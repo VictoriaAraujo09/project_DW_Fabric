@@ -1,0 +1,4 @@
+deltalake
+duckdb
+pyarrow
+pandas

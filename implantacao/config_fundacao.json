@@ -1,0 +1,41 @@
+{
+  "capacidade": "NOME_DA_SUA_CAPACIDADE_F4",
+  "workspaces": {
+    "DW_DEV": {
+      "id": "db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9",
+      "descricao": "Workspace do projeto (existente)"
+    },
+    "DW_PROD": {
+      "id": "",
+      "descricao": "DW - produção. Ciclos agendados (05:00, 12:00, 17:00)."
+    }
+  },
+  "implantar_itens_em": [
+    "DW_DEV"
+  ],
+  "paralelismo": 4,
+  "origens": [
+    {
+      "origem": "GS",
+      "conector": "SQLSERVER",
+      "connection_id": "",
+      "database": ""
+    },
+    {
+      "origem": "PROTHEUS",
+      "conector": "SQLSERVER",
+      "connection_id": "",
+      "database": ""
+    },
+    {
+      "origem": "4S",
+      "conector": "ODBC",
+      "connection_id": ""
+    },
+    {
+      "origem": "VIGON",
+      "conector": "ODBC",
+      "connection_id": ""
+    }
+  ]
+}

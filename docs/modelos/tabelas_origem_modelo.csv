@@ -1,0 +1,3 @@
+tabela_origem;descricao_negocio;tipo_sugerido;entidade_equivalente;chave;coluna_alteracao;volume_linhas;observacoes
+dbo.SE1010;Títulos a receber: uma linha por parcela de cada título (duplicata, boleto, fatura);FATO;parcela_receber;R_E_C_N_O_;;850000;Exemplo Protheus: apagar esta linha
+dbo.SA1010;Cadastro de clientes;DIM;cliente;R_E_C_N_O_;;20000;Exemplo Protheus: apagar esta linha

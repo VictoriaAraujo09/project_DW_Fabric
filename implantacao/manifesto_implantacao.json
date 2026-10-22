@@ -1,0 +1,21 @@
+{
+  "workspaces": {
+    "DW_DEV": "db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9"
+  },
+  "itens": {
+    "DW_DEV": {
+      "workspace": "db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9",
+      "lakehouses": {
+        "Bronze": "d615c567-f054-478a-887b-364eef89aee2",
+        "Silver": "65f25937-b11a-415f-83e6-a4e8fb69fbe8",
+        "Gold": "fd22548a-25e1-43f9-b7cc-bb6875ad35e0"
+      },
+      "notebooks": {
+        "nb_setup_controle": "35570451-9727-4c91-bb10-c9d02b7591d2",
+        "nb_preparar_ciclo": "87b8adbb-b0f5-40e5-bb58-3ba5422885bf",
+        "nb_orquestrador": "a357c6d2-979a-45db-b6af-aac06fcd9c4e"
+      },
+      "pipeline": "4ae3857c-2708-4e6c-804a-f5f467a7f52b"
+    }
+  }
+}

@@ -1,0 +1,163 @@
+﻿entidade;campo;tipo;descricao
+empresa;codigo_empresa;texto;Código da empresa no sistema de origem
+empresa;nome_empresa;texto;Razão social ou nome da empresa
+estabelecimento;codigo_empresa;texto;Empresa do estabelecimento
+estabelecimento;codigo_estabelecimento;texto;Código do estabelecimento (filial)
+estabelecimento;nome_estabelecimento;texto;Nome do estabelecimento
+estabelecimento;nome_fantasia;texto;Nome fantasia
+estabelecimento;cnpj;texto;CNPJ, só dígitos
+estabelecimento;uf;texto;Sigla do estado
+estabelecimento;codigo_municipio;texto;Código do município
+cliente;codigo_empresa;texto;Empresa dona do cadastro
+cliente;codigo_cliente;texto;Código do cliente
+cliente;nome_cliente;texto;Razão social ou nome
+cliente;nome_fantasia;texto;Nome fantasia
+cliente;cnpj_cpf;texto;CNPJ ou CPF, só dígitos
+cliente;uf;texto;Sigla do estado
+cliente;codigo_municipio;texto;Código do município
+cliente;codigo_grupo_cliente;texto;Grupo do cliente
+cliente;inativo;booleano;Cliente inativo
+grupo_cliente;codigo_empresa;texto;Empresa
+grupo_cliente;codigo_grupo_cliente;texto;Código do grupo
+grupo_cliente;nome_grupo_cliente;texto;Nome do grupo
+fornecedor;codigo_empresa;texto;Empresa dona do cadastro
+fornecedor;codigo_fornecedor;texto;Código do fornecedor
+fornecedor;nome_fornecedor;texto;Razão social ou nome
+fornecedor;nome_fantasia;texto;Nome fantasia
+fornecedor;cnpj_cpf;texto;CNPJ ou CPF, só dígitos
+fornecedor;uf;texto;Sigla do estado
+fornecedor;codigo_grupo_fornecedor;texto;Grupo do fornecedor
+grupo_fornecedor;codigo_empresa;texto;Empresa
+grupo_fornecedor;codigo_grupo_fornecedor;texto;Código do grupo
+grupo_fornecedor;nome_grupo_fornecedor;texto;Nome do grupo
+natureza_financeira;codigo_empresa;texto;Empresa
+natureza_financeira;codigo_natureza;texto;Código da natureza financeira (plano de contas gerencial)
+natureza_financeira;nome_natureza;texto;Descrição da natureza
+natureza_financeira;tipo_natureza;texto;Receita, despesa etc., como o sistema classifica
+natureza_financeira;codigo_natureza_pai;texto;Natureza superior na hierarquia
+natureza_financeira;inativo;booleano;Natureza inativa
+centro_resultado;codigo_empresa;texto;Empresa
+centro_resultado;codigo_centro_resultado;texto;Código do centro de resultado / centro de custo
+centro_resultado;nome_centro_resultado;texto;Descrição
+centro_resultado;codigo_centro_resultado_pai;texto;Centro superior na hierarquia
+centro_resultado;inativo;booleano;Centro inativo
+banco;codigo_empresa;texto;Empresa
+banco;codigo_banco;texto;Código interno do banco
+banco;numero_banco;texto;Número do banco no Bacen (001, 237...)
+banco;nome_banco;texto;Nome do banco
+conta_bancaria;codigo_empresa;texto;Empresa
+conta_bancaria;codigo_conta_bancaria;texto;Código interno da conta
+conta_bancaria;nome_conta_bancaria;texto;Descrição da conta
+conta_bancaria;codigo_banco;texto;Banco da conta
+conta_bancaria;agencia;texto;Agência
+conta_bancaria;numero_conta;texto;Número da conta corrente
+conta_bancaria;inativo;booleano;Conta inativa
+titulo_receber;codigo_empresa;texto;Empresa
+titulo_receber;codigo_titulo;texto;Identificador do título a receber
+titulo_receber;codigo_estabelecimento;texto;Estabelecimento emissor
+titulo_receber;codigo_cliente;texto;Cliente devedor
+titulo_receber;numero_documento;texto;Número do documento (NF, fatura, contrato)
+titulo_receber;data_emissao;data;Data de emissão do título
+titulo_receber;valor_bruto;decimal;Valor antes das retenções
+titulo_receber;valor_liquido;decimal;Valor a receber
+titulo_receber;codigo_natureza;texto;Natureza financeira principal
+titulo_receber;codigo_centro_resultado;texto;Centro de resultado principal
+titulo_receber;data_ultima_alteracao;data_hora;Última alteração do registro na origem
+parcela_receber;codigo_empresa;texto;Empresa
+parcela_receber;codigo_titulo;texto;Título a que a parcela pertence
+parcela_receber;numero_parcela;texto;Número ou sequência da parcela
+parcela_receber;data_vencimento;data;Vencimento atual da parcela
+parcela_receber;data_vencimento_original;data;Vencimento antes de prorrogações
+parcela_receber;valor_parcela;decimal;Valor atual da parcela
+parcela_receber;valor_original;decimal;Valor original da parcela
+parcela_receber;valor_desconto;decimal;Desconto concedido
+parcela_receber;quitada;booleano;Parcela totalmente paga
+parcela_receber;data_cancelamento;data;Data de cancelamento, se houver
+baixa_receber;codigo_empresa;texto;Empresa
+baixa_receber;codigo_titulo;texto;Título baixado
+baixa_receber;numero_parcela;texto;Parcela baixada
+baixa_receber;sequencial_baixa;texto;Sequência da baixa dentro da parcela
+baixa_receber;data_baixa;data;Data em que a baixa foi registrada
+baixa_receber;data_pagamento;data;Data em que o cliente pagou
+baixa_receber;valor_baixa;decimal;Valor baixado (principal)
+baixa_receber;valor_desconto;decimal;Desconto na baixa
+baixa_receber;valor_juros;decimal;Juros recebidos
+baixa_receber;valor_multa;decimal;Multa recebida
+baixa_receber;data_cancelamento;data;Estorno da baixa, se houver
+titulo_pagar;codigo_empresa;texto;Empresa
+titulo_pagar;codigo_titulo;texto;Identificador do título a pagar
+titulo_pagar;codigo_estabelecimento;texto;Estabelecimento pagador
+titulo_pagar;codigo_fornecedor;texto;Fornecedor credor
+titulo_pagar;numero_documento;texto;Número do documento
+titulo_pagar;data_emissao;data;Data de emissão do documento
+titulo_pagar;data_entrada;data;Data de entrada/lançamento no sistema
+titulo_pagar;valor_bruto;decimal;Valor antes das retenções
+titulo_pagar;valor_liquido;decimal;Valor a pagar
+titulo_pagar;codigo_natureza;texto;Natureza financeira principal
+titulo_pagar;codigo_centro_resultado;texto;Centro de resultado principal
+titulo_pagar;data_ultima_alteracao;data_hora;Última alteração do registro na origem
+parcela_pagar;codigo_empresa;texto;Empresa
+parcela_pagar;codigo_titulo;texto;Título a que a parcela pertence
+parcela_pagar;numero_parcela;texto;Número ou sequência da parcela
+parcela_pagar;data_vencimento;data;Vencimento atual da parcela
+parcela_pagar;data_vencimento_original;data;Vencimento antes de prorrogações
+parcela_pagar;valor_parcela;decimal;Valor atual da parcela
+parcela_pagar;valor_desconto;decimal;Desconto
+parcela_pagar;valor_juros;decimal;Juros
+parcela_pagar;valor_multa;decimal;Multa
+parcela_pagar;quitada;booleano;Parcela totalmente paga
+parcela_pagar;data_cancelamento;data;Data de cancelamento, se houver
+baixa_pagar;codigo_empresa;texto;Empresa
+baixa_pagar;codigo_titulo;texto;Título baixado
+baixa_pagar;numero_parcela;texto;Parcela baixada
+baixa_pagar;sequencial_baixa;texto;Sequência da baixa dentro da parcela
+baixa_pagar;data_baixa;data;Data do pagamento/baixa
+baixa_pagar;valor_baixa;decimal;Valor baixado (principal)
+baixa_pagar;valor_desconto;decimal;Desconto obtido
+baixa_pagar;valor_juros;decimal;Juros pagos
+baixa_pagar;valor_multa;decimal;Multa paga
+baixa_pagar;data_cancelamento;data;Estorno da baixa, se houver
+lancamento_financeiro;codigo_empresa;texto;Empresa
+lancamento_financeiro;codigo_lancamento;texto;Identificador do lançamento / movimento bancário
+lancamento_financeiro;codigo_estabelecimento;texto;Estabelecimento
+lancamento_financeiro;codigo_conta_bancaria;texto;Conta movimentada
+lancamento_financeiro;data_lancamento;data;Data do movimento
+lancamento_financeiro;valor;decimal;Valor do movimento
+lancamento_financeiro;tipo_movimento;texto;Entrada ou saída (débito/crédito), como o sistema codifica
+lancamento_financeiro;origem_lancamento;texto;Rotina que gerou o lançamento
+lancamento_financeiro;historico;texto;Histórico
+lancamento_financeiro;codigo_natureza;texto;Natureza financeira
+lancamento_financeiro;codigo_centro_resultado;texto;Centro de resultado
+transferencia_contas;codigo_empresa;texto;Empresa
+transferencia_contas;data_transferencia;data;Data da transferência
+transferencia_contas;sequencial;texto;Sequência no dia
+transferencia_contas;codigo_conta_origem;texto;Conta de saída
+transferencia_contas;codigo_conta_destino;texto;Conta de entrada
+transferencia_contas;valor;decimal;Valor transferido
+transferencia_contas;historico;texto;Histórico
+nota_fiscal;codigo_empresa;texto;Empresa
+nota_fiscal;codigo_nota;texto;Identificador interno da nota
+nota_fiscal;codigo_estabelecimento;texto;Estabelecimento emissor
+nota_fiscal;codigo_cliente;texto;Destinatário
+nota_fiscal;numero_nota;texto;Número da nota
+nota_fiscal;serie;texto;Série
+nota_fiscal;data_emissao;data;Data de emissão
+nota_fiscal;cfop;texto;CFOP principal
+nota_fiscal;valor_total;decimal;Valor total da nota
+nota_fiscal;valor_servicos;decimal;Valor dos serviços
+nota_fiscal;valor_produtos;decimal;Valor dos produtos
+nota_fiscal;cancelada;booleano;Nota cancelada
+nota_fiscal;data_cancelamento;data;Data do cancelamento
+nota_fiscal;codigo_titulo_receber;texto;Título a receber gerado pela nota
+rateio_receita;codigo_empresa;texto;Empresa
+rateio_receita;codigo_titulo;texto;Título a receber rateado
+rateio_receita;codigo_natureza;texto;Natureza do rateio
+rateio_receita;codigo_centro_resultado;texto;Centro do rateio
+rateio_receita;codigo_estabelecimento;texto;Estabelecimento do rateio
+rateio_receita;valor;decimal;Valor rateado
+rateio_despesa;codigo_empresa;texto;Empresa
+rateio_despesa;codigo_titulo;texto;Título a pagar rateado
+rateio_despesa;codigo_natureza;texto;Natureza do rateio
+rateio_despesa;codigo_centro_resultado;texto;Centro do rateio
+rateio_despesa;codigo_estabelecimento;texto;Estabelecimento do rateio
+rateio_despesa;valor;decimal;Valor rateado

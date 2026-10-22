@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+
+# amostras de dados das origens: podem ter dados pessoais (docs/00_guia_nova_origem.md, etapa 4.3)
+docs/origens/*/amostra_*

@@ -1,0 +1,1556 @@
+﻿tabela_silver;coluna;tipo_atual;categoria;proposta
+silver_dim_apuracao_financeira_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_apuracao_financeira_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_dim_apuracao_financeira_gs;Descricao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_apuracao_financeira_gs;_origem;texto;técnica;manter
+silver_dim_apuracao_financeira_gs;_lote;texto;técnica;manter
+silver_dim_apuracao_financeira_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_apuracao_financeira_gs;_ativo;booleano;técnica;manter
+silver_dim_apuracao_financeira_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_bancos_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_bancos_gs;Codigo;texto;código;texto + rtrim
+silver_dim_bancos_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_bancos_gs;Numero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_bancos_gs;DV;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_bancos_gs;ISPB;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_bancos_gs;EnderecoAtualizacaoBoleto;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_bancos_gs;CNPJ;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_bancos_gs;_origem;texto;técnica;manter
+silver_dim_bancos_gs;_lote;texto;técnica;manter
+silver_dim_bancos_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_bancos_gs;_ativo;booleano;técnica;manter
+silver_dim_bancos_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_centro_resultado_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_centro_resultado_gs;Codigo;texto;código;texto + rtrim
+silver_dim_centro_resultado_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_centro_resultado_gs;CRS_Codigo_Mae;texto;código;texto + rtrim
+silver_dim_centro_resultado_gs;CRS_Contabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_centro_resultado_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_centro_resultado_gs;Inativo;inteiro;inteiro/flag;manter
+silver_dim_centro_resultado_gs;GCR_Codigo;texto;código;texto + rtrim
+silver_dim_centro_resultado_gs;PESO;float;valor monetário;DECIMAL(18,6)
+silver_dim_centro_resultado_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_centro_resultado_gs;IAG_CODIGO;inteiro;inteiro/flag;manter
+silver_dim_centro_resultado_gs;IDVEXPENSES;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_centro_resultado_gs;_origem;texto;técnica;manter
+silver_dim_centro_resultado_gs;_lote;texto;técnica;manter
+silver_dim_centro_resultado_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_centro_resultado_gs;_ativo;booleano;técnica;manter
+silver_dim_centro_resultado_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_clientes_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;NomeFantasia;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CNPJCPF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;ENDCEP;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;EndLogradouro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;EndNumero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;EndComplemento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;ENDBairro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;MUN_UFD_Sigla;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;MUN_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;DDD;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;Celular;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;Contato;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;OBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;GCL_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;VRP_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;COB_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;Vencimento;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;Site;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;Boleto;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;Recibo;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;Etiqueta;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;GeraNFAuto;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;DebAutomatico;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;BAN_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;Agencia;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;AtualObs;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;ISS;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;HorasATECompradas;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;HorasATEMensais;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;HorasATEUsadas;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;HorasATETreinamento;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CLI_Pagador;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;Senha;texto;sensível;remover da Silver?
+silver_dim_clientes_gs;HCA;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;HUA;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;Exterior;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CentralizaHrCLIPag;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;NrDiasLiberacao;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;ObsSuporte;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;DtNascimento;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;Sexo;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IRRF;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;RG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IM;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;REFERENCIA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;SenhaPortal;texto;sensível;remover da Silver?
+silver_dim_clientes_gs;NaoCobrarAtendimento;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;DtUltPesquisa;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;TPA_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;AliqISS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_clientes_gs;Fone;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;TRA_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;RetemINSS;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;IDENTIFICADOR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;LimiteCredito;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;CLC_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;DtAtualizacao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;PISDiferenciado;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;PIS;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;COFINS;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;CSLL;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;IsentoIE;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;BloquearATE;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;VencEnesimoDiaUtil;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;BloqueiaLicenca;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;UtilizaRG;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;IRRFMinDiferenciado;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;VLRMINIRRF;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;PAI_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;CobrancaImpressa;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CampoExtra1;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra2;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra3;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra4;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra5;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra6;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra7;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra8;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra9;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CampoExtra10;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CONTACONTABILACL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;Fax;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;DDD_CELULAR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;DDD_FAX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;idEstrangeiro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IndicadorIEDestinatario;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;GEC_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;TVI_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;Email;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CLI_Pae;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;ISUF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;OrgaoPublico;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;INCENTIVOSFISCAISZFM;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;OptanteSimples;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CONSUMIDORFINAL;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;BloquearFIN;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;GFC_CODIGO;texto;código;texto + rtrim
+silver_dim_clientes_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CodParticipante;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;juro;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_clientes_gs;multa;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_clientes_gs;EMP_Contabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;EST_Contabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CRS_Contabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;ContaContabilDespesa;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;ContaContabilFornecedor;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;BloquearCRE;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;BloquearPEV;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;BloquearNFS;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;PkSysPdv;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;DV_Agencia;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;DV_CC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;EhCLIPagador;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;ID_VendasMobile;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;NOE_CODIGO;texto;código;texto + rtrim
+silver_dim_clientes_gs;NaoInformaVrIBPTFederal;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;NaoInformaVrIBPTEstadual;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;NaoInformaVrIBPTMunicipal;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;BloqueioLiberadoAte;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;DEDUCAOISS;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;PERCENTUALDEDUCAOISS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_clientes_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;COMANDOENVIOBANCO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IDCLIENTEBANCO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IDPASTABOLETOCONECTA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IDPASTANOTAFISCALCONECTA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;CRIARPASTABOLETOSNOTASCONECTA;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CSRFMinDiferenciado;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;VLRMINCSRF;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;Desconto;float;valor monetário;DECIMAL(18,6)
+silver_dim_clientes_gs;RP_HABAPPCOLABORADOR;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;RP_USUAPPCOLABORADOR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;RP_SENHAAPPCOLABORADOR;texto;sensível;remover da Silver?
+silver_dim_clientes_gs;DDD_WHATSAPP;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;WHATSAPP;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;BNF_CODIGO;texto;código;texto + rtrim
+silver_dim_clientes_gs;NPNIFSisCoServ;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;TipoVinculacaoSisCoServ;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;ID_CLIENTEFWF;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CNAE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;Inativo;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;IAG_CODIGO;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;SomenteDestacarPISCOFINSCSLL;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;SomenteDestacarISS;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CNPJINTERMEDIADOR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;IDENTIFICADORINTERMEDIADOR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;POSSUIDUASOUMAISIM;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;DtLimiteGEC;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;INSTITUICAOFINPGTO;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;INTERMEDIADORTRANSACAO;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;CTC_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;HIS_Codigo;texto;código;texto + rtrim
+silver_dim_clientes_gs;somentedestacarIRRF;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;TranspFrete;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;ID_ASAAS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_clientes_gs;TOKENCARTAOASAAS;texto;sensível;remover da Silver?
+silver_dim_clientes_gs;TIPODIAFAT;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;DTREGISTRO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_clientes_gs;DESCONSIDERARVALORMINIMO;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;TIPOASSINANTENFCOM;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;ENTEGOVERNAMENTAL;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;TIPOENTEGOVERNAMENTAL;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;somentedestacarINSS;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;MESSUBSEQUENTEFAT;inteiro;inteiro/flag;manter
+silver_dim_clientes_gs;_origem;texto;técnica;manter
+silver_dim_clientes_gs;_lote;texto;técnica;manter
+silver_dim_clientes_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_clientes_gs;_ativo;booleano;técnica;manter
+silver_dim_clientes_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_contas_bancarias_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_contas_bancarias_gs;Codigo;texto;código;texto + rtrim
+silver_dim_contas_bancarias_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_contas_bancarias_gs;GCO_Codigo;texto;código;texto + rtrim
+silver_dim_contas_bancarias_gs;Agencia;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_contas_bancarias_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_contas_bancarias_gs;IdImpressaoECH;inteiro;inteiro/flag;manter
+silver_dim_contas_bancarias_gs;OBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_contas_bancarias_gs;BAN_Codigo;texto;código;texto + rtrim
+silver_dim_contas_bancarias_gs;CC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_contas_bancarias_gs;ValorLimite;float;valor monetário;DECIMAL(18,6)
+silver_dim_contas_bancarias_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_contas_bancarias_gs;INATIVA;inteiro;inteiro/flag;manter
+silver_dim_contas_bancarias_gs;IAG_CODIGO;inteiro;inteiro/flag;manter
+silver_dim_contas_bancarias_gs;CRS_CODIGO;texto;código;texto + rtrim
+silver_dim_contas_bancarias_gs;_origem;texto;técnica;manter
+silver_dim_contas_bancarias_gs;_lote;texto;técnica;manter
+silver_dim_contas_bancarias_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_contas_bancarias_gs;_ativo;booleano;técnica;manter
+silver_dim_contas_bancarias_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_empresas_gs;Codigo;texto;código;texto + rtrim
+silver_dim_empresas_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_empresas_gs;Apelido;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_empresas_gs;Logotipo;binário;binário;avaliar: remover da Silver
+silver_dim_empresas_gs;Fortes;inteiro;inteiro/flag;manter
+silver_dim_empresas_gs;INSS;inteiro;inteiro/flag;manter
+silver_dim_empresas_gs;IM;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_empresas_gs;AliquotasEspeciais;inteiro;inteiro/flag;manter
+silver_dim_empresas_gs;ULTIMADTENVIOEMAILPEDIDO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;ULTIMADTENVIOEMAILVCPVENCIDO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;UltimaDTAtualizacaoVAS;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;TOKENLICENCIADOFORTESDOC;texto;sensível;remover da Silver?
+silver_dim_empresas_gs;UltimaDTEnvioEmailVDRVencendo;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;ULTIMADATAENVIOEMAILBOLETOS;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;ULTIMADATAVALIDACAOVIC;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;IntegradoPolibrasNet;inteiro;inteiro/flag;manter
+silver_dim_empresas_gs;ULTIMADTPREVISAOFATURAMENTO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;dtprocbloqcli;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;statusprocbloqcli;inteiro;inteiro/flag;manter
+silver_dim_empresas_gs;DTLIBERACAOMANIFESTO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;ULTIMADATAENVIOWHATSAPPBOLETOS;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_empresas_gs;id;inteiro;inteiro/flag;manter
+silver_dim_empresas_gs;_origem;texto;técnica;manter
+silver_dim_empresas_gs;_lote;texto;técnica;manter
+silver_dim_empresas_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_empresas_gs;_ativo;booleano;técnica;manter
+silver_dim_empresas_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_estabelecimentos_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;Codigo;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;CNPJCPF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;EndLogradouro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;EndNumero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;EndComplemento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;Bairro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CEP;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;MUN_UFD_Sigla;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;MUN_Codigo;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;DDD;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ESTContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ISS;float;valor monetário;DECIMAL(18,6)
+silver_dim_estabelecimentos_gs;Mnemonico;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;RetemIRRF;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;IM;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;IE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;OptanteSIMPLES;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;RegimeEspecial;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CNAE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;SeriePadrao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;RegimeCOFINS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;STB_Codigo;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;STBSN_Codigo;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;ImagemEmail;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;LinkImagemEmail;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CorCabecalhoEmail;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CorCorpoEmail;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CorFonteEmail;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CorpoReciboDuplicataEmail;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CorpoBoletoEmail;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NomeFantasiaObsCREBoleto;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;NomeFantasiaRecDuplicata;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;EmailRemetente;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NomeApresentarRemetente;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ESTFiscal;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;RegimeEspecialICMSSubst;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AssEnvEmaBol;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;AssEnvEmaRecDup;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;AssEnvEmaCartaCob;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;AssEnvEmaCartaQuita;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CorpoCartaCobEmail;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CorpoCartaQuitaEmail;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ReceptorConfRecebBol;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;AssEnvEmaColetaPreco;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CorpoColetaPrecoEmail;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CERTIFICADO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TipoCertificado;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;AmbienteEnvioNF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;INCENTIVOFISCAL;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;NFS_ESPECIE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSApagarNumeroSerieNFSe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSValidarIMNFSe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSValidarNumeroEndNFSe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSTentaviasProcessamentoNFSe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSTentaviasProcessamentoNFe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;Logotipo;binário;binário;avaliar: remover da Silver
+silver_dim_estabelecimentos_gs;TSLocalCertificado;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSSenhaCertificado;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;TSTipoConsultaAutorizacaoNFSe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSTipoConsultaImpressaoNFSe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSDescricaoServicoCustomizada;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSDescricaoServicoNFSe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSDescricaoServicoRPSNFSe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSUnicaDescricaoServico;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSUnicaDescricaoServicoRPS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSDescontoPrevFaturaDuplicata;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;SeriePadraoNFSe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NFe_Especie;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;AmbienteEnvioNFSe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;VERSAONFE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;MODALIDADEENVIO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSCOMPDESCRICAOSERVICONFSE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSCOMPDESCRICAORPSNFSE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TSUTILIZARCOMPDESCPROD;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRPRNGERAL;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRSITTRIBISS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRSITTRIBCOFINS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRSITTRIBPIS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRUF;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRMUN;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRNATUREZATRIBISS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDREXIGIBILIDADEISS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDROPERASERVPRESTADO;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRITEMLISTASERV;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VLDRCODTRIBMUN;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;DTEMISSAONUMERAR;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_estabelecimentos_gs;NOMENOTAFISCAL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;EMPContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;UTILIZAQUEBRALINHANFSE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSUTILIZARDATAENVIO;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSOMITIRIMTOMADORFORA;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSCPROCODESTFISCAL;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;OMITIRMSGLEITRANSP;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;COLETAPRECORESPONDERPARAEMAIL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ContribuinteIPI;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;FONE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;FAX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TOKENIBPT;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;ORIENTACAODANFE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;OPERACAOPRESENCACOMPRADOR;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;EXIBIRRETENCOES;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;IMPRIMIRDADOSFATURA;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VARIOSSERVICOSNFSE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CNPJESCRITCONTABIL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;IntegraAtlas;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;SEMPRERENUMERALOTE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TokenGnre;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;integragnre;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;IntegradoACContabil;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TokenNFCe;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;integranfce;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AmbienteEnvioNFCe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;TokenPedidoMobile;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;HabilitaDifal;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;LASTSYNCPEDIDOMOBILE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;UTILIZARCOMPETENCIANFSE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;EmailContador;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;SERIEPADRAOMDFE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;LOGINNFSE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;AmbienteEnvioMDFe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TokenMDFe;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;IntegraMDFE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;MODALIDADEENVIONFCE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;IDTOKENNFCE;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;UTILIZADODADOSLOGINNFSE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;OMITIRCNPJCLIEXTERIOR;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ENVIARBOLETOEMAILNFSE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;DtInicioAtividade;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_estabelecimentos_gs;HabTipoReceitaTribCRE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TOKENASSINANTEFORTESDOC;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;LASTSYNCCLIENTEMOBILE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;OMITIRDADOSCRENFE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ENVIARCODTRIBUTACAONOCNAE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;VISUALIZANFSEXML;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;UltimoIDClienteVendasMobile;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;OMITIRVALORDEDUCOES;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;SeriePadraoNFCe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;IMPRIMIRUNIDADETRIB;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TAF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NroRegEstadual;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;FORMATOIMPRESSAOCTEOS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AMBIENTEEMISSAOCTE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;SERIEPADRAOCTEOS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NAOENVIARPARAVEDASMOBILE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ASSEMAILCARCOBRANCA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;EXIBIRIMPOSTOSFEDCTEOS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TIPOEMITENTEMDF;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;MODOEMISSAONFSE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;IMPUNDTRIBCFOPEXPORT;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AssEnvEmaInfoCli;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CorpoInfoCli;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ClientIDGerencianet;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ClientSecretGerencianet;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TipoAmbienteGerencianet;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;RNTC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;UtilizarIntegracaoGerencianet;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;SUGERIRUFMUNCLI;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;IDENTPRESTADOR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;EMPFiscal;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CONTACONTABILMAPEAMENTOAUTO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ENVIARCJNOTABOLETOEMAIL;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSUTILIZARDATAENVIONFE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSUTILIZARDATAENVIONFCE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ContaContabilFRN;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ContaContabilAFR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ContaContabilCLI;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ContaContabilACL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ContaContabilCON;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;UTILIZALOGINOAUTH2NFSE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CLIENTIDNFSE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CLIENTSECRETNFSE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NUMEROAEDFNFSE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;SENHAOAUTHNFSE;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;OMITIROUTRASINFORMACOES;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;GNRE_CODIGO_PRODUTO;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;GNRE_CODIGO_RECEITA;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;SENHANFSE;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;RETZEROESQTSCPROCOD;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;MANTERNUMERORPSSISTEMA;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CLIENTIDBBWEB;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CLIENTSECRETBBWEB;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;UtilizarIntegracaoBBBoletoWeb;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TipoAmbienteBBBoletoWeb;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;COB_CODIGO;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;IntegradoPolibrasNet;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;OPERACAOPRESENCACOMPRADORNFCe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CREDENCIALPJBANK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CHAVEPJBANK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CONTAVIRTUALPJBANK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TIPOAMBIENTEPJBANK;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AGENCIAPJBANK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CONTACORRENTEPJBANK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;BAN_CODIGOPJBANK;texto;código;texto + rtrim
+silver_dim_estabelecimentos_gs;TIPOTRANSPORTADORAMDFE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;EMAILPJBANK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CHAVEJBBWEB;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ULTRAPASSOUSSN;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ULTIMADTATUALIZACAOSSN;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_estabelecimentos_gs;UtilizarIntegracaoPJBank;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;APAGARNUMEROSERIENFE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;APAGARNUMEROSERIENFCE;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ASSUNTOENVEMABOLCJNOTA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;DATAEMISSAONFCOMPLEMENTAR;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;USARFUSOHORARIOCONFIG;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;FUSOHORARIOCONFIG;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;INTEGRAPAGAMENTOBB;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CLIENTIDBBINTEGRAPAG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CLIENTSECRETBBINTEGRAPAG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;GWAPPDEVKEYBBINTEGRAPAG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;IDCLIENTBBINTEGRAPAG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TIPOAMBIENTEBBINTEGRAPAG;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;BB_REQUESTID;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ACCESSTOKENBB;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;DTACCESSTOKENBB;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_estabelecimentos_gs;ImpNFETipoCertificado;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ImpNFEConteudoArquivoA1;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ImpNFESenhaA1;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;ImpNFENomeCertificadoA3;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;UTILIZARINTEGRACAOBBCOBRANCA;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CLIENTIDBBCOBRANCA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CLIENTSECRETBBCOBRANCA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;GWAPPDEVKEYBBCOBRANCA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;tipoambientebbcobranca;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CLIENTIDBBPIX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CLIENTSECRETBBPIX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;GWAPPDEVKEYBBPIX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TIPOAMBIENTEBBPIX;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;UTILIZARINTEGRACAOPIXBB;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ASSENVEMABOLPIX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CORPOBOLETOPIXEMAIL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ASSEMAILBOLETOBANCA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;ASSENVEMANF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CORPOEMAILNF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;APURACAOPISCOFINSREGIMEMISTO;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSUSARLOTCOMPDESCPROD;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSUTILIZARREDBASECALC;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;MAPEARCCONTABILSCL;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;OPERACAOINTERMEDIADOR;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TSUSARDADOSIMPOSTOS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;FORCARDESTAQUEISS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ENVIARPDFBOLETOFORTES;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;ESCREVINFRESPTEC;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;LOCALCERTIFICADOBBINTEGRAPAG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;LOCALCERTPRIVATEKEYBBINTEGRAPAG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;EXTENSAOARQUIVO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NOMEFANTASIA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;INTEGRAEXTRATOBB;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CLIENTIDBBINTEGRAEXT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CLIENTSECRETBBINTEGRAEXT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;GWAPPDEVKEYBBINTEGRAEXT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TIPOAMBIENTEBBINTEGRAEXT;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;LOCALCERTIFICADOBBINTEGRAEXT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;LOCALCERTPRIVATEKEYBBINTEGRAEXT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;DTEMISSAONUMERARMDF;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_estabelecimentos_gs;ASSENVEMATERMINOCTT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;CORPOEMAILTERMINOCTT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;GerarNotaPorServico;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;SMTPServerEmpresa;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;SMTPPortEmpresa;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AutenticacaoSMTPEmpresa;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;SMTPUsuarioEmpresa;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;SMTPSenhaEmpresa;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;RequerSSLTLSEmpresa;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AutoTLSEmpresa;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;TokenAuth2EMP;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;LOCALXMLMDFE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;LOCALPDFMDFE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;TOKENASAAS;texto;sensível;remover da Silver?
+silver_dim_estabelecimentos_gs;INTEGRAAPIASAAS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AmbienteEnvioNFCom;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;SeriePadraoNFCom;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NumeroSerieCertificado;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;NaoFormatarNumeroRPS;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;CompDescricaoServico;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;AmbienteNacional;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;REGIMEAPURACAOTRIBUTARIA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;SITUACAOSIMPLES;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_estabelecimentos_gs;VERSAOAPIBBINTEGRAEXT;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;UTILIZARPERCVALORAPROXTRIB;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;DESTINATARIOMESMOTOMADOR;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;EnviarECONFNFe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;EnviarECONFNFCe;inteiro;inteiro/flag;manter
+silver_dim_estabelecimentos_gs;_origem;texto;técnica;manter
+silver_dim_estabelecimentos_gs;_lote;texto;técnica;manter
+silver_dim_estabelecimentos_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_estabelecimentos_gs;_ativo;booleano;técnica;manter
+silver_dim_estabelecimentos_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_fornecedores_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;GFR_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;CNPJCPF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;ENDCEP;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;EndLogradouro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;EndNumero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;EndComplemento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;ENDBairro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;MUN_UFD_Sigla;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;MUN_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;DDD;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;Site;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;Contato;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;OBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;RG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;IE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;BAN_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;Agencia;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;CC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;IM;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;REFERENCIA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;DescPrevisto;float;valor monetário;DECIMAL(18,6)
+silver_dim_fornecedores_gs;EnviaEmail;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;Exterior;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;ICMS;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;IPI;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;ServicoPublico;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;FinalidadeTED;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;FinalidadeDOC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;Leiaute;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;DVAg;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;email;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;CalcINSSEmp;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;AliqINSS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_fornecedores_gs;ContaContabilAFR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;NomeFantasia;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;DVConta;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;TipoConta;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;PAI_CODIGO;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;idEstrangeiro;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;FONE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;FAX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;CELULAR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;TDC_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;crs_codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;INDICADORIE;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;CodParticipante;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;RNTC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;PkSysPdv;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;Inativo;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;CPOM;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;TAF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;NroRegEstadual;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;NIT;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;DTNASCIMENTO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_fornecedores_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;GFF_CODIGO;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;CONTRIBUINTECPRB;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_fornecedores_gs;CODIGOOPERACAO;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;DTSUSPEND;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_fornecedores_gs;DTSUSPENDFIM;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_fornecedores_gs;OBS_SUSPEND;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;IAG_CODIGO;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;TTB_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;JURO;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_fornecedores_gs;MULTA;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_fornecedores_gs;LimiteCredito;float;valor monetário;DECIMAL(18,6)
+silver_dim_fornecedores_gs;HIS_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;IDVEXPENSES;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_fornecedores_gs;USU_Codigo;texto;código;texto + rtrim
+silver_dim_fornecedores_gs;DIAVENCIMENTO;inteiro;inteiro/flag;manter
+silver_dim_fornecedores_gs;_origem;texto;técnica;manter
+silver_dim_fornecedores_gs;_lote;texto;técnica;manter
+silver_dim_fornecedores_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_fornecedores_gs;_ativo;booleano;técnica;manter
+silver_dim_fornecedores_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_grupo_clientes_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_grupo_clientes_gs;Codigo;texto;código;texto + rtrim
+silver_dim_grupo_clientes_gs;nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_grupo_clientes_gs;NaoEnviarVendasMobile;inteiro;inteiro/flag;manter
+silver_dim_grupo_clientes_gs;EnviarInfoBoleto;inteiro;inteiro/flag;manter
+silver_dim_grupo_clientes_gs;_origem;texto;técnica;manter
+silver_dim_grupo_clientes_gs;_lote;texto;técnica;manter
+silver_dim_grupo_clientes_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_grupo_clientes_gs;_ativo;booleano;técnica;manter
+silver_dim_grupo_clientes_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_grupo_fornecedores_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_grupo_fornecedores_gs;Codigo;texto;código;texto + rtrim
+silver_dim_grupo_fornecedores_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_grupo_fornecedores_gs;_origem;texto;técnica;manter
+silver_dim_grupo_fornecedores_gs;_lote;texto;técnica;manter
+silver_dim_grupo_fornecedores_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_grupo_fornecedores_gs;_ativo;booleano;técnica;manter
+silver_dim_grupo_fornecedores_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_natureza_financeira_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_natureza_financeira_gs;Codigo;texto;código;texto + rtrim
+silver_dim_natureza_financeira_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;Tipo;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;Natureza;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;CRD_Codigo_Mae;texto;código;texto + rtrim
+silver_dim_natureza_financeira_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;GRD_Codigo;texto;código;texto + rtrim
+silver_dim_natureza_financeira_gs;Investimento;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;RetemISS;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;RetemINSS;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;RetemIRRF;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;RetemPISCOFINSCSL;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;CON_Codigo;texto;código;texto + rtrim
+silver_dim_natureza_financeira_gs;ContaContabilEstoque;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;Inativo;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;GeraSPR;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;RETEMICMS;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;Obs;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;crs_codigo;texto;código;texto + rtrim
+silver_dim_natureza_financeira_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_natureza_financeira_gs;IAG_CODIGO;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;IDVEXPENSES;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_natureza_financeira_gs;Retencao;inteiro;inteiro/flag;manter
+silver_dim_natureza_financeira_gs;_origem;texto;técnica;manter
+silver_dim_natureza_financeira_gs;_lote;texto;técnica;manter
+silver_dim_natureza_financeira_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_natureza_financeira_gs;_ativo;booleano;técnica;manter
+silver_dim_natureza_financeira_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_dim_servicos_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_dim_servicos_gs;Codigo;texto;código;texto + rtrim
+silver_dim_servicos_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;NomeApresentar;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;Observacao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;ISS;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;IRRF;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;IDR_Codigo;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;HorasATEMensais;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;HorasATECompradas;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;HorasATETreinamento;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;Minemonico;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;PISCOFINSCSLL;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;INSS;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;AliqISS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;Versao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;AtividadeDDS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;GSE_Codigo;texto;código;texto + rtrim
+silver_dim_servicos_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;ICMS;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;AliqICMS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;DeducaoICMS;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;AliqINSS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_dim_servicos_gs;CodSERFiscal;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;AliqIRRF;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;CODIGONBS;texto;código;texto + rtrim
+silver_dim_servicos_gs;NBS_CODIGO;texto;código;texto + rtrim
+silver_dim_servicos_gs;GeraROY;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;UTILIZARALIQUOTANBS;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;AliqPIS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;AliqCOFINS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;AliqCSL;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;Inativo;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;LabelTamEmpresa;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;AjudinhaTamEmpresa;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_dim_servicos_gs;CODIGOMOVIDESK;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;INTEGRADOMOVIDESK;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;DESCRICAOMOVIDESK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_dim_servicos_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_dim_servicos_gs;APURACAOPISCOFINS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;CNAE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;DEDBASEINSS;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;AliqDEDBASEINSS;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;CNC_CODIGO;texto;código;texto + rtrim
+silver_dim_servicos_gs;UNIDADENFCOM;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;TIPOSERNFCOM;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;FUST;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;ALIQFUST;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;FUNTTEL;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;ALIQFUNTTEL;float;percentual/taxa;DECIMAL(18,6)
+silver_dim_servicos_gs;CSTIBSCBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;CLASSIFICACAOIBSCBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;INDOPERACAO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;NUMBENEFICIOMUNICIPAL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_dim_servicos_gs;IndZFMALC;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;PARTILHAICMSNFCOM;inteiro;inteiro/flag;manter
+silver_dim_servicos_gs;_origem;texto;técnica;manter
+silver_dim_servicos_gs;_lote;texto;técnica;manter
+silver_dim_servicos_gs;_dt_carga;data_hora;técnica;manter
+silver_dim_servicos_gs;_ativo;booleano;técnica;manter
+silver_dim_servicos_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_baixas_contas_pagar_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_baixas_contas_pagar_gs;VCP_CPG_Codigo;texto;código;texto + rtrim
+silver_fato_baixas_contas_pagar_gs;VCP_Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_pagar_gs;VCP_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_pagar_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_baixas_contas_pagar_gs;Desconto;float;valor monetário;DECIMAL(18,6)
+silver_fato_baixas_contas_pagar_gs;Juros;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_baixas_contas_pagar_gs;Automatica;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;DtCancel;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_pagar_gs;ObsCancel;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_baixas_contas_pagar_gs;IAG_Codigo;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;BPA_Codigo;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;Multa;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_baixas_contas_pagar_gs;ExportaAC;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;PPR_Codigo;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;JaExportado;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_pagar_gs;Obs;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_baixas_contas_pagar_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_baixas_contas_pagar_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_pagar_gs;DTREGISTRO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_pagar_gs;FPG_Codigo;texto;código;texto + rtrim
+silver_fato_baixas_contas_pagar_gs;_origem;texto;técnica;manter
+silver_fato_baixas_contas_pagar_gs;_lote;texto;técnica;manter
+silver_fato_baixas_contas_pagar_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_baixas_contas_pagar_gs;_ativo;booleano;técnica;manter
+silver_fato_baixas_contas_pagar_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_baixas_contas_receber_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_baixas_contas_receber_gs;VDR_CRE_Codigo;texto;código;texto + rtrim
+silver_fato_baixas_contas_receber_gs;VDR_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_receber_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_baixas_contas_receber_gs;Desconto;float;valor monetário;DECIMAL(18,6)
+silver_fato_baixas_contas_receber_gs;Juros;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_baixas_contas_receber_gs;Multa;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_baixas_contas_receber_gs;DtCancel;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_receber_gs;Automatica;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;ObsCancel;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_baixas_contas_receber_gs;IAG_Codigo;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;BDA_Codigo;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;COM_Codigo;texto;código;texto + rtrim
+silver_fato_baixas_contas_receber_gs;ExportaAC;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;TarifaBancaria;float;valor monetário;DECIMAL(18,6)
+silver_fato_baixas_contas_receber_gs;PPR_Codigo;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;JaExportado;inteiro;inteiro/flag;manter
+silver_fato_baixas_contas_receber_gs;CALCAO;float;valor monetário;DECIMAL(18,6)
+silver_fato_baixas_contas_receber_gs;DtRecebimento;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_receber_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_baixas_contas_receber_gs;FPG_Codigo;texto;código;texto + rtrim
+silver_fato_baixas_contas_receber_gs;DataPagamento;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_receber_gs;ReferenciaBancaria;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_baixas_contas_receber_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_receber_gs;DTREGISTRO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_baixas_contas_receber_gs;NFS_CODIGO;texto;código;texto + rtrim
+silver_fato_baixas_contas_receber_gs;IdLiquidacao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_baixas_contas_receber_gs;_origem;texto;técnica;manter
+silver_fato_baixas_contas_receber_gs;_lote;texto;técnica;manter
+silver_fato_baixas_contas_receber_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_baixas_contas_receber_gs;_ativo;booleano;técnica;manter
+silver_fato_baixas_contas_receber_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_contas_pagar_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;EST_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;FRN_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;TDC_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;CON_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;DtEmissao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_pagar_gs;DtEntrada;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_pagar_gs;Documento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;INSSCPF;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;INSSCNPJ;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;INSSEMP;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;INSSBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;OrigemCPG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;ISSVALOR;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;ISSBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IRRFBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IRRFCPF;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IRRFCNPJ;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;PISBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;PISVALOR;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;Obs;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;ExportaAC;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;IAG_Codigo;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;HIS_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;USU_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;MesAnoComp;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;USU_Vistoriador;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;ValorBruto;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;Especie;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;SeqACFiscal;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;Nfe_Numero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;ExpLanUnico;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;UsarIndexadorVenc;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;JaExportado;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;ICMSBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;ICMSVALOR;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CTA_CODIGO;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;DtEmissaoNF;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_pagar_gs;DespesaDispensada;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;PkSysPdv;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CTT_CODIGO;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;ALIQPIS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;ALIQCOFINS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;ALIQCSLL;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_pagar_gs;IRRFDEDUCAO;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;DTREGISTRO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_pagar_gs;DTO_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;TTB_Codigo;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;VlrAbertoVCPsOriRenegociacao;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;JurosRenegociacao;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;MultaRenegociacao;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;DescontoRenegociacao;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;AteDataJurosRenegociacao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_pagar_gs;CPG_CODIGO_Renegociado;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;CPGdeRenegociacao;inteiro;inteiro/flag;manter
+silver_fato_contas_pagar_gs;CampoExtra1;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra2;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra3;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra4;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra5;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra6;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra7;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra8;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra9;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;CampoExtra10;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;USU_CODIGOATU;texto;código;texto + rtrim
+silver_fato_contas_pagar_gs;INSSCIOTCPF;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;INSSCIOTCNPJ;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;INSSCIOTEMP;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;INSSCIOTBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;SESTSENATCIOTCPF;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;SESTSENATCIOTCNPJ;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;SESTSENATCIOTEMP;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;SESTSENATCIOTBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IRRFCIOTCPF;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IRRFCIOTCNPJ;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IRRFCIOTDEDUCAO;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IRRFCIOTBASE;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;IDVEXPENSES;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;LINKVEXPENSES;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_pagar_gs;ValorCBS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;AliqCBS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;ValorIBSMun;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;AliqIBSMun;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;ValorIBSEst;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;AliqIBSEst;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;BaseIBSCBS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_pagar_gs;DATAULTIMAALTERACAO_LAN;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_pagar_gs;_origem;texto;técnica;manter
+silver_fato_contas_pagar_gs;_lote;texto;técnica;manter
+silver_fato_contas_pagar_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_contas_pagar_gs;_ativo;booleano;técnica;manter
+silver_fato_contas_pagar_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_contas_receber_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;EST_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;CLI_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;ISS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;IRRF;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;PISCOFINSCSL;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;PIS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;COFINS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;CSL;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;DtEmissao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_receber_gs;TipoGeracao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;OBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;INSS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;ExportaAC;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;IAG_Codigo;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;FAT_Codigo;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;BaseICMSSubst;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;ValorICMSSubst;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;ValorIPI;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;DeducaoBaseINSS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;IAD_Codigo;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;Renegociado;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;ICMSReducao;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;HIS_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;ROY_Codigo;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;DeducaoBaseISS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;MesAnoComp;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;DtAtualizaBI;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_receber_gs;ValorBruto;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;DescontoIncondicional;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;ExpLanUnico;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;Documento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;PerAcrescimo;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_receber_gs;UtilizaPerAcrescimo;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;DtAcrescimo;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_receber_gs;JaExportado;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;ValorICMS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;BaseCalculoICMS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;IgnoraROY;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;ROY_Codigo_Origem;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;VALOROUTRASRETENCOES;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;ContaContabilCliente;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;PercDescIncondicional;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_receber_gs;CON_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;CTA_CODIGO;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;CampoExtra1;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra2;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra3;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra4;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra5;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra6;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra7;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra8;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra9;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CampoExtra10;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CLI_Codigo_Original;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;GeraLancamentoHonorario;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;GRE_CODIGO;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;ReceitaDispensada;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;PkSysPdv;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;USU_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;TipoReceitaTrib;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;FreteNaoCompoeIPI;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;ROM_CODIGO;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;NOE_CODIGO;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;MESANOAJUSTE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;CTT_CODIGO;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;NaoUsarEndPadrao;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;TEN_Codigo;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;ECL_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;ICMSDesconto;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;USU_CodigoALT;texto;código;texto + rtrim
+silver_fato_contas_receber_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_receber_gs;DTREGISTRO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_contas_receber_gs;EST_COMISSAO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;NUM_PREVENDA_SYSPDV;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;NumeroNFE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;NumeroNFS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_contas_receber_gs;VALOROUTRASDESPESAS;float;valor monetário;DECIMAL(18,6)
+silver_fato_contas_receber_gs;FRETENAOCOMPOEICMS;inteiro;inteiro/flag;manter
+silver_fato_contas_receber_gs;VALORJUROS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_contas_receber_gs;_origem;texto;técnica;manter
+silver_fato_contas_receber_gs;_lote;texto;técnica;manter
+silver_fato_contas_receber_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_contas_receber_gs;_ativo;booleano;técnica;manter
+silver_fato_contas_receber_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_lancamentos_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;Codigo;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;EST_Codigo;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;CON_Codigo;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_lancamentos_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_lancamentos_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_lancamentos_gs;Natureza;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_lancamentos_gs;Origem;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_lancamentos_gs;Historico;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_lancamentos_gs;ExportaAC;inteiro;inteiro/flag;manter
+silver_fato_lancamentos_gs;IAG_Codigo;inteiro;inteiro/flag;manter
+silver_fato_lancamentos_gs;IEX_Codigo;inteiro;inteiro/flag;manter
+silver_fato_lancamentos_gs;HIS_Codigo;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;JaExportado;inteiro;inteiro/flag;manter
+silver_fato_lancamentos_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_lancamentos_gs;ReferenciaBancaria;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_lancamentos_gs;CTA_CODIGO;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_lancamentos_gs;USU_CODIGO;texto;código;texto + rtrim
+silver_fato_lancamentos_gs;_origem;texto;técnica;manter
+silver_fato_lancamentos_gs;_lote;texto;técnica;manter
+silver_fato_lancamentos_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_lancamentos_gs;_ativo;booleano;técnica;manter
+silver_fato_lancamentos_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_linhas_apuracao_financeira_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_linhas_apuracao_financeira_gs;APF_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;Codigo;texto;código;texto + rtrim
+silver_fato_linhas_apuracao_financeira_gs;Nome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_linhas_apuracao_financeira_gs;Calculo;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_linhas_apuracao_financeira_gs;LAF_Codigo_Mae;texto;código;texto + rtrim
+silver_fato_linhas_apuracao_financeira_gs;PER_LAF_Origem;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_linhas_apuracao_financeira_gs;PER_LAF_Destino;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_linhas_apuracao_financeira_gs;DetalhaLancamentos;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;DestacaNaImpressao;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;DetalhaHistorico;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;QuebraLinha;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;QuebraPagina;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;DestacaNegrito;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;DestacaSublinhado;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;TipoVencimento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_linhas_apuracao_financeira_gs;DesconsideraACompensar;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;TipoChqEmiAComp;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_linhas_apuracao_financeira_gs;PIS;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;COFINS;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;CSL;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;ISS;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;IRRF;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;INSS;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;ConsideraJuMuDe;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;CasasDecimais;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;NaoContabResult;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;ContabIncNaoContabResult;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;PercentualFixo;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_linhas_apuracao_financeira_gs;NaoConsChqAntPer;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;FORMULA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_linhas_apuracao_financeira_gs;ValorNegativoTributos;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;ConsideraLANAlmox;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;ImpReceitasDespesasVinc;inteiro;inteiro/flag;manter
+silver_fato_linhas_apuracao_financeira_gs;_origem;texto;técnica;manter
+silver_fato_linhas_apuracao_financeira_gs;_lote;texto;técnica;manter
+silver_fato_linhas_apuracao_financeira_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_linhas_apuracao_financeira_gs;_ativo;booleano;técnica;manter
+silver_fato_linhas_apuracao_financeira_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_notas_fiscais_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;CRE_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;EST_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;CLI_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;Formulario;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;Numero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;Serie;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;SubSerie;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;AMIDF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;DtEmissao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;DtSaida;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;CFOP_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;Cancelada;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;ValorFrete;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorSeguro;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorOutrasDespesas;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorIPI;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;BaseICMS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorICMS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorProdutos;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorIRRF;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;BaseISS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorISS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorServicos;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorTotal;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;Observacao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;ObsCorpoNF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;ValorPIS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorCOFINS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorCSL;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorPISCOFINSCSL;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ICMSSobreIPI;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;SeloNumero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;SeloSerie;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;IAG_Codigo;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;Especie;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;BaseICMSSubst;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ValorICMSSubst;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;Peso_Bruto;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;Peso_Liquido;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;DtCancel;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;MotivoCancel;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspNome;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspFrete;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspPlaca;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspUFPlaca;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspCNPJCPF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspEndereco;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspMUN_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;TranspUF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspIE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspQuantidade;float;quantidade;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;TranspEspecie;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TRA_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;ValorINSS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;DeducaoBaseINSS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;NFe_DtGeracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;DeducaoBaseISS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;MUN_UFD_Sigla;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;MUN_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;ServicoNFe;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;BaseICMSDiferenciada;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;ExportaACFiscal;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;Desconto;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;FreteBaseIcmsSubst;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;RazaoNota;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;HIS_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;NFe_Numero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;NFe_CodVeri;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;StatusEnvio;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;MensagemStatus;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;RetornoEnvio;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;INSSManual;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;NOE_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;TranspRNTC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;ISSRetido;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;IPIDesconto;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;ICMSDesconto;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;AIDF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspUFDest;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TranspMUN_CodigoDest;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;TEN_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;ECL_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;NaoUsarEndPadrao;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;ISSDesconto;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;FreteNaoCompoeICMS;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;NFPropria;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;NFSubstituida;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;UFD_Sigla_Emb;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;LocalEmbarque;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;ValorBruto;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;DescontoIncondicional;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;TranspVolume;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ART;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;NFEstornada;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;VALORPRODUTOICMS;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;FreteNaoCompoeIPI;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;CHAVECANCELAMENTO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;NUMLOTE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;DataHoraCont;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;JustificativaCont;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;Contingencia;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;LOGXMLERRO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;OPERACAOCOMCONSUMIDORFINAL;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;OPERACAOPRESENCACOMPRADOR;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;VALOROUTRASRETENCOES;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ULTIMORETORNONOTAFISCAL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;VERSAONFE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;MODALIDADEENVIO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TRANSPNATUREZAMERCADORIA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TRANSPESPECIEACONDICIONAMENTO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;VALORII;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;horasaida;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;MSNENVIOGNRE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;STATUSGNRE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;PercDescIncondicional;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;TOKENGNRE;texto;sensível;remover da Silver?
+silver_fato_notas_fiscais_gs;BLOQUEIOGNRE;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;NFConsumidor;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;TIPOEMITENTE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;CNPJCPF;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;DATACOMPETENCIA;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;ICMSCompoeTotalNota;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;FINALIDADENFE;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;IPIOUTRASDESP;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;NUM_PREVENDA_SYSPDV;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;PREVENDA_SYSPDV_LIDA;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;UFD_SIGLADESTINOCTE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;MUN_CODIGODESTINOCTE;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;EXTERIORDESTINOCTE;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;UFD_SIGLAORIGEMCTE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;MUN_CODIGOORIGEMCTE;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;EXTERIORORIGEMCTE;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;TIPOCTE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TIPOSERVICOCTE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;PRC_Codigo;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;BASEICMSUFDEST;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ALIQICMSCOMBPOBREZAUFDEST;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ALIQICMSUFDEST;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ALIQICMSINTEREST;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;ALIQICMSPROVISORIOINTEREST;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;VALORICMSCOMBPOBREZAUFDEST;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;VALORICMSINTERESTUFDEST;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;VALORICMSINTERESTUFREMET;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;VEI_CODIGO;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;OutrasDespesasCompoeICMS;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;CHAVECTEORIGINAL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;Marca;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;Transpnumero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;ICMSSobreIPI_ICMS;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;ICMSSobreIPI_ICMSSubs;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;EMITIR;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;PROCESSAMENTO;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;DTHORAPROCESSAMENTO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_notas_fiscais_gs;QTDCONSULTAS;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;IPIDIFAL;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;TIPOFRETAMENTO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;USU_CODIGO;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;JAEXPACTXT;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;Protocolo;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;OPERACAOINTERMEDIADOR;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;CNPJINTERMEDIADOR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;IDENTIFICADORINTERMEDIADOR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;PERMITIR_EDITAR_TOTAL_ITEM;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;NUMEROFATURA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;VALORORIGINALFATURA;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;VALORDESCONTOFATURA;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;CHAVECTEANULACAO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;CLI_INTERMEDIADORTRANSACAO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;CHAVEGTVE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TIPOCOMPGTVE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;VLRCOMPGTVE;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;NOMECOMPGTVE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;CODIGOCANCELAMENTO;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;BaseICMSSTManual;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;NFDEVOLVIDA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;LOCALDESPACHO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TipoFaturamento;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;TotValorIBS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;TotValorCBS;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;TIPODEBCRED;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;UFD_SIGLACONSUMOIBSCBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;MUN_CODCONSUMOIBSCBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;TIPOOPERACAOGOV;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;CodObra;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;EndLogradouroObra;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;EndNumeroObra;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;EndComplementoObra;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;BairroObra;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;CEPObra;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;MUN_UFD_Sigla_Obra;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;MUN_Codigo_Obra;texto;código;texto + rtrim
+silver_fato_notas_fiscais_gs;NUMERONFSE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_notas_fiscais_gs;POSSUIPAGANTECIPADO;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;LocacaoBemMovel;inteiro;inteiro/flag;manter
+silver_fato_notas_fiscais_gs;BASEPISCOFINSCSL;float;valor monetário;DECIMAL(18,6)
+silver_fato_notas_fiscais_gs;_origem;texto;técnica;manter
+silver_fato_notas_fiscais_gs;_lote;texto;técnica;manter
+silver_fato_notas_fiscais_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_notas_fiscais_gs;_ativo;booleano;técnica;manter
+silver_fato_notas_fiscais_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_origem_lancamentos_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_origem_lancamentos_gs;LAN_Codigo;texto;código;texto + rtrim
+silver_fato_origem_lancamentos_gs;LAN_Origem;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_origem_lancamentos_gs;CPG_Codigo;texto;código;texto + rtrim
+silver_fato_origem_lancamentos_gs;BVP_VCP_Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_origem_lancamentos_gs;BVP_VCP_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;BVP_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;CRE_Codigo;texto;código;texto + rtrim
+silver_fato_origem_lancamentos_gs;BVD_VDR_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;BVD_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;BVH_VHR_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;BVH_Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_origem_lancamentos_gs;BVH_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;BVC_VCR_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;BVC_Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_origem_lancamentos_gs;BVC_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_origem_lancamentos_gs;ECH_Codigo;texto;código;texto + rtrim
+silver_fato_origem_lancamentos_gs;_origem;texto;técnica;manter
+silver_fato_origem_lancamentos_gs;_lote;texto;técnica;manter
+silver_fato_origem_lancamentos_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_origem_lancamentos_gs;_ativo;booleano;técnica;manter
+silver_fato_origem_lancamentos_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_rateio_despesas_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_despesas_gs;CPG_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_despesas_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_despesas_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_despesas_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_despesas_gs;EST_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_despesas_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_despesas_gs;Obs;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_despesas_gs;NUMEROSOLICITACAODESPESASIG;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_despesas_gs;IDVEXPENSES;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_despesas_gs;_origem;texto;técnica;manter
+silver_fato_rateio_despesas_gs;_lote;texto;técnica;manter
+silver_fato_rateio_despesas_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_rateio_despesas_gs;_ativo;booleano;técnica;manter
+silver_fato_rateio_despesas_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_rateio_receitas_despesas_lancamentos_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_despesas_lancamentos_gs;LAN_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_despesas_lancamentos_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_rateio_receitas_despesas_lancamentos_gs;EST_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_despesas_lancamentos_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_despesas_lancamentos_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_despesas_lancamentos_gs;Natureza;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_receitas_despesas_lancamentos_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_receitas_despesas_lancamentos_gs;ContaContabil;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_receitas_despesas_lancamentos_gs;Historico;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_receitas_despesas_lancamentos_gs;_origem;texto;técnica;manter
+silver_fato_rateio_receitas_despesas_lancamentos_gs;_lote;texto;técnica;manter
+silver_fato_rateio_receitas_despesas_lancamentos_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_rateio_receitas_despesas_lancamentos_gs;_ativo;booleano;técnica;manter
+silver_fato_rateio_receitas_despesas_lancamentos_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_rateio_receitas_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_gs;CRE_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_gs;EST_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_receitas_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_receitas_gs;Obs;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_receitas_gs;_origem;texto;técnica;manter
+silver_fato_rateio_receitas_gs;_lote;texto;técnica;manter
+silver_fato_rateio_receitas_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_rateio_receitas_gs;_ativo;booleano;técnica;manter
+silver_fato_rateio_receitas_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_rateio_servicos_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;CRE_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_rateio_servicos_gs;SER_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;MDS_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;Observacao;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_servicos_gs;QtdServicos;float;quantidade;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;DeducaoISS;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;TPS_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;AliquotaISS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;ValorBruto;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;DescontoIncondicional;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;AliquotaINSS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;STP_Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;QtdeUSUFinal;inteiro;inteiro/flag;manter
+silver_fato_rateio_servicos_gs;QtdeUSULogado;inteiro;inteiro/flag;manter
+silver_fato_rateio_servicos_gs;QtdeModulos;inteiro;inteiro/flag;manter
+silver_fato_rateio_servicos_gs;NUMFOLHA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_servicos_gs;NUMPEDIDO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_servicos_gs;PercDescIncondicional;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;VRP_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;GERAROY;inteiro;inteiro/flag;manter
+silver_fato_rateio_servicos_gs;ROY_CODIGO;inteiro;inteiro/flag;manter
+silver_fato_rateio_servicos_gs;CRS_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;DeducaoINSS;float;valor monetário;DECIMAL(18,6)
+silver_fato_rateio_servicos_gs;MUN_UFD_CODIGO;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;MUN_UFD_SIGLA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_rateio_servicos_gs;MUN_CODIGO;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;STISS_CODIGO;texto;código;texto + rtrim
+silver_fato_rateio_servicos_gs;NaoDeduzBaseISS;inteiro;inteiro/flag;manter
+silver_fato_rateio_servicos_gs;_origem;texto;técnica;manter
+silver_fato_rateio_servicos_gs;_lote;texto;técnica;manter
+silver_fato_rateio_servicos_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_rateio_servicos_gs;_ativo;booleano;técnica;manter
+silver_fato_rateio_servicos_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_transferencias_contas_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_transferencias_contas_gs;Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_transferencias_contas_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_transferencias_contas_gs;EST_Origem;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;EST_Destino;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;CON_Origem;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;CON_Destino;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_transferencias_contas_gs;Historico;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;ExportaAC;inteiro;inteiro/flag;manter
+silver_fato_transferencias_contas_gs;IAG_Codigo;inteiro;inteiro/flag;manter
+silver_fato_transferencias_contas_gs;IEX_Codigo;inteiro;inteiro/flag;manter
+silver_fato_transferencias_contas_gs;HIS_Codigo;texto;código;texto + rtrim
+silver_fato_transferencias_contas_gs;USU_Codigo;texto;código;texto + rtrim
+silver_fato_transferencias_contas_gs;JaExportado;inteiro;inteiro/flag;manter
+silver_fato_transferencias_contas_gs;CRS_Origem;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;CRS_Destino;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;IDWS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;ReferenciaBancaria;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_transferencias_contas_gs;DataUltimaAlteracao;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_transferencias_contas_gs;_origem;texto;técnica;manter
+silver_fato_transferencias_contas_gs;_lote;texto;técnica;manter
+silver_fato_transferencias_contas_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_transferencias_contas_gs;_ativo;booleano;técnica;manter
+silver_fato_transferencias_contas_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_vencimentos_contas_pagar_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;CPG_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;Data;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;NumTit;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;Quitado;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;DtCancel;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;MotCancel;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;Autorizado;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;CodigoBarras;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;BAN_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;USU_Autorizou;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;ValorBruto;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;Enviado;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;Desconto;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;TipoServico;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;FormaLancamento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;Agencia;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;CC;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;DVAg;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;FRN_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;FFR_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;DVConta;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;IND_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;QtdIndice;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;Amortizacao;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;Encargos;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;Percentual;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;CodigoReceitaPublica;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;COB_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;DATAAPURACAO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;FinalidadeLancamento;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;Juros;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;Multa;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;EncargosGPS;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;ValorGPS;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;JuroDarfGPS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;EncargosDarfGPS;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_pagar_gs;DTPREVISAOPAGAMENTO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;STATUSENVIOBANCO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;DTREGISTRO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;DATAORIGINAL;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;VCPRenegociacao;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;DTHORAPROCESSAMENTO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;BB_REQUESTID;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;CPG_DESTINO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;ENVIOAOBANCO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;CODIGOIDENTIFICADORPAGAMENTO;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;MOTIVOEDICAOVENCIMENTO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;FPG_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;ID_PAGAMENTO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;CODIGO_TRANSACAO;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;DATA_TRANSACAO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_pagar_gs;PROCESSAMENTOTHREAD;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_pagar_gs;TipoConta;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;NUMEROREFERENCIA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;CODIGORECEITATRIBUTOGPS;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;CODIGOIDENTIFICADORTRIBUTOGPS;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_pagar_gs;ID_TRANSACAOBRADESCO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;PROTOCOLOCBCA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;CHAVETRANSFBRADESCO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;E2E;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;COPIACOLAQRCODE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;CHAVEPIX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_pagar_gs;_origem;texto;técnica;manter
+silver_fato_vencimentos_contas_pagar_gs;_lote;texto;técnica;manter
+silver_fato_vencimentos_contas_pagar_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_vencimentos_contas_pagar_gs;_ativo;booleano;técnica;manter
+silver_fato_vencimentos_contas_pagar_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_vencimentos_contas_receber_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;CRE_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;Sequencial;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;TDC_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;COB_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;DtVenc;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;Valor;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;Quitado;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;DtCancel;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;MotCancel;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;NrBoleto;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;IdBloquete;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;IND_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;QtdIndice;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;REFERENCIATELEMAR;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;ValorOriginal;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;Desconto;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;Titulo;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;Percentual;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;Bordero;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;DtIndexador;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;DtIndexadorAjuste;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;DTORIGEMRESIDUO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;RESIDUOORIGINAL;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;RESIDUOATUALIZADO;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;TIPOPARCELA;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;DESVINCULADOCTO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;ROY_Codigo;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;ENVIADO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;CALCAO;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;DtConcessaoDesc;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;CORRIGIDOATE;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;OBS;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;MCV_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;FPG_Codigo;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;ComandoEnvioBanco;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;DtEnvioBoletoPorEmail;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;IdTransacaoGerencianet;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;GRN_LinhaDigitavel;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;GRN_LinkBoleto;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;TIPOJUROS;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;TIPOMULTA;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;PERC_JUROS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;PERC_MULTA;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;CodigoBarras;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;LinhaDigitada;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;DtProcessamento;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;USU_CodigoALT;texto;código;texto + rtrim
+silver_fato_vencimentos_contas_receber_gs;NUMEROCONTRATOCOBRANCA;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;IDTRANSACAOPJBANK;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;DTREGISTRO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;DTULTIMOENVIO;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;PROCESSAMENTO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;DTVENC_ORIGINAL;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;DistratoDTO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;EMITIRBOLETO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;PROCESSAMENTOTHREAD;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;DTHORAPROCESSAMENTOTHREAD;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;SEQPEDIDO;inteiro;inteiro/flag;manter
+silver_fato_vencimentos_contas_receber_gs;TXID;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;LOCATIONPIX;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;TEXTOIMAGEMQRCODE;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;DTENVIOBOLETOPORWHATSAPP;data_hora;data/hora;manter (horário de Brasília, sem conversão)
+silver_fato_vencimentos_contas_receber_gs;MOTIVOEDICAOVENCIMENTO;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;ID_BOLETO_INDIVIDUAL;texto;descritivo;"texto + rtrim; vazio -> NULL"
+silver_fato_vencimentos_contas_receber_gs;JUROS;float;percentual/taxa;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;VALORLIQUIDO;float;valor monetário;DECIMAL(18,6)
+silver_fato_vencimentos_contas_receber_gs;_origem;texto;técnica;manter
+silver_fato_vencimentos_contas_receber_gs;_lote;texto;técnica;manter
+silver_fato_vencimentos_contas_receber_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_vencimentos_contas_receber_gs;_ativo;booleano;técnica;manter
+silver_fato_vencimentos_contas_receber_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;LAF_APF_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;LAF_Codigo;texto;código;texto + rtrim
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;CRD_Codigo;texto;código;texto + rtrim
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;CRS_CODIGO;texto;código;texto + rtrim
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;CODIGO;texto;código;texto + rtrim
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;_origem;texto;técnica;manter
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;_lote;texto;técnica;manter
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;_ativo;booleano;técnica;manter
+silver_fato_vinculos_natureza_centro_resultado_apf_gs;_dt_atualizacao;data_hora;técnica;manter
+silver_fato_vinculos_servicos_apf_gs;EMP_Codigo;texto;código;texto + rtrim
+silver_fato_vinculos_servicos_apf_gs;LAF_APF_Sequencial;inteiro;inteiro/flag;manter
+silver_fato_vinculos_servicos_apf_gs;LAF_Codigo;texto;código;texto + rtrim
+silver_fato_vinculos_servicos_apf_gs;SER_Codigo;texto;código;texto + rtrim
+silver_fato_vinculos_servicos_apf_gs;Faturado;inteiro;inteiro/flag;manter
+silver_fato_vinculos_servicos_apf_gs;_origem;texto;técnica;manter
+silver_fato_vinculos_servicos_apf_gs;_lote;texto;técnica;manter
+silver_fato_vinculos_servicos_apf_gs;_dt_carga;data_hora;técnica;manter
+silver_fato_vinculos_servicos_apf_gs;_ativo;booleano;técnica;manter
+silver_fato_vinculos_servicos_apf_gs;_dt_atualizacao;data_hora;técnica;manter

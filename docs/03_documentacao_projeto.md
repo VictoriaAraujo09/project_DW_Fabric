@@ -58,6 +58,8 @@ Tecnologia: os notebooks são **Python notebooks** do Fabric, não PySpark. Eles
 | Notebook | nb_setup_controle | `35570451-9727-4c91-bb10-c9d02b7591d2` |
 | Notebook | nb_preparar_ciclo | `87b8adbb-b0f5-40e5-bb58-3ba5422885bf` |
 | Notebook | nb_orquestrador | `a357c6d2-979a-45db-b6af-aac06fcd9c4e` |
+| Notebook | nb_ingestao_api | `f8959b17-ca80-4ad2-898c-881125d8d754` |
+| Key Vault | `kv-dw-fabric-kmf` (grupo `grupokmf`, East US) | `https://kv-dw-fabric-kmf.vault.azure.net/` |
 | Pipeline | pl_mestre_dw | `4ae3857c-2708-4e6c-804a-f5f467a7f52b` |
 
 ### Origens e conexões
@@ -66,6 +68,7 @@ Tecnologia: os notebooks são **Python notebooks** do Fabric, não PySpark. Eles
 |---|---|---|---|---|
 | `GS` | Fortes GS AG · SQL Server `10.1.0.38` / `GSAG` | Fortes AG GS - Cloud | `45393625-ea40-4705-9a62-14e2e875d8f7` | **Ativa** |
 | `4S` | Fortes 4S AG · Firebird `AG_4S.FDB` | FORTES AG 4S - FIREBIRD | `2783e8cb-469a-4581-80f7-b4e5f0fc448a` | **Ativa** |
+| `NEXTI` | Nexti (ponto e escalas) · API REST `api.nexti.com` | — (credenciais no Key Vault `kv-dw-fabric-kmf`) | — | **Ativa**, recuperando o histórico desde 01/01/2025 ([decisões](origens/nexti/proposta.md)) |
 | `PROTHEUS` | Protheus · SQL Server | Protheus PROD | — | Não iniciada |
 | `VIGON` | Fortes VIGON · Firebird | — | — | Não iniciada |
 
@@ -170,6 +173,17 @@ O código-fonte fica em [`implantacao/src/`](../implantacao/src/), em arquivos `
      - `query_copy`: a consulta de cópia, com a janela `> último watermark − 10 min` e `<= novo watermark`, mais as colunas técnicas.
   4. Devolve ao pipeline um JSON com a lista de tabelas por origem.
 
+### `nb_ingestao_api`: origens API (Nexti)
+- **Quando roda:** no pipeline, em paralelo às cópias dos bancos (atividade `Ingestao_API`).
+- **Parâmetros:** `lote`, `ciclo` (já resolvido pelo preparador), `origens` (filtro), `configuracao_api` (URL do Key Vault de cada origem), `inicio_historico` (01/01/2025) e `max_dias_por_execucao` (45).
+- **O que faz:**
+  1. Lê as credenciais no Key Vault e obtém o token da API.
+  2. Para cada tabela ativa da origem, chama o endpoint de `ENDPOINTS_NEXTI`: os cadastros por inteiro e as fatos pela janela que vai do último watermark (menos a margem) até agora, em blocos do tamanho que a API aceita.
+  3. Grava **só os campos de `COLUNAS_NEXTI`**, com tipos fixos. Converte as datas `ddMMyyyyHHmmss`, passa os horários UTC das marcações para Brasília e troca datas fictícias por nulo.
+  4. Faz append na Bronze, bloco a bloco, com as colunas técnicas.
+  5. Devolve ao orquestrador a lista `id|novo_watermark|linhas`, no mesmo formato do pipeline.
+- Na recuperação do histórico, cada ciclo avança no máximo 45 dias por tabela. O watermark só avança com o ciclo inteiro bem-sucedido.
+
 ### `nb_orquestrador`: Silver, Gold e fechamento
 - **Quando roda:** última atividade do pipeline, depois de todas as cópias.
 - **Parâmetros:** `lote`, `ciclo`, `resultados` (lista `id|novo_watermark|linhas` montada pelo pipeline), `status_ciclo` e `mensagem`.
@@ -217,11 +231,12 @@ flowchart TD
 | `Se_Mudou_{origem}` | If | Pula a cópia de tabela incremental sem alteração |
 | `Copiar_{origem}` | Copy | Copia da origem para `bronze_*` pelo gateway (append) |
 | `Registrar_{origem}` | Append Variable | Acumula `id|watermark|linhas` para o orquestrador |
+| `Ingestao_API` | Notebook (`nb_ingestao_api`) | Lê as origens API e grava na Bronze, em paralelo aos `ForEach` |
 | `Orquestrador` | Notebook | Grava a Silver, avança os watermarks e grava o log |
 | `Registrar_Falha` | Notebook | Registra no log uma falha anterior ao orquestrador |
 | `Falhar_Pipeline` | Fail | Marca a execução como falha |
 
-**Parâmetro:** `ciclo` (padrão `AUTO`).
+**Parâmetros:** `ciclo` (padrão `AUTO`) e `origens` (vazio = todas; ex.: `NEXTI` roda só a Nexti).
 
 **Falhas:** se qualquer tabela falhar, o watermark não avança. O ciclo seguinte reprocessa a mesma janela e o MERGE evita duplicar linhas.
 
@@ -255,6 +270,7 @@ Tudo é criado pela API REST do Fabric com [`implantar_fundacao.py`](../implanta
 | `--origens GS` | Gera o pipeline só com estas origens (`GS,4S` para várias) |
 | `--executar-setup` | Roda o `nb_setup_controle` depois de implantar |
 | `--executar-ciclo COMPLETO` | Roda o `pl_mestre_dw` com o ciclo informado e espera o fim |
+| `--ciclo-origens NEXTI` | Junto com `--executar-ciclo`: roda o ciclo só dessas origens |
 
 Exemplos:
 
@@ -350,3 +366,4 @@ WHERE modo_carga = 'INCREMENTAL' ORDER BY id;
 | 22/10/2026 | Padronização de tipos na Silver (decimal, textos) e retenção automática da Bronze implantadas |
 | 22/10/2026 | 4S AG (Firebird) ativado: 29 tabelas, 2,3 mi de linhas. Ajustes: colunas ausentes no 4S (`COLUNAS_AUSENTES`), nomes em maiúsculas e `NaN` → nulo. Pipeline com `ForEach_GS` e `ForEach_4S` |
 | 22/10/2026 | Guia padrão para novas origens, dicionário canônico (21 entidades, 162 campos) e de-para do Fortes |
+| 22/10/2026 | Nexti (API) incluída: Key Vault `kv-dw-fabric-kmf`, notebook `nb_ingestao_api`, 12 tabelas `_nexti`, sem dados pessoais e de saúde (exceto o nome do colaborador) |

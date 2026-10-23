@@ -1,0 +1,234 @@
+﻿endpoint;campo;tipo;preenchido;exemplo;proposta
+marcacoes;adjustmentDate;data_hora;54%;21102026124222;carregar
+marcacoes;adjustmentReasonId;inteiro;100%;7941;carregar
+marcacoes;clockingCollectorId;inteiro;100%;6;carregar
+marcacoes;clockingCollectorName;texto;100%;WEB;carregar
+marcacoes;clockingDate;data_hora;100%;08082026100500;carregar
+marcacoes;clockingOriginId;inteiro;100%;2569171092;carregar
+marcacoes;clockingTypeId;inteiro;100%;3;carregar
+marcacoes;clockingTypeName;texto;100%;ADJUSTED;carregar
+marcacoes;companyNumber;texto;100%;16707848000357;carregar
+marcacoes;deviceCode;texto;4%;f1fbe6e2a6e1bb49;carregar
+marcacoes;deviceId;inteiro;100%;0;carregar
+marcacoes;directionTypeId;inteiro;100%;0;carregar
+marcacoes;externalPersonId;texto;100%;6108;carregar
+marcacoes;id;inteiro;100%;2722194347;carregar
+marcacoes;identificationMethodId;inteiro;100%;0;carregar
+marcacoes;identificationMethodName;texto;2%;NOT_APPLICABLE;carregar
+marcacoes;lastUpdate;data_hora;100%;21102026124222;carregar
+marcacoes;online;booleano;100%;False;carregar
+marcacoes;personId;inteiro;100%;4702699;carregar
+marcacoes;referenceDate;data_hora;100%;08082026030000;carregar
+marcacoes;registerDate;data_hora;100%;21102026124222;carregar
+marcacoes;removed;booleano;100%;False;carregar
+marcacoes;timezone;texto;100%;America/Sao_Paulo;carregar
+marcacoes;userAdjustmentId;inteiro;100%;4307808;carregar
+marcacoes;workplaceId;inteiro;100%;1076047;carregar
+marcacoes;adjustmentObservation;texto;54%;;excluir (saúde ou texto livre)
+marcacoes;latitude;texto;4%;;excluir (dado pessoal)
+marcacoes;longitude;texto;4%;;excluir (dado pessoal)
+marcacoes;personPIS;texto;14%;;excluir (dado pessoal)
+marcacoes;ticketSignature;texto;2%;;excluir (dado pessoal)
+previsto_x_trabalhado;absenceSituation;texto;6%;Suspensão;carregar
+previsto_x_trabalhado;adjustmentReason;texto;3%;"ESQUECIMENTO ; ESQUECIMENTO";carregar
+previsto_x_trabalhado;costCenter;texto;25%;2202110101;carregar
+previsto_x_trabalhado;expectedHours;texto;100%;08:00;carregar
+previsto_x_trabalhado;expectedMinutes;inteiro;100%;480;carregar
+previsto_x_trabalhado;firstClocking;texto;93%;07:00;carregar
+previsto_x_trabalhado;month;inteiro;100%;10;carregar
+previsto_x_trabalhado;personEnrolment;texto;100%;008996;carregar
+previsto_x_trabalhado;personExternalId;texto;100%;BI - 5240654;carregar
+previsto_x_trabalhado;personId;inteiro;100%;5240654;carregar
+previsto_x_trabalhado;referenceDate;texto;100%;21102026;carregar
+previsto_x_trabalhado;scheduleId;inteiro;100%;245813;carregar
+previsto_x_trabalhado;scheduleName;texto;100%;Curitiba - 6X1 - 08:00 AS 17:00 / SAB - ;carregar
+previsto_x_trabalhado;timeTrackingEvents;lista;100%;"[{""timeTrackingTypeName"": ""PARTIAL_ABSEN";carregar
+previsto_x_trabalhado;timeTrackingPeriodId;inteiro;100%;122161;carregar
+previsto_x_trabalhado;timeTrackingPeriodName;texto;100%;OUTUBRO - 2026;carregar
+previsto_x_trabalhado;workedMinutes;inteiro;100%;447;carregar
+previsto_x_trabalhado;workedMinutesWithOvertime;inteiro;100%;447;carregar
+previsto_x_trabalhado;workplaceName;texto;100%;FERISTA- CURITIBA - ASG;carregar
+previsto_x_trabalhado;year;inteiro;100%;2026;carregar
+previsto_x_trabalhado;personName;texto;100%;;excluir (dado pessoal)
+ausencias;absenceSituationExternalId;texto;100%;15933;carregar
+ausencias;absenceSituationId;inteiro;100%;15933;carregar
+ausencias;demissionReasonId;inteiro;3%;2249;carregar
+ausencias;finishDateTime;data_hora;99%;20102026000000;carregar
+ausencias;finishMinute;inteiro;1%;998;carregar
+ausencias;id;inteiro;100%;102824612;carregar
+ausencias;lastUpdate;data_hora;100%;21102026013154;carregar
+ausencias;medicalDoctorId;inteiro;18%;151598;carregar
+ausencias;personExternalId;texto;100%;BI - 6299787;carregar
+ausencias;personId;inteiro;100%;6299787;carregar
+ausencias;removed;booleano;52%;True;carregar
+ausencias;startDateTime;data_hora;100%;20102026000000;carregar
+ausencias;startMinute;inteiro;1%;795;carregar
+ausencias;userRegisterId;inteiro;100%;2662369;carregar
+ausencias;cidCode;texto;12%;;excluir (saúde ou texto livre)
+ausencias;cidDescription;texto;12%;;excluir (saúde ou texto livre)
+ausencias;cidId;inteiro;12%;;excluir (saúde ou texto livre)
+ausencias;medicalDoctorCrm;texto;18%;;excluir (dado pessoal)
+ausencias;medicalDoctorName;texto;18%;;excluir (dado pessoal)
+ausencias;note;texto;74%;;excluir (saúde ou texto livre)
+colaboradores;adminDevice;booleano;100%;False;carregar
+colaboradores;admissionDate;data_hora;100%;02122022000000;carregar
+colaboradores;allowMobileClocking;booleano;100%;False;carregar
+colaboradores;allowMobileMonthComptime;booleano;100%;False;carregar
+colaboradores;businessUnitId;inteiro;100%;0;carregar
+colaboradores;businessUnitName;texto;1%;Fortaleza;carregar
+colaboradores;careerId;inteiro;100%;186114;carregar
+colaboradores;city;texto;1%;FORTALEZA;carregar
+colaboradores;companyId;inteiro;100%;7909;carregar
+colaboradores;country;texto;1%;BRASIL;carregar
+colaboradores;demissionDate;data_hora;33%;11032026000000;carregar
+colaboradores;enrolment;texto;100%;002776;carregar
+colaboradores;externalCareerId;texto;10%;0026-012;carregar
+colaboradores;externalCompanyId;texto;100%;0081-0001;carregar
+colaboradores;externalId;texto;100%;1;carregar
+colaboradores;externalScheduleId;texto;100%;241420;carregar
+colaboradores;federatedUnitInitials;texto;1%;CE;carregar
+colaboradores;gender;texto;100%;M;carregar
+colaboradores;generateNightBonusByExpectedWorkload;booleano;100%;False;carregar
+colaboradores;id;inteiro;100%;3262772;carregar
+colaboradores;ignoreTimeTracking;booleano;100%;False;carregar
+colaboradores;ignoreTimeTrackingDate;data_hora;2%;01011940000000;carregar
+colaboradores;ignoreValidation;booleano;100%;False;carregar
+colaboradores;personSituationId;inteiro;100%;1;carregar
+colaboradores;personTypeId;inteiro;100%;1;carregar
+colaboradores;rotationCode;inteiro;100%;1;carregar
+colaboradores;rotationId;inteiro;100%;530707;carregar
+colaboradores;scheduleId;inteiro;100%;241420;carregar
+colaboradores;state;texto;1%;CEARÁ;carregar
+colaboradores;userAccountId;inteiro;100%;2663038;carregar
+colaboradores;workplaceId;inteiro;100%;1078332;carregar
+colaboradores;address;texto;1%;;excluir (dado pessoal)
+colaboradores;allowDevicePassword;booleano;100%;;excluir (dado pessoal)
+colaboradores;birthDate;data_hora;100%;;excluir (dado pessoal)
+colaboradores;cpf;texto;100%;;excluir (dado pessoal)
+colaboradores;district;texto;1%;;excluir (dado pessoal)
+colaboradores;email;texto;33%;;excluir (dado pessoal)
+colaboradores;houseNumber;texto;1%;;excluir (dado pessoal)
+colaboradores;name;texto;100%;;a decidir (nome do colaborador)
+colaboradores;phone;texto;35%;;excluir (dado pessoal)
+colaboradores;pis;texto;81%;;excluir (dado pessoal)
+colaboradores;publicArea;texto;1%;;excluir (dado pessoal)
+colaboradores;registerNumber;texto;1%;;excluir (dado pessoal)
+colaboradores;zipCode;texto;1%;;excluir (dado pessoal)
+postos;active;booleano;100%;True;carregar
+postos;alterBonusForReplacement;booleano;100%;False;carregar
+postos;businessUnitId;inteiro;100%;0;carregar
+postos;checkinTolerance;inteiro;100%;0;carregar
+postos;checkoutTolerance;inteiro;100%;0;carregar
+postos;cityExternalId;texto;89%;2304400;carregar
+postos;cityId;inteiro;89%;2525346;carregar
+postos;cityName;texto;89%;FORTALEZA;carregar
+postos;clientId;inteiro;100%;526690;carregar
+postos;clientName;texto;100%;PADRÃO;carregar
+postos;companyId;inteiro;99%;7909;carregar
+postos;companyNumber;texto;80%;40262078000107;carregar
+postos;contractNumber;inteiro;64%;265;carregar
+postos;contractNumberTxt;texto;64%;000000000000265;carregar
+postos;controlLackOfEffectiveness;booleano;100%;False;carregar
+postos;costCenter;texto;72%;2202310101;carregar
+postos;createMaximumPerimeterToRecordMarking;booleano;100%;False;carregar
+postos;externalCompanyId;texto;89%;0081-0001;carregar
+postos;federatedUnitExternalId;texto;89%;2309409;carregar
+postos;federatedUnitId;inteiro;89%;12647;carregar
+postos;federatedUnitInitials;texto;89%;CE;carregar
+postos;federatedUnitName;texto;89%;CEARÁ;carregar
+postos;finalScheduleAdjustment;booleano;100%;False;carregar
+postos;finishDate;data_hora;25%;20112024000000;carregar
+postos;forceCompanyReplacement;booleano;100%;False;carregar
+postos;forceCompanyTransfer;booleano;100%;False;carregar
+postos;fractionalVacancy;booleano;100%;False;carregar
+postos;generateFlexibleInconsistenciesAlert;booleano;100%;False;carregar
+postos;generateVirtualClocking;booleano;100%;False;carregar
+postos;id;inteiro;100%;811201;carregar
+postos;initialScheduleAdjustment;booleano;100%;False;carregar
+postos;intervalScheduleAdjustment;booleano;100%;False;carregar
+postos;lastUpdate;data_hora;100%;01011970000000;carregar
+postos;maximumPerimeterRecordMarking;inteiro;100%;0;carregar
+postos;name;texto;100%;PADRÃO;carregar
+postos;registerDate;data_hora;100%;01011970000000;carregar
+postos;service;texto;100%;Serviços;carregar
+postos;serviceTypeId;inteiro;100%;0;carregar
+postos;showWorkplaceInPersonInformationApp;booleano;100%;True;carregar
+postos;startDate;data_hora;100%;01012019000000;carregar
+postos;state;texto;88%;CEARÁ;carregar
+postos;timezone;texto;100%;America/Sao_Paulo;carregar
+postos;vacantJob;inteiro;100%;0;carregar
+postos;address;texto;88%;;excluir (dado pessoal)
+postos;addressNumber;texto;84%;;excluir (dado pessoal)
+postos;district;texto;85%;;excluir (dado pessoal)
+postos;latitude;texto;1%;;excluir (dado pessoal)
+postos;longitude;texto;1%;;excluir (dado pessoal)
+postos;managerName;texto;2%;;excluir (dado pessoal)
+postos;zipCode;texto;85%;;excluir (dado pessoal)
+escalas;active;booleano;100%;True;carregar
+escalas;dailyWorkload;inteiro;100%;0;carregar
+escalas;differentiateToleranceInMarkings;booleano;100%;False;carregar
+escalas;externalId;texto;100%;222314;carregar
+escalas;fullDescription;texto;11%;Na semana que a plantão no sábado na sem;carregar
+escalas;holidayTimeTracking;booleano;100%;False;carregar
+escalas;id;inteiro;100%;222314;carregar
+escalas;ignoreHolidays;booleano;100%;True;carregar
+escalas;ignoreInterval;booleano;100%;False;carregar
+escalas;ignoreValidation;booleano;100%;False;carregar
+escalas;lastUpdate;data_hora;100%;04092026191652;carregar
+escalas;monthlyWorkload;inteiro;100%;0;carregar
+escalas;name;texto;100%;CE - 12X36 - 06:00 - 18:00 - COM INTRAJO;carregar
+escalas;premarkedInterval;booleano;100%;False;carregar
+escalas;registerDate;data_hora;100%;01011970000000;carregar
+escalas;rotations;lista;100%;"[{""code"": 1, ""baseDateTime"": ""0101194000";carregar
+escalas;scheduleShifts;lista;100%;"[{""sequence"": 1, ""shiftId"": 14489424}, {";carregar
+escalas;scheduleTurnId;inteiro;100%;852;carregar
+escalas;scheduleTypeId;inteiro;100%;2;carregar
+escalas;weeklyWorkload;inteiro;100%;0;carregar
+escalas;workedBreakOnDoubleJourney;booleano;100%;False;carregar
+horarios;active;booleano;100%;True;carregar
+horarios;generateFlexibleInconsistenciesAlert;booleano;100%;False;carregar
+horarios;id;inteiro;100%;14385247;carregar
+horarios;lastUpdate;data_hora;100%;01011970000000;carregar
+horarios;markings;lista;99%;"[{""sequence"": 1, ""marking"": 360, ""markin";carregar
+horarios;mobilityAfter;inteiro;100%;0;carregar
+horarios;mobilityBefore;inteiro;100%;0;carregar
+horarios;name;texto;100%;06:00 - 16:00 - 1H INTERVALO;carregar
+horarios;registerDate;data_hora;100%;01011970000000;carregar
+horarios;shiftTypeId;inteiro;100%;1;carregar
+clientes;active;booleano;100%;True;carregar
+clientes;clientTypeId;inteiro;2%;733;carregar
+clientes;companyNumber;texto;28%;24104693000120;carregar
+clientes;generateFlexibleInconsistenciesAlert;booleano;100%;False;carregar
+clientes;id;inteiro;100%;526696;carregar
+clientes;name;texto;100%;MERIT OFFICES;carregar
+clientes;premarkedInterval;booleano;100%;False;carregar
+clientes;startPaycheckPeriod;inteiro;63%;16;carregar
+empresas;active;booleano;100%;True;carregar
+empresas;companyName;texto;100%;SINGULAR FACILITIES SERVICE S.A - CE;carregar
+empresas;companyNumber;texto;100%;16707848000195;carregar
+empresas;companyNumberType;texto;95%;CNPJ;carregar
+empresas;externalId;texto;43%;0081-0001;carregar
+empresas;fantasyName;texto;100%;SINGULAR FACILITIES - CE;carregar
+empresas;id;inteiro;100%;7909;carregar
+unidades_negocio;active;booleano;100%;True;carregar
+unidades_negocio;externalId;texto;25%;0017;carregar
+unidades_negocio;id;inteiro;100%;15297;carregar
+unidades_negocio;name;texto;100%;Fortaleza;carregar
+cargos;active;booleano;100%;False;carregar
+cargos;careerGroupId;inteiro;100%;533;carregar
+cargos;id;inteiro;100%;173323;carregar
+cargos;lastUpdate;data_hora;100%;01011970000000;carregar
+cargos;name;texto;100%;ADM;carregar
+cargos;registerDate;data_hora;100%;01011970000000;carregar
+situacoes_ausencia;absenceTypeId;inteiro;100%;1;carregar
+situacoes_ausencia;active;booleano;100%;True;carregar
+situacoes_ausencia;cid;booleano;100%;*** (dado pessoal);carregar
+situacoes_ausencia;deductWeeklyDayOff;booleano;100%;False;carregar
+situacoes_ausencia;externalId;texto;97%;BI - 15932;carregar
+situacoes_ausencia;id;inteiro;100%;15932;carregar
+situacoes_ausencia;medicalDoctor;booleano;100%;False;carregar
+situacoes_ausencia;name;texto;100%;Férias;carregar
+situacoes_ausencia;removeAbsence;booleano;100%;True;carregar
+situacoes_ausencia;removeTemplate;booleano;100%;False;carregar
+situacoes_ausencia;requiredReplacement;booleano;35%;False;carregar
+situacoes_ausencia;showSituation;booleano;100%;True;carregar

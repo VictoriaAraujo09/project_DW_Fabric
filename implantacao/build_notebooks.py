@@ -60,5 +60,5 @@ def script_local(nome, overrides=None):
     return "\n\n".join(partes)
 
 if __name__ == "__main__":
-    for n in ("nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador"):
+    for n in ("nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador", "nb_ingestao_api"):
         print("gerado:", montar(n))

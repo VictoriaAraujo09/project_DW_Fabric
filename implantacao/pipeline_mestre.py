@@ -101,19 +101,32 @@ def _foreach(o, ws_id, lh_bronze_id, paralelismo):
         },
     }
 
-def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, paralelismo=4):
-    ativos = [o for o in origens if o.get("connection_id")]
-    if not ativos:
-        raise ValueError("Informe connection_id de ao menos uma origem")
+def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, paralelismo=4, nb_api_id=None):
+    ativos = [o for o in origens if o.get("connection_id") and o["conector"] != "API"]
+    apis = [o for o in origens if o["conector"] == "API" and o.get("key_vault")]
+    if not ativos and not apis:
+        raise ValueError("Informe connection_id (banco) ou key_vault (API) de ao menos uma origem")
+    if apis and not nb_api_id:
+        raise ValueError("Origem API sem o notebook nb_ingestao_api")
     saida_prep = "json(activity('Preparar_Ciclo').output.result.exitValue)"
     atividades = [_notebook("Preparar_Ciclo", nb_preparar_id, ws_id,
-                            {"ciclo": "@pipeline().parameters.ciclo", "lote": "@pipeline().RunId"})]
+                            {"ciclo": "@pipeline().parameters.ciclo", "lote": "@pipeline().RunId",
+                             "origens": "@pipeline().parameters.origens"})]
     atividades += [_foreach(o, ws_id, lh_bronze_id, paralelismo) for o in ativos]
-    atividades.append(_notebook(
-        "Orquestrador", nb_orquestrador_id, ws_id,
-        {"lote": "@pipeline().RunId", "ciclo": f"@{saida_prep}['ciclo']",
-         "resultados": "@string(variables('resultados'))", "status_ciclo": "SUCESSO"},
-        [{"activity": f"ForEach_{o['origem']}", "dependencyConditions": ["Succeeded"]} for o in ativos]))
+    depende = [{"activity": f"ForEach_{o['origem']}", "dependencyConditions": ["Succeeded"]} for o in ativos]
+    params_orq = {"lote": "@pipeline().RunId", "ciclo": f"@{saida_prep}['ciclo']",
+                  "resultados": "@string(variables('resultados'))", "status_ciclo": "SUCESSO"}
+    if apis:
+        # origens API: um notebook lê as APIs e devolve a lista id|watermark|linhas ao orquestrador
+        config_api = json.dumps({o["origem"]: {"key_vault": o["key_vault"]} for o in apis})
+        atividades.append(_notebook(
+            "Ingestao_API", nb_api_id, ws_id,
+            {"lote": "@pipeline().RunId", "ciclo": f"@{saida_prep}['ciclo']",
+             "origens": "@pipeline().parameters.origens", "configuracao_api": config_api},
+            [{"activity": "Preparar_Ciclo", "dependencyConditions": ["Succeeded"]}]))
+        params_orq["resultados_api"] = "@activity('Ingestao_API').output.result.exitValue"
+        depende.append({"activity": "Ingestao_API", "dependencyConditions": ["Succeeded"]})
+    atividades.append(_notebook("Orquestrador", nb_orquestrador_id, ws_id, params_orq, depende))
     # Orquestrador "Skipped" = alguma etapa anterior falhou: registra no log e marca o pipeline como falho
     atividades.append(_notebook(
         "Registrar_Falha", nb_orquestrador_id, ws_id,
@@ -130,7 +143,8 @@ def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, para
     return {"properties": {
         "description": "Pipeline mestre do DW: controle -> Bronze (incremental) -> Silver/Gold -> log",
         "activities": atividades,
-        "parameters": {"ciclo": {"type": "string", "defaultValue": "AUTO"}},
+        "parameters": {"ciclo": {"type": "string", "defaultValue": "AUTO"},
+                       "origens": {"type": "string", "defaultValue": ""}},
         "variables": {"resultados": {"type": "Array", "defaultValue": []}},
     }}
 

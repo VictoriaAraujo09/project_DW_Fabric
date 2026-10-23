@@ -10,6 +10,7 @@
 # %% tags=["parameters"]
 ciclo = "AUTO"        # AUTO | COMPLETO | FATOS
 lote = "manual"       # o pipeline envia @pipeline().RunId
+origens = ""          # filtro opcional, ex.: "NEXTI" ou "GS,4S" (vazio = todas)
 hora_corte_completo = 9
 
 # %%
@@ -87,11 +88,14 @@ if ciclo == "AUTO":
     ciclo = "COMPLETO" if dt.datetime.now(FUSO_BRT).hour < hora_corte_completo else "FATOS"
 tipos = {"DIM", "FATO"} if ciclo == "COMPLETO" else {"FATO"}
 
+filtro = {o.strip().upper() for o in origens.split(",") if o.strip()}
 origens = {o["origem"]: o for o in ler(LH_BRONZE, "ctl_origens").to_pylist()}
 saida = {nome: [] for nome in origens}          # toda origem aparece, mesmo vazia
 for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
     o = origens.get(r["origem"])
-    if r["ativo"] and o and o["ativo"] and r["tipo"] in tipos:
+    # origens API são lidas pelo nb_ingestao_api, não pela cópia do pipeline
+    if (r["ativo"] and o and o["ativo"] and o["dialeto"] != "API" and r["tipo"] in tipos
+            and (not filtro or r["origem"] in filtro)):
         saida[r["origem"]].append(montar(r, o["dialeto"]))
 
 resumo = {k: len(v) for k, v in saida.items()}

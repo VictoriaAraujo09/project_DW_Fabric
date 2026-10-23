@@ -27,7 +27,7 @@ except ImportError:
 
 RAIZ = pathlib.Path(__file__).parent
 API = "https://api.fabric.microsoft.com/v1"
-NOTEBOOKS = ["nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador"]
+NOTEBOOKS = ["nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador", "nb_ingestao_api"]
 LAKEHOUSES = ["Bronze", "Silver", "Gold"]
 NOMES_ANTIGOS = {"Bronze": "lh_bronze", "Silver": "lh_silver", "Gold": "lh_gold"}
 PIPELINE = "pl_mestre_dw"
@@ -189,6 +189,8 @@ def main():
     ap.add_argument("--executar-ciclo", choices=["AUTO", "COMPLETO", "FATOS"],
                     help="depois de implantar, roda o pl_mestre_dw com este ciclo")
     ap.add_argument("--origens", help="limita o pipeline a estas origens, ex.: GS ou GS,4S")
+    ap.add_argument("--ciclo-origens", default="",
+                    help="com --executar-ciclo: roda o ciclo só destas origens (parâmetro 'origens' do pipeline)")
     ap.add_argument("--somente-itens", action="store_true",
                     help="não cria os workspaces que ficam fora de implantar_itens_em (ex.: DW_PROD)")
     args = ap.parse_args()
@@ -233,7 +235,8 @@ def main():
 
         print(f"5/5 Pipeline em {nome_ws}")
         definicao = pipeline_mestre.gerar(ws, lh["Bronze"], nb["nb_preparar_ciclo"],
-                                          nb["nb_orquestrador"], cfg["origens"], cfg.get("paralelismo", 4))
+                                          nb["nb_orquestrador"], cfg["origens"], cfg.get("paralelismo", 4),
+                                          nb_api_id=nb["nb_ingestao_api"])
         (RAIZ / f"{PIPELINE}_{nome_ws}.json").write_text(json.dumps(definicao, indent=2, ensure_ascii=False))
         pl = item(fab, ws, PIPELINE, "DataPipeline",
                   {"pipeline-content.json": json.dumps(definicao, ensure_ascii=False)})
@@ -245,7 +248,8 @@ def main():
                 sys.exit("nb_setup_controle falhou: confira o notebook no workspace.")
         if args.executar_ciclo:
             executar_job(fab, ws, pl, PIPELINE, "Pipeline",
-                         {"executionData": {"parameters": {"ciclo": args.executar_ciclo}}})
+                         {"executionData": {"parameters": {"ciclo": args.executar_ciclo,
+                                                           "origens": args.ciclo_origens}}})
 
     (RAIZ / "manifesto_implantacao.json").write_text(json.dumps(
         {"workspaces": ids_ws, "itens": manifesto}, indent=2, ensure_ascii=False))

@@ -13,7 +13,8 @@
       "notebooks": {
         "nb_setup_controle": "35570451-9727-4c91-bb10-c9d02b7591d2",
         "nb_preparar_ciclo": "87b8adbb-b0f5-40e5-bb58-3ba5422885bf",
-        "nb_orquestrador": "a357c6d2-979a-45db-b6af-aac06fcd9c4e"
+        "nb_orquestrador": "a357c6d2-979a-45db-b6af-aac06fcd9c4e",
+        "nb_ingestao_api": "f8959b17-ca80-4ad2-898c-881125d8d754"
       },
       "pipeline": "4ae3857c-2708-4e6c-804a-f5f467a7f52b"
     }

@@ -21,6 +21,7 @@ ORIGENS = [
     {"origem": "PROTHEUS", "dialeto": "SQLSERVER", "ativo": False},
     {"origem": "4S",       "dialeto": "FIREBIRD",  "ativo": True},
     {"origem": "VIGON",    "dialeto": "FIREBIRD",  "ativo": False},
+    {"origem": "NEXTI",    "dialeto": "API",       "ativo": True},   # lida pelo nb_ingestao_api
 ]
 
 # %% [markdown]
@@ -251,6 +252,38 @@ TABELAS = [
          janela_seguranca_min=10 if wm else None, janela_dias=None, filtro_adicional=None, ativo=True)
     for origem, (esquema, sufixo) in ORIGENS_FORTES.items()
     for sigla, tipo, assunto, chave, wm in FORTES
+]
+
+# %% [markdown]
+# ### Nexti (API)
+# `tabela_origem` é a chave do endpoint em `ENDPOINTS_NEXTI` (nb_ingestao_api); os campos gravados
+# ficam em `COLUNAS_NEXTI`. Incrementais: marcações e ausências pela data da última alteração (margem de
+# 10 min); previsto x trabalhado pela data de referência, reprocessando os últimos 35 dias (apuração do
+# mês ainda aberta).
+
+# %%
+# chave do endpoint, tipo, assunto, chave_negocio, coluna_watermark, margem de reprocessamento (min)
+NEXTI = [
+    ("CLOCKINGS", "FATO", "marcacoes_ponto", "id", "lastUpdate", 10),
+    ("TIMETRACKINGS", "FATO", "previsto_trabalhado", "personId, referenceDate", "referenceDate", 35 * 24 * 60),
+    ("ABSENCES", "FATO", "ausencias", "id", "lastUpdate", 10),
+    ("PERSONS", "DIM", "colaboradores", "id", None, None),
+    ("WORKPLACES", "DIM", "postos", "id", None, None),
+    ("SCHEDULES", "DIM", "escalas", "id", None, None),
+    ("SHIFTS", "DIM", "horarios", "id", None, None),
+    ("CLIENTS", "DIM", "clientes", "id", None, None),
+    ("COMPANIES", "DIM", "empresas", "id", None, None),
+    ("BUSINESSUNITS", "DIM", "unidades_negocio", "id", None, None),
+    ("CAREERS", "DIM", "cargos", "id", None, None),
+    ("ABSENCESITUATIONS", "DIM", "situacoes_ausencia", "id", None, None),
+]
+
+TABELAS += [
+    dict(origem="NEXTI", tabela_origem=endpoint, tabela_destino=f"{tipo.lower()}_{assunto}_nexti", tipo=tipo,
+         modo_carga="INCREMENTAL" if wm else "FULL", coluna_watermark=wm, colunas="*",
+         tipo_watermark="DATA" if wm else None, chave_negocio=chave, janela_seguranca_min=margem,
+         janela_dias=None, filtro_adicional=None, ativo=True)
+    for endpoint, tipo, assunto, chave, wm, margem in NEXTI
 ]
 
 # %% [markdown]

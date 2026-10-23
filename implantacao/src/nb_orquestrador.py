@@ -12,6 +12,7 @@
 lote = "manual"
 ciclo = "FATOS"
 resultados = "[]"       # lista "id|novo_watermark|linhas_copiadas", montada pelo pipeline
+resultados_api = "[]"   # mesma lista, devolvida pelo nb_ingestao_api (origens API)
 status_ciclo = "SUCESSO"
 mensagem = ""
 
@@ -79,6 +80,8 @@ def padronizar(tabela):
 def carregar_silver(cfg, linhas_copiadas):
     """Leva o lote da Bronze para a Silver. Devolve quantas linhas foram gravadas."""
     destino = nome_silver(cfg["tabela_destino"])
+    if not existe(LH_BRONZE, nome_bronze(cfg["tabela_destino"])):  # origem API sem nenhuma linha ainda
+        return 0, ""
     bruto = ler(LH_BRONZE, nome_bronze(cfg["tabela_destino"]), filtros=[("_lote", "=", lote)])
     if bruto.num_rows == 0:
         return 0, ""
@@ -154,7 +157,7 @@ if status_ciclo != "SUCESSO":
     gravar_log()
     sair("FALHA registrada")
 else:
-    itens = interpretar(resultados)
+    itens = interpretar(resultados) + interpretar(resultados_api)
     ctl = {r["id"]: r for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist()}
     erros, alteradas = [], []
     for i in itens:

@@ -27,9 +27,10 @@ except ImportError:
 
 RAIZ = pathlib.Path(__file__).parent
 API = "https://api.fabric.microsoft.com/v1"
-NOTEBOOKS = ["nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador", "nb_ingestao_api"]
+NOTEBOOKS = ["nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador", "nb_ingestao_api",
+             "nb_rotina_nexti", "nb_gold_fato_movimentacao_colaborador", "nb_gold_fato_ausencias", "nb_gold"]
+# Não renomear: o banco do SQL endpoint mantém o nome da criação e a sincronização passa a falhar
 LAKEHOUSES = ["Bronze", "Silver", "Gold"]
-NOMES_ANTIGOS = {"Bronze": "lh_bronze", "Silver": "lh_silver", "Gold": "lh_gold"}
 PIPELINE = "pl_mestre_dw"
 
 sys.path.insert(0, str(RAIZ))
@@ -158,13 +159,67 @@ def item(fab, ws, nome, tipo, partes=None, rota=None):
     print(f"  {tipo} {nome}: criado ({novo['id']})")
     return novo["id"]
 
-def renomear_antigos(fab, ws):
-    """Renomeia lh_bronze/lh_silver/lh_gold de implantações anteriores, preservando os dados."""
-    atuais = {i["displayName"]: i["id"] for i in fab.listar(f"/workspaces/{ws}/items?type=Lakehouse")}
-    for novo, antigo in NOMES_ANTIGOS.items():
-        if antigo in atuais and novo not in atuais:
-            fab.chamar("PATCH", f"/workspaces/{ws}/lakehouses/{atuais[antigo]}", {"displayName": novo})
-            print(f"  Lakehouse {antigo}: renomeado para {novo}")
+def enviar_consultas(fab, ws, lh_gold):
+    """Copia implantacao/consultas/*.sql para o lakehouse Gold → Files/consultas, de onde os notebooks
+    Gold leem as regras de negócio."""
+    tok = fab.cred.get_token("https://storage.azure.com/.default").token
+    cab = {"Authorization": f"Bearer {tok}"}
+    for arq in sorted((RAIZ / "consultas").glob("*.sql")):
+        url = f"https://onelake.dfs.fabric.microsoft.com/{ws}/{lh_gold}/Files/consultas/{arq.name}"
+        dados = arq.read_bytes()
+        for metodo, params, corpo in (("PUT", {"resource": "file"}, None),
+                                      ("PATCH", {"action": "append", "position": 0}, dados),
+                                      ("PATCH", {"action": "flush", "position": len(dados)}, None)):
+            r = requests.request(metodo, url, headers=cab, params=params, data=corpo, timeout=120)
+            if r.status_code >= 400:
+                raise RuntimeError(f"{metodo} {arq.name} -> {r.status_code}: {r.text[:300]}")
+        print(f"  consulta {arq.name}: enviada")
+
+def organizar_pastas(fab, ws, pastas):
+    """Cria as pastas do workspace e move cada item para a sua (config "pastas": {pasta: [itens]})."""
+    existentes = {p["displayName"]: p["id"] for p in fab.listar(f"/workspaces/{ws}/folders")
+                  if not p.get("parentFolderId")}
+    itens = {i["displayName"]: i for i in fab.listar(f"/workspaces/{ws}/items")
+             if i.get("type") != "SQLEndpoint"}
+    for pasta, nomes in pastas.items():
+        if pasta not in existentes:
+            existentes[pasta] = fab.chamar("POST", f"/workspaces/{ws}/folders", {"displayName": pasta})["id"]
+            print(f"  pasta {pasta}: criada")
+        for nome in nomes:
+            it = itens.get(nome)
+            if it and it.get("folderId") != existentes[pasta]:
+                fab.chamar("POST", f"/workspaces/{ws}/items/{it['id']}/move", {"targetFolderId": existentes[pasta]})
+                print(f"  {nome} -> {pasta}")
+
+def agendar(fab, ws, item_id, nome, tipo_job, minutos, ativo=True, inicio=None, fim=None):
+    """Agendamento a cada `minutos`, no fuso de Brasília. Com janela (inicio/fim, "HH:MM"), cria agendamentos
+    diários com os horários da janela, em blocos de até 60 horários (o Fabric recusa listas maiores).
+    Sem janela, usa o intervalo simples. Reaproveita os agendamentos existentes e desativa os que sobrarem."""
+    # horários no fuso informado em localTimeZoneId (Brasília, UTC-3), não em UTC
+    brt = time.time() - 3 * 3600
+    base = {"startDateTime": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(brt)),
+            "endDateTime": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(brt + 365 * 86400)),
+            "localTimeZoneId": "E. South America Standard Time"}
+    if inicio and fim:
+        h0, m0 = map(int, inicio.split(":"))
+        h1, m1 = map(int, fim.split(":"))
+        horarios = [f"{t // 60:02d}:{t % 60:02d}" for t in range(h0 * 60 + m0, h1 * 60 + m1 + 1, int(minutos))]
+        configs = [{**base, "type": "Daily", "times": horarios[i:i + 60]} for i in range(0, len(horarios), 60)]
+    else:
+        configs = [{**base, "type": "Cron", "interval": int(minutos)}]
+    rota = f"/workspaces/{ws}/items/{item_id}/jobs/{tipo_job}/schedules"
+    atuais = fab.listar(rota)
+    for i, conf in enumerate(configs):
+        corpo = {"enabled": ativo, "configuration": conf}
+        if i < len(atuais):
+            fab.chamar("PATCH", f"{rota}/{atuais[i]['id']}", corpo)
+        else:
+            fab.chamar("POST", rota, corpo)
+    for sobra in atuais[len(configs):]:
+        fab.chamar("PATCH", f"{rota}/{sobra['id']}", {"enabled": False, "configuration": sobra["configuration"]})
+    janela = f" das {inicio} às {fim}" if inicio and fim else ""
+    print(f"  agendamento {nome}: a cada {minutos} min{janela} ({len(configs)} agendamento(s), "
+          f"{'ativo' if ativo else 'pausado'})")
 
 def executar_job(fab, ws, item_id, nome, tipo_job="RunNotebook", corpo=None):
     print(f"  executando {nome} ...")
@@ -224,8 +279,9 @@ def main():
     for nome_ws in cfg["implantar_itens_em"]:
         ws = ids_ws[nome_ws]
         print(f"3/5 Lakehouses em {nome_ws}")
-        renomear_antigos(fab, ws)
         lh = {n: item(fab, ws, n, "Lakehouse", rota=f"/workspaces/{ws}/lakehouses") for n in LAKEHOUSES}
+
+        enviar_consultas(fab, ws, lh["Gold"])
 
         print(f"4/5 Notebooks em {nome_ws}")
         nb = {}
@@ -241,7 +297,23 @@ def main():
         pl = item(fab, ws, PIPELINE, "DataPipeline",
                   {"pipeline-content.json": json.dumps(definicao, ensure_ascii=False)})
 
-        manifesto[nome_ws] = {"workspace": ws, "lakehouses": lh, "notebooks": nb, "pipeline": pl}
+        # atalhos de um clique: todas as origens e uma por origem listada em "atalhos" no config
+        atalhos = {}
+        for origem in [None] + cfg.get("atalhos", []):
+            nome = pipeline_mestre.nome_atalho(origem)
+            atalhos[nome] = item(fab, ws, nome, "DataPipeline", {"pipeline-content.json": json.dumps(
+                pipeline_mestre.gerar_atalho(pl, origem), ensure_ascii=False)})
+
+        if cfg.get("pastas"):
+            organizar_pastas(fab, ws, cfg["pastas"])
+        # rotinas agendadas (config "agendamentos": {notebook: {"minutos": 5, "inicio": "06:00", "fim": "20:00"}})
+        for nome, ag in cfg.get("agendamentos", {}).items():
+            if nome in nb:
+                agendar(fab, ws, nb[nome], nome, "RunNotebook", ag["minutos"], ag.get("ativo", True),
+                        ag.get("inicio"), ag.get("fim"))
+
+        manifesto[nome_ws] = {"workspace": ws, "lakehouses": lh, "notebooks": nb, "pipeline": pl,
+                              "atalhos": atalhos}
         if args.executar_setup:
             st = executar_job(fab, ws, nb["nb_setup_controle"], "nb_setup_controle")
             if st.get("status") != "Completed":

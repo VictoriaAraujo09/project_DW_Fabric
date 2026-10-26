@@ -156,7 +156,7 @@
                               "type": "Lakehouse",
                               "typeProperties": {
                                 "workspaceId": "db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9",
-                                "artifactId": "d615c567-f054-478a-887b-364eef89aee2",
+                                "artifactId": "9e23d513-0ddd-4671-8940-2728cb1bb64e",
                                 "rootFolder": "Tables"
                               }
                             }
@@ -317,7 +317,7 @@
                               "type": "Lakehouse",
                               "typeProperties": {
                                 "workspaceId": "db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9",
-                                "artifactId": "d615c567-f054-478a-887b-364eef89aee2",
+                                "artifactId": "9e23d513-0ddd-4671-8940-2728cb1bb64e",
                                 "rootFolder": "Tables"
                               }
                             }
@@ -478,6 +478,13 @@
               "value": "SUCESSO",
               "type": "string"
             },
+            "origens": {
+              "value": {
+                "value": "@json(activity('Preparar_Ciclo').output.result.exitValue)['selecionadas']",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
             "resultados_api": {
               "value": {
                 "value": "@activity('Ingestao_API').output.result.exitValue",
@@ -530,6 +537,13 @@
             },
             "status_ciclo": {
               "value": "FALHA",
+              "type": "string"
+            },
+            "origens": {
+              "value": {
+                "value": "@pipeline().parameters.origens",
+                "type": "Expression"
+              },
               "type": "string"
             },
             "mensagem": {

@@ -15,6 +15,7 @@ resultados = "[]"       # lista "id|novo_watermark|linhas_copiadas", montada pel
 resultados_api = "[]"   # mesma lista, devolvida pelo nb_ingestao_api (origens API)
 status_ciclo = "SUCESSO"
 mensagem = ""
+origens = ""            # origens deste ciclo, ex.: "GS,4S" (vazio = todas): limita a retenção a elas
 
 # %%
 #@@COMUM@@
@@ -31,6 +32,19 @@ RETENCAO_DIAS = {"FULL": 3, "JANELA": 3, "INCREMENTAL": 30}
 
 INICIO = agora_utc()
 _log = []
+FILTRO = {o.strip().upper() for o in origens.split(",") if o.strip()}
+
+def com_nova_tentativa(acao, tentativas=5):
+    """Ciclos de origens diferentes podem rodar juntos e gravar ctl_tabelas/ctl_log ao mesmo tempo:
+    o commit que perde a disputa é refeito sobre a versão nova da tabela."""
+    import time
+    for n in range(tentativas):
+        try:
+            return acao()
+        except Exception as e:
+            if n == tentativas - 1 or ("commit" not in str(e).lower() and "conflict" not in str(e).lower()):
+                raise
+            time.sleep(5 * (n + 1))
 
 def log(tabela_id, etapa, linhas, status, msg=""):
     _log.append({"lote": lote, "ciclo": ciclo, "tabela_id": tabela_id, "etapa": etapa,
@@ -40,7 +54,7 @@ def log(tabela_id, etapa, linhas, status, msg=""):
 def gravar_log():
     if _log:
         schema = ler(LH_BRONZE, "ctl_log").schema
-        gravar(LH_BRONZE, "ctl_log", pa.Table.from_pylist(_log, schema=schema))
+        com_nova_tentativa(lambda: gravar(LH_BRONZE, "ctl_log", pa.Table.from_pylist(_log, schema=schema)))
 
 def interpretar(resultados):
     itens = []
@@ -107,6 +121,7 @@ def carregar_silver(cfg, linhas_copiadas):
         # dimensões: retrato completo do dia substitui a versão anterior
         gravar(LH_SILVER, destino, unico, modo="overwrite")
     else:
+        acrescentar_colunas(LH_SILVER, destino, unico.schema)
         alvo = tabela_delta(LH_SILVER, destino)
         (alvo.merge(unico,
                     predicate=" AND ".join(f"t.{q(c)} = s.{q(c)}" for c in chaves),
@@ -121,6 +136,9 @@ def aplicar_retencao(ctl):
     fisicamente o que não é mais referenciado (após 7 dias). Falha aqui não derruba o ciclo."""
     for cfg in ctl.values():
         nome = nome_bronze(cfg["tabela_destino"])
+        # só as origens deste ciclo: outra origem pode estar gravando a Bronze em paralelo
+        if FILTRO and cfg["origem"] not in FILTRO:
+            continue
         if not cfg["ativo"] or not existe(LH_BRONZE, nome):
             continue
         limite = agora_utc() - dt.timedelta(days=RETENCAO_DIAS.get(cfg["modo_carga"], 30))
@@ -146,7 +164,7 @@ def avancar_watermarks(itens, ctl):
         return
     fonte = pa.Table.from_pylist(novos, schema=pa.schema(
         [("id", pa.string()), ("novo", pa.string()), ("dt", pa.timestamp("us", tz="UTC"))]))
-    (tabela_delta(LH_BRONZE, "ctl_tabelas")
+    com_nova_tentativa(lambda: tabela_delta(LH_BRONZE, "ctl_tabelas")
         .merge(fonte, predicate="t.id = s.id", source_alias="s", target_alias="t")
         .when_matched_update(updates={"ultimo_watermark": "s.novo", "dt_atualizacao": "s.dt"})
         .execute())
@@ -192,6 +210,7 @@ else:
         aplicar_retencao(ctl)
     duracao = (agora_utc() - INICIO).total_seconds()
     log("CICLO", "CICLO", sum(i["linhas"] for i in itens), "SUCESSO",
-        f"{len(itens)} tabelas copiadas, {len(alteradas)} alteradas na Silver, {duracao:.0f}s no notebook")
+        f"Origens {origens or 'todas'}: {len(itens)} tabelas copiadas, {len(alteradas)} alteradas na Silver, "
+        f"{duracao:.0f}s no notebook")
     gravar_log()
     sair(json.dumps({"tabelas": len(itens), "alteradas": alteradas}))

@@ -5,7 +5,9 @@
 # para as origens SQL. O orquestrador cuida da Silver, dos watermarks e do log.
 #
 # - Credenciais no Azure Key Vault (`configuracao_api`), nunca no código.
-# - Só os campos de `COLUNAS_NEXTI` são gravados: dados pessoais, de saúde e texto livre ficam fora.
+# - Só os campos de `COLUNAS_NEXTI` são gravados; credenciais ficam fora. Dados pessoais e de saúde entram
+#   como no DW do Airflow (decisão de 26/10/2026): CID, médico e justificativa nas ausências; CPF, e-mail,
+#   telefone, PIS e geolocalização nas marcações, colaboradores e postos.
 # - Incremental por janela (data de alteração ou data de referência), com recuperação de histórico em
 #   blocos de até `max_dias_por_execucao` dias por ciclo.
 
@@ -13,6 +15,7 @@
 lote = "manual"
 ciclo = "COMPLETO"            # já resolvido pelo nb_preparar_ciclo (COMPLETO | FATOS)
 origens = ""                  # filtro opcional, ex.: "NEXTI"
+tabelas = ""                  # filtro opcional de endpoints, ex.: "ABSENCES,WORKPLACETRANSFERS" (rotinas)
 configuracao_api = "{}"       # {"NEXTI": {"key_vault": "https://<cofre>.vault.azure.net/"}}
 inicio_historico = "2025-01-01"
 max_dias_por_execucao = 45
@@ -28,6 +31,14 @@ FMT_NEXTI = "%d%m%Y%H%M%S"
 TAMANHO_PAGINA = 60000  # um dia de marcações (~45 mil) numa chamada: o limite da API é por chamada pesada
 TIPOS_MARCACAO = ",".join(str(i) for i in range(1, 11))  # sem o filtro a API devolve zero marcações
 
+# Tabelas com rotina dedicada (nb_rotina_nexti, a cada poucos minutos): o ciclo geral não as carrega,
+# para a mesma janela não ser copiada duas vezes. Só entram quando pedidas em `tabelas`.
+TABELAS_ROTINA = {"ABSENCES", "WORKPLACETRANSFERS", "REPLACEMENTS", "CLOCKINGS"}
+
+# Início do histórico por endpoint, quando difere de `inicio_historico`: a transferência antiga define o
+# posto atual do colaborador, então a movimentação precisa do histórico completo.
+INICIO_HISTORICO_TABELA = {"WORKPLACETRANSFERS": "2010-01-01"}
+
 # chave (tabela_origem em ctl_tabelas): caminho, parâmetros, onde estão os itens, janela máxima por chamada.
 # utc=True: o endpoint trabalha em UTC (conferido: marcação 3h à frente do firstClocking do previsto);
 # a janela e o watermark ficam em UTC e as datas gravadas são convertidas para o horário de Brasília.
@@ -37,7 +48,15 @@ ENDPOINTS_NEXTI = {
     "TIMETRACKINGS": dict(caminho="/timetrackings/estimatedhoursvsworkedhours",
                           params={"startDate": "{ini}", "finishDate": "{fim}"}, itens="value", janela_dias=7,
                           por_dia=True),
-    "ABSENCES": dict(caminho="/absences/lastupdate/start/{ini}/finish/{fim}", itens="content", janela_dias=1),
+    "ABSENCES": dict(caminho="/absences/lastupdate/start/{ini}/finish/{fim}", itens="content", janela_dias=30,
+                     tamanho=1000),
+    "WORKPLACETRANSFERS": dict(caminho="/workplacetransfers/lastupdate/start/{ini}/finish/{fim}", itens="content",
+                               janela_dias=30, tamanho=1000),
+    "REPLACEMENTS": dict(caminho="/replacements/lastupdate/start/{ini}/finish/{fim}", itens="content",
+                         janela_dias=30, tamanho=1000),
+    # usuários ficam em outro host; a resposta traz senha e token, que não entram em COLUNAS_NEXTI
+    "USERACCOUNTS": dict(caminho="https://pontodigital.api.nexti.com/security/useraccounts/", itens="content",
+                         tamanho=1000),
     "PERSONS": dict(caminho="/persons/all", itens="content"),
     "WORKPLACES": dict(caminho="/workplaces/all", itens="content"),
     "SCHEDULES": dict(caminho="/schedules/all", itens="content"),
@@ -60,7 +79,10 @@ COLUNAS_NEXTI = {
         "id": "inteiro", "identificationMethodId": "inteiro", "identificationMethodName": "texto",
         "lastUpdate": "data_hora", "online": "booleano", "personId": "inteiro", "referenceDate": "data_hora",
         "registerDate": "data_hora", "removed": "booleano", "timezone": "texto", "userAdjustmentId": "inteiro",
-        "workplaceId": "inteiro"},
+        "workplaceId": "inteiro",
+        # dados pessoais, igual ao DW do Airflow (decisão de 26/10/2026)
+        "adjustmentObservation": "texto", "latitude": "numero", "longitude": "numero", "personPIS": "texto",
+        "ticketSignature": "texto"},
     "TIMETRACKINGS": {
         "absenceSituation": "texto", "adjustmentReason": "texto", "costCenter": "texto",
         "expectedHours": "texto", "expectedMinutes": "inteiro", "firstClocking": "texto", "month": "inteiro",
@@ -73,7 +95,20 @@ COLUNAS_NEXTI = {
         "absenceSituationExternalId": "texto", "absenceSituationId": "inteiro", "demissionReasonId": "inteiro",
         "finishDateTime": "data_hora", "finishMinute": "inteiro", "id": "inteiro", "lastUpdate": "data_hora",
         "medicalDoctorId": "inteiro", "personExternalId": "texto", "personId": "inteiro", "removed": "booleano",
-        "startDateTime": "data_hora", "startMinute": "inteiro", "userRegisterId": "inteiro"},
+        "startDateTime": "data_hora", "startMinute": "inteiro", "userRegisterId": "inteiro",
+        "note": "texto", "medicalDoctorName": "texto", "medicalDoctorCrm": "texto", "cidId": "inteiro",
+        "cidCode": "texto", "cidDescription": "texto"},
+    "WORKPLACETRANSFERS": {
+        "id": "inteiro", "personId": "inteiro", "workplaceId": "inteiro", "transferDateTime": "data_hora",
+        "lastUpdate": "data_hora", "removed": "booleano", "userRegisterId": "inteiro"},
+    "USERACCOUNTS": {"id": "inteiro", "name": "texto", "active": "booleano"},
+    "REPLACEMENTS": {
+        "id": "inteiro", "personId": "inteiro", "personName": "texto", "absenteeId": "inteiro",
+        "absenteeName": "texto", "workplaceId": "inteiro", "startDateTime": "data_hora",
+        "finishDateTime": "data_hora", "replacementTypeId": "inteiro", "note": "texto",
+        "registerDate": "data_hora", "replacementReasonId": "inteiro", "replacementReasonName": "texto",
+        "replacementResourceId": "inteiro", "replacementResourceName": "texto", "shiftId": "inteiro",
+        "lastUpdate": "data_hora", "removed": "booleano"},
     "PERSONS": {
         "adminDevice": "booleano", "admissionDate": "data_hora", "allowMobileClocking": "booleano",
         "allowMobileMonthComptime": "booleano", "businessUnitId": "inteiro", "businessUnitName": "texto",
@@ -84,7 +119,8 @@ COLUNAS_NEXTI = {
         "id": "inteiro", "ignoreTimeTracking": "booleano", "ignoreTimeTrackingDate": "data_hora",
         "ignoreValidation": "booleano", "personSituationId": "inteiro", "personTypeId": "inteiro",
         "rotationCode": "inteiro", "rotationId": "inteiro", "scheduleId": "inteiro", "state": "texto",
-        "userAccountId": "inteiro", "workplaceId": "inteiro", "name": "texto"},
+        "userAccountId": "inteiro", "workplaceId": "inteiro", "name": "texto",
+        "cpf": "texto", "email": "texto", "phone": "texto"},
     "WORKPLACES": {
         "active": "booleano", "alterBonusForReplacement": "booleano", "businessUnitId": "inteiro",
         "checkinTolerance": "inteiro", "checkoutTolerance": "inteiro", "cityExternalId": "texto",
@@ -100,7 +136,8 @@ COLUNAS_NEXTI = {
         "intervalScheduleAdjustment": "booleano", "lastUpdate": "data_hora",
         "maximumPerimeterRecordMarking": "inteiro", "name": "texto", "registerDate": "data_hora",
         "service": "texto", "serviceTypeId": "inteiro", "showWorkplaceInPersonInformationApp": "booleano",
-        "startDate": "data_hora", "state": "texto", "timezone": "texto", "vacantJob": "inteiro"},
+        "startDate": "data_hora", "state": "texto", "timezone": "texto", "vacantJob": "inteiro",
+        "latitude": "numero", "longitude": "numero"},
     "SCHEDULES": {
         "active": "booleano", "dailyWorkload": "inteiro", "differentiateToleranceInMarkings": "booleano",
         "externalId": "texto", "fullDescription": "texto", "holidayTimeTracking": "booleano", "id": "inteiro",
@@ -161,7 +198,8 @@ class ClienteNexti:
     def get(self, caminho, params):
         for tentativa in range(10):
             inicio = time.time()
-            r = requests.get(f"{NEXTI_URL}{caminho}", headers=self._token(), params=params, timeout=900)
+            url = caminho if caminho.startswith("http") else f"{NEXTI_URL}{caminho}"
+            r = requests.get(url, headers=self._token(), params=params, timeout=900)
             if r.status_code == 429 or r.status_code >= 500:
                 espera = int(r.headers.get("Retry-After", 30 * (tentativa + 1)))
                 print(f"  {caminho} página {params.get('page', '-')}: HTTP {r.status_code}, nova tentativa em {espera}s")
@@ -186,7 +224,7 @@ class ClienteNexti:
             return
         pagina = 0
         while True:
-            j = self.get(caminho, {**params, "page": pagina, "size": TAMANHO_PAGINA})
+            j = self.get(caminho, {**params, "page": pagina, "size": ep.get("tamanho", TAMANHO_PAGINA)})
             yield from (j.get("content") or [])
             if j.get("last", True) or not j.get("content"):
                 return
@@ -235,7 +273,8 @@ def periodo(cfg, agora_brt):
     """Janela do ciclo: do último watermark (menos a margem de segurança) até agora, limitada a
     max_dias_por_execucao a partir do watermark para recuperar o histórico em blocos."""
     wm = (cfg["ultimo_watermark"] or "").strip()
-    base = dt.datetime.fromisoformat(wm[:19]) if wm else dt.datetime.fromisoformat(inicio_historico)
+    inicio = INICIO_HISTORICO_TABELA.get(cfg["tabela_origem"], inicio_historico)
+    base = dt.datetime.fromisoformat(wm[:19]) if wm else dt.datetime.fromisoformat(inicio)
     ini = base - dt.timedelta(minutes=cfg["janela_seguranca_min"] or 0) if wm else base
     fim = min(agora_brt, base + dt.timedelta(days=int(max_dias_por_execucao)))
     return ini, fim
@@ -266,7 +305,13 @@ def carregar(cliente, cfg):
 # %%
 cfg_api = json.loads(configuracao_api or "{}")
 filtro = {o.strip().upper() for o in origens.split(",") if o.strip()}
+so_tabelas = {t.strip().upper() for t in tabelas.split(",") if t.strip()}
 tipos = {"DIM", "FATO"} if ciclo == "COMPLETO" else {"FATO"}
+
+def escolhida(cfg):
+    if so_tabelas:
+        return cfg["tabela_origem"] in so_tabelas
+    return cfg["tipo"] in tipos and cfg["tabela_origem"] not in TABELAS_ROTINA
 ativas = {o["origem"] for o in ler(LH_BRONZE, "ctl_origens").to_pylist()
           if o["ativo"] and o["dialeto"] == "API" and (not filtro or o["origem"] in filtro)}
 
@@ -276,7 +321,7 @@ for origem in sorted(ativas):
         raise ValueError(f"Origem API sem conector implementado: {origem}")
     cliente = ClienteNexti(cfg_api.get(origem, {}))
     for cfg in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
-        if cfg["origem"] == origem and cfg["ativo"] and cfg["tipo"] in tipos:
+        if cfg["origem"] == origem and cfg["ativo"] and escolhida(cfg):
             inicio = time.time()
             novo, linhas = carregar(cliente, cfg)
             print(f"{cfg['id']}: {linhas} linhas até {novo} ({time.time() - inicio:.0f}s)")

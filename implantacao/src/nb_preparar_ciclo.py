@@ -10,7 +10,7 @@
 # %% tags=["parameters"]
 ciclo = "AUTO"        # AUTO | COMPLETO | FATOS
 lote = "manual"       # o pipeline envia @pipeline().RunId
-origens = ""          # filtro opcional, ex.: "NEXTI" ou "GS,4S" (vazio = todas)
+origens = ""          # filtro opcional, ex.: "NEXTI" ou "GS,4S" (vazio = todas as ativas)
 hora_corte_completo = 9
 
 # %%
@@ -90,6 +90,13 @@ tipos = {"DIM", "FATO"} if ciclo == "COMPLETO" else {"FATO"}
 
 filtro = {o.strip().upper() for o in origens.split(",") if o.strip()}
 origens = {o["origem"]: o for o in ler(LH_BRONZE, "ctl_origens").to_pylist()}
+ativas = sorted(n for n, o in origens.items() if o["ativo"])
+# nome errado no filtro faria um ciclo vazio terminar com "sucesso": melhor falhar já aqui
+invalidas = sorted(filtro - set(ativas))
+if invalidas:
+    raise ValueError(f"Origens inexistentes ou inativas: {', '.join(invalidas)}. "
+                     f"Ativas: {', '.join(ativas)} (vazio = todas)")
+selecionadas = sorted(filtro) if filtro else ativas
 saida = {nome: [] for nome in origens}          # toda origem aparece, mesmo vazia
 for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
     o = origens.get(r["origem"])
@@ -99,5 +106,6 @@ for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
         saida[r["origem"]].append(montar(r, o["dialeto"]))
 
 resumo = {k: len(v) for k, v in saida.items()}
-print(f"Ciclo {ciclo} | lote {lote} | tabelas por origem: {resumo}")
-sair(json.dumps({"ciclo": ciclo, "lote": lote, "origens": saida}, ensure_ascii=False))
+print(f"Ciclo {ciclo} | lote {lote} | origens {selecionadas} | tabelas por origem: {resumo}")
+sair(json.dumps({"ciclo": ciclo, "lote": lote, "origens": saida, "selecionadas": ",".join(selecionadas)},
+                ensure_ascii=False))

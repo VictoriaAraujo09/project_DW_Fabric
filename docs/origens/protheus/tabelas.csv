@@ -1,0 +1,15 @@
+tabela_origem;descricao_negocio;tipo_sugerido;entidade_equivalente;chave;coluna_alteracao;volume_linhas;observacoes
+dbo.SE1010;Contas a receber: uma linha por parcela de cada título;FATO;parcela_receber e titulo_receber;R_E_C_N_O_;S_T_A_M_P_;571955;Exclusão lógica por D_E_L_E_T_
+dbo.SE2010;Contas a pagar: uma linha por parcela de cada título;FATO;parcela_pagar e titulo_pagar;R_E_C_N_O_;S_T_A_M_P_;187578;Exclusão lógica por D_E_L_E_T_
+dbo.SE5010;Movimentação financeira: movimentos bancários e baixas a receber e a pagar;FATO;lancamento_financeiro, baixa_receber, baixa_pagar;R_E_C_N_O_;;234627;Sem S_T_A_M_P_: carga a definir (JANELA por E5_DATA ou FULL)
+dbo.SF2010;Nota fiscal de saída: cabeçalho, uma linha por nota. Os itens estão na SD2;FATO;nota_fiscal;R_E_C_N_O_;S_T_A_M_P_;61863;Exclusão lógica por D_E_L_E_T_
+dbo.SD2010;Nota fiscal de saída: itens, uma linha por item da nota;FATO;nota_fiscal (itens);R_E_C_N_O_;S_T_A_M_P_;69307;Exclusão lógica por D_E_L_E_T_
+dbo.SF1010;Nota fiscal de entrada: cabeçalho, uma linha por nota. Os itens estão na SD1;FATO;entidade nova (nota de entrada);R_E_C_N_O_;S_T_A_M_P_;32839;Exclusão lógica por D_E_L_E_T_
+dbo.SD1010;Nota fiscal de entrada: itens, uma linha por item da nota;FATO;entidade nova (nota de entrada);R_E_C_N_O_;S_T_A_M_P_;64968;Exclusão lógica por D_E_L_E_T_
+dbo.SFT010;Livro fiscal por item de nota (entrada e saída);FATO;entidade nova (livro fiscal);R_E_C_N_O_;S_T_A_M_P_;139256;Exclusão lógica por D_E_L_E_T_
+dbo.SA1010;Cadastro de clientes (chave código + loja);DIM;cliente;R_E_C_N_O_;S_T_A_M_P_;2643;"Dados pessoais (RG, data de nascimento, e-mail, telefone) a revisar na proposta; A1_PRF_OBS binário fica fora"
+dbo.SA2010;Cadastro de fornecedores (chave código + loja);DIM;fornecedor;R_E_C_N_O_;S_T_A_M_P_;4195;Dados pessoais (CPF do produtor rural/IRPF, data de nascimento, e-mail, telefone) a revisar na proposta
+dbo.SA6010;Bancos: cadastro de bancos, agências e contas bancárias (tabela única);DIM;conta_bancaria e banco;R_E_C_N_O_;;386;Sem S_T_A_M_P_. Colunas binárias de configuração de boleto/PIX/integração (A6_CFGBOL, A6_CFGBOLP, A6_CFGPIX, A6_DADOINT) ficam fora
+dbo.SED010;Naturezas financeiras;DIM;natureza_financeira;R_E_C_N_O_;;460;"Sem S_T_A_M_P_; tabela pequena, carga completa"
+dbo.CTT010;Centros de custo (centro de resultado);DIM;centro_resultado;R_E_C_N_O_;S_T_A_M_P_;32455;Exclusão lógica por D_E_L_E_T_
+dbo.SYS_COMPANY;Empresas e filiais (equivale à SM0 nas versões com o cadastro no banco);DIM;empresa e estabelecimento;R_E_C_N_O_;;39;Código da empresa M0_CODIGO como texto de 2 dígitos (01). Senhas, licença e chave (M0_PSW, M0_CTPSW, M0_PSWSTRT, M0_LICENSA, M0_CORPKEY) ficam fora

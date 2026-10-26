@@ -276,6 +276,11 @@ NEXTI = [
     ("BUSINESSUNITS", "DIM", "unidades_negocio", "id", None, None),
     ("CAREERS", "DIM", "cargos", "id", None, None),
     ("ABSENCESITUATIONS", "DIM", "situacoes_ausencia", "id", None, None),
+    # rotina de ausências (nb_rotina_nexti): posto de cada dia e usuário "Sistema" da ausência automática
+    ("WORKPLACETRANSFERS", "FATO", "transferencias_posto", "id", "lastUpdate", 10),
+    ("USERACCOUNTS", "DIM", "usuarios", "id", None, None),
+    # rotina de coberturas (nb_rotina_nexti)
+    ("REPLACEMENTS", "FATO", "coberturas", "id", "lastUpdate", 10),
 ]
 
 TABELAS += [

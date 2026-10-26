@@ -115,7 +115,8 @@ def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, para
     atividades += [_foreach(o, ws_id, lh_bronze_id, paralelismo) for o in ativos]
     depende = [{"activity": f"ForEach_{o['origem']}", "dependencyConditions": ["Succeeded"]} for o in ativos]
     params_orq = {"lote": "@pipeline().RunId", "ciclo": f"@{saida_prep}['ciclo']",
-                  "resultados": "@string(variables('resultados'))", "status_ciclo": "SUCESSO"}
+                  "resultados": "@string(variables('resultados'))", "status_ciclo": "SUCESSO",
+                  "origens": f"@{saida_prep}['selecionadas']"}
     if apis:
         # origens API: um notebook lê as APIs e devolve a lista id|watermark|linhas ao orquestrador
         config_api = json.dumps({o["origem"]: {"key_vault": o["key_vault"]} for o in apis})
@@ -131,7 +132,7 @@ def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, para
     atividades.append(_notebook(
         "Registrar_Falha", nb_orquestrador_id, ws_id,
         {"lote": "@pipeline().RunId", "ciclo": "@pipeline().parameters.ciclo", "resultados": "[]",
-         "status_ciclo": "FALHA",
+         "status_ciclo": "FALHA", "origens": "@pipeline().parameters.origens",
          "mensagem": "@concat('Falha antes do orquestrador. Ver execução ', pipeline().RunId)"},
         [{"activity": "Orquestrador", "dependencyConditions": ["Skipped"]}]))
     atividades.append({
@@ -146,6 +147,26 @@ def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, para
         "parameters": {"ciclo": {"type": "string", "defaultValue": "AUTO"},
                        "origens": {"type": "string", "defaultValue": ""}},
         "variables": {"resultados": {"type": "Array", "defaultValue": []}},
+    }}
+
+def nome_atalho(origem=None):
+    return f"pl_atualizar_{origem.lower()}" if origem else "pl_atualizar_todas"
+
+def gerar_atalho(pl_mestre_id, origem=None):
+    """Pipeline de um clique: chama o pl_mestre_dw com a origem já preenchida (None = todas as ativas).
+    O ciclo continua como parâmetro (padrão AUTO) para quem quiser forçar COMPLETO ou FATOS."""
+    alvo = origem or "todas as origens ativas"
+    return {"properties": {
+        "description": f"Atualiza {alvo} pelo pl_mestre_dw. Executar = ciclo AUTO; troque 'ciclo' para forçar.",
+        "activities": [{
+            "name": "Executar_pl_mestre_dw", "type": "ExecutePipeline", "dependsOn": [],
+            "typeProperties": {
+                "pipeline": {"referenceName": pl_mestre_id, "type": "PipelineReference"},
+                "parameters": {"ciclo": _expr("@pipeline().parameters.ciclo"), "origens": origem or ""},
+                "waitOnCompletion": True,
+            },
+        }],
+        "parameters": {"ciclo": {"type": "string", "defaultValue": "AUTO"}},
     }}
 
 if __name__ == "__main__":

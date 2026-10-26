@@ -52,9 +52,9 @@ Tecnologia: os notebooks são **Python notebooks** do Fabric, não PySpark. Eles
 | Capacidade | `grupokmf` (F4) | `4edcfa75-772f-4f7f-9eff-b42b976e02ff` |
 | Workspace DEV | Squad Dados - DW Dev | `db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9` |
 | Workspace PROD | DW_PROD | *ainda não criado* |
-| Lakehouse | Bronze | `d615c567-f054-478a-887b-364eef89aee2` |
-| Lakehouse | Silver | `65f25937-b11a-415f-83e6-a4e8fb69fbe8` |
-| Lakehouse | Gold | `fd22548a-25e1-43f9-b7cc-bb6875ad35e0` |
+| Lakehouse | Bronze | `9e23d513-0ddd-4671-8940-2728cb1bb64e` |
+| Lakehouse | Silver | `203e4280-9163-4a33-b7b7-b80edeeb409d` |
+| Lakehouse | Gold | `1ee545d4-58f7-4253-b931-4757d1e266b9` |
 | Notebook | nb_setup_controle | `35570451-9727-4c91-bb10-c9d02b7591d2` |
 | Notebook | nb_preparar_ciclo | `87b8adbb-b0f5-40e5-bb58-3ba5422885bf` |
 | Notebook | nb_orquestrador | `a357c6d2-979a-45db-b6af-aac06fcd9c4e` |
@@ -78,7 +78,7 @@ Tecnologia: os notebooks são **Python notebooks** do Fabric, não PySpark. Eles
 
 | O quê | Padrão | Exemplo |
 |---|---|---|
-| Lakehouses | Nome da camada | `Bronze`, `Silver`, `Gold` |
+| Lakehouses | Nome da camada. **Não renomear:** o banco do SQL endpoint mantém o nome da criação e a sincronização das tabelas passa a falhar | `Bronze`, `Silver`, `Gold` |
 | Tabela na Bronze | `bronze_{fato\|dim}_{assunto}_{origem}` | `bronze_fato_contas_receber_gs` |
 | Tabela na Silver | `silver_{fato\|dim}_{assunto}_{origem}` | `silver_dim_clientes_4s` |
 | Tabelas de controle | `ctl_{nome}` (na Bronze) | `ctl_tabelas` |
@@ -236,7 +236,43 @@ flowchart TD
 | `Registrar_Falha` | Notebook | Registra no log uma falha anterior ao orquestrador |
 | `Falhar_Pipeline` | Fail | Marca a execução como falha |
 
-**Parâmetros:** `ciclo` (padrão `AUTO`) e `origens` (vazio = todas; ex.: `NEXTI` roda só a Nexti).
+**Parâmetros:** `ciclo` (padrão `AUTO`) e `origens` (vazio = todas as ativas; ex.: `NEXTI` roda só a Nexti).
+
+### Rodar todas as origens ou só algumas
+
+O mesmo pipeline atende os dois casos. O parâmetro `origens` escolhe o que entra no ciclo:
+
+| `origens` | O que roda |
+|---|---|
+| vazio | Todas as origens ativas (GS, 4S e Nexti hoje). É o que o agendamento usa |
+| `GS` | Só o GS |
+| `GS,4S` | GS e 4S, sem a Nexti |
+| `NEXTI` | Só a Nexti |
+
+Pelo terminal, sem reimplantar:
+
+```powershell
+.\.venv\Scripts\python.exe implantacao\executar_ciclo.py                         # todas, ciclo AUTO
+.\.venv\Scripts\python.exe implantacao\executar_ciclo.py --origens GS            # só o GS
+.\.venv\Scripts\python.exe implantacao\executar_ciclo.py --origens 4S,NEXTI --ciclo COMPLETO
+```
+
+**Pelo Fabric, com um clique:** cada atalho chama o `pl_mestre_dw` com a origem já preenchida. Abra o atalho e clique em **Executar**. O `ciclo` vem como `AUTO` e pode ser trocado na tela de execução.
+
+| Pipeline | Atualiza |
+|---|---|
+| `pl_atualizar_todas` | Todas as origens ativas |
+| `pl_atualizar_gs` | Só o GS |
+| `pl_atualizar_4s` | Só o 4S |
+| `pl_atualizar_nexti` | Só a Nexti |
+
+Os atalhos são gerados pela implantação a partir da lista `atalhos` do `config_fundacao.json`. Origem nova = acrescentar a sigla na lista e reimplantar. Também dá para executar o próprio `pl_mestre_dw` e preencher `origens` à mão.
+
+Regras:
+- Nome errado ou origem inativa (ex.: `G5`, ou `PROTHEUS` antes de ativado) **falha no Preparar_Ciclo**, com a lista das origens válidas. Um ciclo vazio não termina como sucesso.
+- Execuções de **origens diferentes** podem rodar ao mesmo tempo: cada uma só mexe nas tabelas das suas origens, inclusive na retenção da Bronze, e a gravação dos watermarks e do log tenta de novo se as duas terminarem juntas.
+- **Não rode a mesma origem** em duas execuções simultâneas: as duas copiariam a mesma janela.
+- O `ctl_log` registra no resumo do ciclo quais origens rodaram.
 
 **Falhas:** se qualquer tabela falhar, o watermark não avança. O ciclo seguinte reprocessa a mesma janela e o MERGE evita duplicar linhas.
 
@@ -367,3 +403,5 @@ WHERE modo_carga = 'INCREMENTAL' ORDER BY id;
 | 22/10/2026 | 4S AG (Firebird) ativado: 29 tabelas, 2,3 mi de linhas. Ajustes: colunas ausentes no 4S (`COLUNAS_AUSENTES`), nomes em maiúsculas e `NaN` → nulo. Pipeline com `ForEach_GS` e `ForEach_4S` |
 | 22/10/2026 | Guia padrão para novas origens, dicionário canônico (21 entidades, 162 campos) e de-para do Fortes |
 | 22/10/2026 | Nexti (API) incluída: Key Vault `kv-dw-fabric-kmf`, notebook `nb_ingestao_api`, 12 tabelas `_nexti`, sem dados pessoais e de saúde (exceto o nome do colaborador) |
+| 23/10/2026 | Lakehouses Bronze, Silver e Gold recriados e dados copiados dos antigos `lh_*`: a renomeação pela API não mudou o banco do SQL endpoint e a sincronização de todas as tabelas falhava. A implantação não renomeia mais lakehouses |
+| 23/10/2026 | Orquestração por origem: todas de uma vez ou só as escolhidas (`executar_ciclo.py`), com validação do filtro e retenção limitada às origens do ciclo |

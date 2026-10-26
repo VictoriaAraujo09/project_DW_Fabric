@@ -137,6 +137,14 @@ def manutencao(nome, cfg, lote):
                 alvo.vacuum(retention_hours=168, enforce_retention_duration=False, dry_run=False)
         except Exception as e:
             log(lote, nome, tabela, "MANUTENCAO", 0, "FALHA", str(e))
+    # regras de qualidade do grupo da rotina (config/qualidade.yml), uma vez por dia
+    try:
+        q = json.loads(rodar("nb_qualidade", {"grupo": nome, "lote": lote}) or "{}")
+        status = "SUCESSO" if not q.get("falhas_erro") else "FALHA"
+        log(lote, nome, f"QUALIDADE.{nome}", "QUALIDADE", q.get("regras", 0), status,
+            json.dumps(q, ensure_ascii=False))
+    except Exception as e:
+        log(lote, nome, f"QUALIDADE.{nome}", "QUALIDADE", 0, "FALHA", str(e))
     gravar_watermark_gold(f"ROTINA_{nome}", "manutencao", agora_utc())
 
 def hoje_ja(nome, marca):
@@ -150,10 +158,12 @@ def executar(nome, cfg):
     res_api = rodar("nb_ingestao_api", {
         "lote": lote, "ciclo": "FATOS", "origens": "NEXTI", "tabelas": ",".join(cfg["tabelas"]),
         "configuracao_api": configuracao_api, "max_dias_por_execucao": int(max_dias_por_execucao)})
-    copiadas = sum(int(float(s.split("|")[2] or 0)) for s in json.loads(res_api or "[]"))
+    itens_api = json.loads(res_api or "[]")
+    copiadas = sum(int(float(s.split("|")[2] or 0)) for s in itens_api)
+    falhou = any(s.split("|")[1] == "FALHA" for s in itens_api)
     # nada mudou na API e as Golds já viraram o dia: termina sem Silver nem Gold. Os watermarks não
     # avançam; a próxima busca parte do mesmo ponto, o que só alarga um pouco a janela consultada.
-    if copiadas == 0 and modo_gold != "COMPLETO" and (not cfg["golds"] or hoje_ja(nome, "golds_dia")):
+    if copiadas == 0 and not falhou and modo_gold != "COMPLETO" and (not cfg["golds"] or hoje_ja(nome, "golds_dia")):
         seg = (agora_utc() - t_ini).total_seconds()
         log(lote, nome, f"ROTINA.{nome}", "ROTINA", 0, "SEM_ALTERACAO", f"nenhuma alteração na API | {seg:.0f}s")
         return f"{nome}: sem alteração ({seg:.0f}s)"
@@ -199,6 +209,15 @@ elif escolhidas:
         soltar_trava()
 else:
     print("nenhuma rotina no horário")
+
+# %%
+# monitoramento a cada 30 min (rotinas atrasadas, tabelas paradas, falhas, qualidade) -> ctl_alertas
+ultimo_monitor = watermark_gold("MONITORAMENTO", "ctl_log")
+if not _LOCAL and (ultimo_monitor is None or agora_utc() - ultimo_monitor > dt.timedelta(minutes=30)):
+    try:
+        print("monitoramento:", rodar("nb_monitoramento", {}))
+    except Exception as e:
+        print(f"monitoramento falhou: {str(e)[:300]}")
 
 # %%
 # falha de uma rotina não impede as outras; no fim, a execução fica marcada como falha no Fabric

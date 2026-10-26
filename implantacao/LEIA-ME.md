@@ -12,7 +12,7 @@ Este pacote cria a estrutura do DW em poucos minutos: workspaces, lakehouses (Br
 | `notebooks/nb_setup_controle.ipynb` | Cria `ctl_origens`, `ctl_tabelas` e `ctl_log` no lakehouse `Bronze` |
 | `notebooks/nb_preparar_ciclo.ipynb` | Lê o controle e monta as consultas incrementais de cada tabela |
 | `notebooks/nb_orquestrador.ipynb` | Faz o MERGE na Silver, avança os watermarks e grava o log |
-| `src/`, `build_notebooks.py`, `teste_local.py` | Fonte dos notebooks e teste local, para versionar no GitHub |
+| `src/`, `build_notebooks.py` | Fonte dos notebooks, para versionar no GitHub. Testes em `tests/` (`python -m pytest` na raiz) |
 
 ## Passo a passo
 

@@ -12,7 +12,8 @@
 lote = "manual"
 ciclo = "FATOS"
 resultados = "[]"       # lista "id|novo_watermark|linhas_copiadas", montada pelo pipeline
-resultados_api = "[]"   # mesma lista, devolvida pelo nb_ingestao_api (origens API)
+resultados_api = "[]"   # mesma lista, devolvida pelo nb_ingestao_api (origens API); "FALHOU" se ele quebrou
+planejadas = "[]"       # ids das tabelas de banco que o nb_preparar_ciclo mandou copiar
 status_ciclo = "SUCESSO"
 mensagem = ""
 origens = ""            # origens deste ciclo, ex.: "GS,4S" (vazio = todas): limita a retenção a elas
@@ -57,10 +58,12 @@ def gravar_log():
         com_nova_tentativa(lambda: gravar(LH_BRONZE, "ctl_log", pa.Table.from_pylist(_log, schema=schema)))
 
 def interpretar(resultados):
+    """Itens "id|novo_watermark|linhas[|mensagem]". novo_watermark = FALHA (cópia falhou) ou SEM_MUDANCA
+    (incremental sem alteração na origem, cópia pulada)."""
     itens = []
     for s in json.loads(resultados or "[]"):
-        tid, novo, linhas = (s.split("|") + ["", "", "0"])[:3]
-        itens.append({"id": tid, "novo": novo, "linhas": int(float(linhas or 0))})
+        tid, novo, linhas, msg = (s.split("|", 3) + ["", "", "0", ""])[:4]
+        itens.append({"id": tid, "novo": novo, "linhas": int(float(linhas or 0)), "msg": msg})
     return itens
 
 def q(nome):
@@ -175,42 +178,60 @@ if status_ciclo != "SUCESSO":
     gravar_log()
     sair("FALHA registrada")
 else:
-    itens = interpretar(resultados) + interpretar(resultados_api)
+    # Cada tabela é independente: a que falhou fica com o watermark parado e vai para o log; as outras
+    # seguem para a Silver normalmente. No fim, havendo falha, o notebook falha (pipeline vermelho).
+    falhas = []
+    itens = interpretar(resultados)
+    if resultados_api == "FALHOU":
+        falhas.append("Ingestao_API: notebook falhou antes de devolver os resultados")
+        log("Ingestao_API", "BRONZE", 0, "FALHA", "notebook nb_ingestao_api falhou")
+    else:
+        itens += interpretar(resultados_api)
     ctl = {r["id"]: r for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist()}
-    erros, alteradas = [], []
+    reportadas = {i["id"] for i in itens}
+    for tid in json.loads(planejadas or "[]"):
+        if tid not in reportadas:   # o ForEach não chegou a registrar: a cópia falhou
+            falhas.append(f"{tid}: cópia não concluída")
+            log(tid, "BRONZE", 0, "FALHA", "cópia não concluída (ver a execução do pipeline)")
+    ok, alteradas = [], []
     for i in itens:
         cfg = ctl.get(i["id"])
         if cfg is None:
-            erros.append(f"{i['id']}: não está em ctl_tabelas")
+            falhas.append(f"{i['id']}: não está em ctl_tabelas")
+            continue
+        if i["novo"] == "FALHA":
+            falhas.append(f"{i['id']}: {i['msg']}")
+            log(i["id"], "BRONZE", 0, "FALHA", i["msg"])
+            continue
+        if i["novo"] == "SEM_MUDANCA":
             continue
         log(i["id"], "BRONZE", i["linhas"], "SUCESSO")
         try:
             n, aviso = carregar_silver(cfg, i["linhas"])
             log(i["id"], "SILVER", n, "SUCESSO", aviso)
+            ok.append(i)
             if n:
                 alteradas.append(cfg["tabela_destino"])
         except Exception as e:
-            erros.append(f"{i['id']}: {e}")
+            falhas.append(f"{i['id']}: {e}")
             log(i["id"], "SILVER", 0, "FALHA", str(e))
 
-    if not erros:
-        try:
-            rodar_gold(alteradas)
-        except Exception as e:
-            erros.append(f"GOLD: {e}")
-            log("GOLD", "GOLD", 0, "FALHA", str(e))
+    try:
+        rodar_gold(alteradas)
+    except Exception as e:
+        falhas.append(f"GOLD: {e}")
+        log("GOLD", "GOLD", 0, "FALHA", str(e))
 
-    if erros:
-        log("CICLO", "CICLO", 0, "FALHA", " | ".join(erros))
-        gravar_log()
-        raise RuntimeError("Ciclo com falha; watermarks NÃO avançados:\n" + "\n".join(erros))
-
-    avancar_watermarks(itens, ctl)
+    avancar_watermarks(ok, ctl)              # só as tabelas que chegaram à Silver
     if ciclo == "COMPLETO":
         aplicar_retencao(ctl)
     duracao = (agora_utc() - INICIO).total_seconds()
-    log("CICLO", "CICLO", sum(i["linhas"] for i in itens), "SUCESSO",
-        f"Origens {origens or 'todas'}: {len(itens)} tabelas copiadas, {len(alteradas)} alteradas na Silver, "
-        f"{duracao:.0f}s no notebook")
+    status = "SUCESSO" if not falhas else ("PARCIAL" if ok else "FALHA")
+    log("CICLO", "CICLO", sum(i["linhas"] for i in ok), status,
+        f"Origens {origens or 'todas'}: {len(ok)} tabelas na Silver, {len(alteradas)} alteradas, "
+        f"{len(falhas)} com falha, {duracao:.0f}s no notebook" + (" | " + " | ".join(falhas) if falhas else ""))
     gravar_log()
-    sair(json.dumps({"tabelas": len(itens), "alteradas": alteradas}))
+    if falhas:
+        raise RuntimeError(f"Ciclo {status}: {len(ok)} tabelas atualizadas; watermark parado nas que falharam:\n"
+                           + "\n".join(falhas))
+    sair(json.dumps({"tabelas": len(ok), "alteradas": alteradas}))

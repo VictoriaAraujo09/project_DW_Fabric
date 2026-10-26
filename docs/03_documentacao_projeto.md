@@ -339,7 +339,7 @@ project_DW_Fabric/
     ├── implantar_fundacao.py      implantação pela API do Fabric
     ├── pipeline_mestre.py         gerador do pl_mestre_dw
     ├── build_notebooks.py         src/*.py → notebooks/*.ipynb
-    ├── teste_local.py             teste do ciclo sem Fabric
+    ├── (testes em tests/, com pytest) teste do ciclo sem Fabric
     ├── LEIA-ME.md                 passo a passo da Fase 1
     ├── src/                       código-fonte dos notebooks (editar aqui)
     └── notebooks/                 notebooks gerados (não editar à mão)
@@ -373,6 +373,42 @@ WHERE modo_carga = 'INCREMENTAL' ORDER BY id;
 
 ---
 
+## 9.1 Testes, qualidade e monitoramento
+
+**Isolamento entre bases.** Uma base ou tabela com falha não trava as outras:
+- no `pl_mestre_dw`, o orquestrador roda mesmo se o `ForEach` de uma origem ou a `Ingestao_API` falhar (dependência *Completed*);
+- o orquestrador leva para a Silver e avança o watermark só das tabelas que deram certo; as que falharam ficam com o watermark parado e aparecem no `ctl_log` (o ciclo fica `PARCIAL`), e o pipeline termina vermelho para alertar;
+- o `nb_ingestao_api` devolve `FALHA` por tabela em vez de parar no primeiro erro; no `nb_rotina_nexti`, uma rotina com falha não impede as outras.
+
+**Testes unitários** (`tests/`, pytest): rodam os notebooks localmente, sem Fabric, sobre lakehouses temporários, e cobrem preparo do ciclo, padronização da Silver, isolamento, regras das Golds e o motor de qualidade.
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest      # na raiz do projeto
+```
+
+O GitHub roda os mesmos testes a cada push e pull request (`.github/workflows/ci.yml`).
+
+**Qualidade dos dados** (`nb_qualidade` + `config/qualidade.yml`). As regras ficam no YAML (chave única, não nulo, linhas proibidas, valores permitidos, faixa de datas, mínimo de linhas, sem timestamp sem fuso), com grupo (`AUSENCIAS`, `COBERTURAS`, `MARCACAO`, `GERAL`) e severidade (`erro` ou `alerta`). O resultado de cada regra vai para `ctl_qualidade`. Roda uma vez por dia em cada rotina e pode ser executado à mão com `grupo` vazio (todas).
+
+**Monitoramento** (`nb_monitoramento`, a cada 30 min pelas rotinas e no fim do `pl_mestre_dw`). Grava em `ctl_alertas`:
+
+| Alerta | Quando |
+|---|---|
+| `ROTINA_ATRASADA` | rotina sem executar além do limite, dentro da janela |
+| `TABELA_PARADA` | tabela incremental com watermark parado além de `tabelas_incrementais_max_horas` |
+| `FALHA_*` | etapa com FALHA ou PARCIAL no `ctl_log` |
+| `VOLUME_BAIXO` | tabela FULL do ciclo completo com queda grande em relação à média |
+| `QUALIDADE` | regra do `qualidade.yml` quebrada |
+
+O mesmo alerta não se repete por `silenciar_horas`. Com o webhook do canal no Key Vault (segredo `teams-webhook-dw`), os alertas de severidade `erro` também vão para o Teams.
+
+```sql
+-- últimos alertas (SQL endpoint do lakehouse Bronze)
+SELECT dt_alerta, severidade, tipo, mensagem FROM ctl_alertas ORDER BY dt_alerta DESC;
+-- última verificação de qualidade
+SELECT * FROM ctl_qualidade WHERE dt_execucao = (SELECT MAX(dt_execucao) FROM ctl_qualidade);
+```
+
 ## 10. Pendências e próximos passos
 
 | # | Item | Prioridade |
@@ -405,3 +441,4 @@ WHERE modo_carga = 'INCREMENTAL' ORDER BY id;
 | 22/10/2026 | Nexti (API) incluída: Key Vault `kv-dw-fabric-kmf`, notebook `nb_ingestao_api`, 12 tabelas `_nexti`, sem dados pessoais e de saúde (exceto o nome do colaborador) |
 | 23/10/2026 | Lakehouses Bronze, Silver e Gold recriados e dados copiados dos antigos `lh_*`: a renomeação pela API não mudou o banco do SQL endpoint e a sincronização de todas as tabelas falhava. A implantação não renomeia mais lakehouses |
 | 23/10/2026 | Orquestração por origem: todas de uma vez ou só as escolhidas (`executar_ciclo.py`), com validação do filtro e retenção limitada às origens do ciclo |
+| 26/10/2026 | Testes (pytest e CI no GitHub), isolamento entre bases no pipeline e na ingestão, qualidade de dados (`nb_qualidade`, `config/qualidade.yml`) e monitoramento (`nb_monitoramento`, `ctl_alertas`) |

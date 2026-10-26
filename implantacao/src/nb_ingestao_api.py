@@ -323,7 +323,13 @@ for origem in sorted(ativas):
     for cfg in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
         if cfg["origem"] == origem and cfg["ativo"] and escolhida(cfg):
             inicio = time.time()
-            novo, linhas = carregar(cliente, cfg)
+            # falha de uma tabela não impede as outras: vai para o orquestrador como FALHA (watermark parado)
+            try:
+                novo, linhas = carregar(cliente, cfg)
+            except Exception as e:
+                print(f"{cfg['id']}: FALHA {e}")
+                resultados.append(f"{cfg['id']}|FALHA|0|{str(e)[:500]}")
+                continue
             print(f"{cfg['id']}: {linhas} linhas até {novo} ({time.time() - inicio:.0f}s)")
             resultados.append(f"{cfg['id']}|{novo}|{linhas}")
 

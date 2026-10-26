@@ -61,5 +61,6 @@ def script_local(nome, overrides=None):
 
 if __name__ == "__main__":
     for n in ("nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador", "nb_ingestao_api",
-              "nb_rotina_nexti", "nb_gold_fato_movimentacao_colaborador", "nb_gold_fato_ausencias", "nb_gold"):
+              "nb_rotina_nexti", "nb_gold_fato_movimentacao_colaborador", "nb_gold_fato_ausencias", "nb_gold",
+              "nb_qualidade", "nb_monitoramento"):
         print("gerado:", montar(n))

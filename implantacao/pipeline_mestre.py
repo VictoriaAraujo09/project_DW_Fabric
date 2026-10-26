@@ -88,7 +88,11 @@ def _foreach(o, ws_id, lh_bronze_id, paralelismo):
                 f"@or(not(equals(item().modo_carga, 'INCREMENTAL')), "
                 f"and(not(equals({novo}, '')), not(equals({novo}, item().wm_atual))))"),
             "ifTrueActivities": [atv_copia, atv_registro],
-            "ifFalseActivities": [],
+            # incremental sem alteração: registra para o orquestrador saber que não foi falha
+            "ifFalseActivities": [{
+                "name": f"Sem_Mudanca_{n}", "type": "AppendVariable", "dependsOn": [],
+                "typeProperties": {"variableName": "resultados",
+                                   "value": _expr("@concat(item().id, '|SEM_MUDANCA|0')")}}],
         },
     }
     return {
@@ -101,7 +105,8 @@ def _foreach(o, ws_id, lh_bronze_id, paralelismo):
         },
     }
 
-def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, paralelismo=4, nb_api_id=None):
+def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, paralelismo=4, nb_api_id=None,
+          nb_monitoramento_id=None):
     ativos = [o for o in origens if o.get("connection_id") and o["conector"] != "API"]
     apis = [o for o in origens if o["conector"] == "API" and o.get("key_vault")]
     if not ativos and not apis:
@@ -113,9 +118,11 @@ def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, para
                             {"ciclo": "@pipeline().parameters.ciclo", "lote": "@pipeline().RunId",
                              "origens": "@pipeline().parameters.origens"})]
     atividades += [_foreach(o, ws_id, lh_bronze_id, paralelismo) for o in ativos]
-    depende = [{"activity": f"ForEach_{o['origem']}", "dependencyConditions": ["Succeeded"]} for o in ativos]
+    # Completed: o orquestrador roda mesmo se a cópia de uma base falhar, e atualiza as outras
+    depende = [{"activity": f"ForEach_{o['origem']}", "dependencyConditions": ["Completed"]} for o in ativos]
     params_orq = {"lote": "@pipeline().RunId", "ciclo": f"@{saida_prep}['ciclo']",
                   "resultados": "@string(variables('resultados'))", "status_ciclo": "SUCESSO",
+                  "planejadas": f"@string({saida_prep}['ids'])",
                   "origens": f"@{saida_prep}['selecionadas']"}
     if apis:
         # origens API: um notebook lê as APIs e devolve a lista id|watermark|linhas ao orquestrador
@@ -125,9 +132,14 @@ def gerar(ws_id, lh_bronze_id, nb_preparar_id, nb_orquestrador_id, origens, para
             {"lote": "@pipeline().RunId", "ciclo": f"@{saida_prep}['ciclo']",
              "origens": "@pipeline().parameters.origens", "configuracao_api": config_api},
             [{"activity": "Preparar_Ciclo", "dependencyConditions": ["Succeeded"]}]))
-        params_orq["resultados_api"] = "@activity('Ingestao_API').output.result.exitValue"
-        depende.append({"activity": "Ingestao_API", "dependencyConditions": ["Succeeded"]})
+        # se o notebook da API quebrar, o orquestrador recebe FALHOU e segue com os bancos
+        params_orq["resultados_api"] = "@coalesce(activity('Ingestao_API').output?.result?.exitValue, 'FALHOU')"
+        depende.append({"activity": "Ingestao_API", "dependencyConditions": ["Completed"]})
     atividades.append(_notebook("Orquestrador", nb_orquestrador_id, ws_id, params_orq, depende))
+    if nb_monitoramento_id:
+        # depois do orquestrador, com sucesso ou falha: alertas do ciclo no ctl_alertas
+        atividades.append(_notebook("Monitoramento", nb_monitoramento_id, ws_id, {},
+                                    [{"activity": "Orquestrador", "dependencyConditions": ["Completed"]}]))
     # Orquestrador "Skipped" = alguma etapa anterior falhou: registra no log e marca o pipeline como falho
     atividades.append(_notebook(
         "Registrar_Falha", nb_orquestrador_id, ws_id,

@@ -1,0 +1,22 @@
+name: ci
+
+# Testes unitários e de qualidade (tests/) a cada push e pull request: roda os notebooks localmente,
+# sem Fabric, sobre lakehouses temporários. Um teste quebrado bloqueia o merge na main.
+on:
+  push:
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependências (as do pyproject.toml usadas nos testes)
+        run: pip install deltalake duckdb pyarrow pandas pyyaml pytest
+      - name: Notebooks gerados a partir do src
+        run: cd implantacao && PYTHONUTF8=1 python build_notebooks.py
+      - name: Testes
+        run: PYTHONUTF8=1 python -m pytest

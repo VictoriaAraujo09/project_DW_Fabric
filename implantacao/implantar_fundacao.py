@@ -28,7 +28,8 @@ except ImportError:
 RAIZ = pathlib.Path(__file__).parent
 API = "https://api.fabric.microsoft.com/v1"
 NOTEBOOKS = ["nb_setup_controle", "nb_preparar_ciclo", "nb_orquestrador", "nb_ingestao_api",
-             "nb_rotina_nexti", "nb_gold_fato_movimentacao_colaborador", "nb_gold_fato_ausencias", "nb_gold"]
+             "nb_rotina_nexti", "nb_gold_fato_movimentacao_colaborador", "nb_gold_fato_ausencias", "nb_gold",
+             "nb_qualidade", "nb_monitoramento"]
 # Não renomear: o banco do SQL endpoint mantém o nome da criação e a sincronização passa a falhar
 LAKEHOUSES = ["Bronze", "Silver", "Gold"]
 PIPELINE = "pl_mestre_dw"
@@ -164,8 +165,10 @@ def enviar_consultas(fab, ws, lh_gold):
     Gold leem as regras de negócio."""
     tok = fab.cred.get_token("https://storage.azure.com/.default").token
     cab = {"Authorization": f"Bearer {tok}"}
-    for arq in sorted((RAIZ / "consultas").glob("*.sql")):
-        url = f"https://onelake.dfs.fabric.microsoft.com/{ws}/{lh_gold}/Files/consultas/{arq.name}"
+    arquivos = [(arq, "consultas") for arq in sorted((RAIZ / "consultas").glob("*.sql"))]
+    arquivos += [(arq, "config") for arq in sorted((RAIZ.parent / "config").glob("*.yml"))]
+    for arq, pasta in arquivos:
+        url = f"https://onelake.dfs.fabric.microsoft.com/{ws}/{lh_gold}/Files/{pasta}/{arq.name}"
         dados = arq.read_bytes()
         for metodo, params, corpo in (("PUT", {"resource": "file"}, None),
                                       ("PATCH", {"action": "append", "position": 0}, dados),
@@ -173,7 +176,7 @@ def enviar_consultas(fab, ws, lh_gold):
             r = requests.request(metodo, url, headers=cab, params=params, data=corpo, timeout=120)
             if r.status_code >= 400:
                 raise RuntimeError(f"{metodo} {arq.name} -> {r.status_code}: {r.text[:300]}")
-        print(f"  consulta {arq.name}: enviada")
+        print(f"  {pasta}/{arq.name}: enviado")
 
 def organizar_pastas(fab, ws, pastas):
     """Cria as pastas do workspace e move cada item para a sua (config "pastas": {pasta: [itens]})."""
@@ -292,7 +295,7 @@ def main():
         print(f"5/5 Pipeline em {nome_ws}")
         definicao = pipeline_mestre.gerar(ws, lh["Bronze"], nb["nb_preparar_ciclo"],
                                           nb["nb_orquestrador"], cfg["origens"], cfg.get("paralelismo", 4),
-                                          nb_api_id=nb["nb_ingestao_api"])
+                                          nb_api_id=nb["nb_ingestao_api"], nb_monitoramento_id=nb["nb_monitoramento"])
         (RAIZ / f"{PIPELINE}_{nome_ws}.json").write_text(json.dumps(definicao, indent=2, ensure_ascii=False))
         pl = item(fab, ws, PIPELINE, "DataPipeline",
                   {"pipeline-content.json": json.dumps(definicao, ensure_ascii=False)})

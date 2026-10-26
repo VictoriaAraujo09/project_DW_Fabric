@@ -18,7 +18,9 @@
         "nb_rotina_nexti": "fceced3e-1ddf-4db8-bca0-773d18db22c9",
         "nb_gold_fato_movimentacao_colaborador": "34d3a722-47ae-4383-851f-f038e7543b8e",
         "nb_gold_fato_ausencias": "c04f8544-bd5c-4571-b09e-614b05923447",
-        "nb_gold": "e52e91cf-e2fa-4527-ae71-4d4cade980cb"
+        "nb_gold": "e52e91cf-e2fa-4527-ae71-4d4cade980cb",
+        "nb_qualidade": "255f243c-ddae-4b09-991f-b6721672e1dc",
+        "nb_monitoramento": "685fed95-b4c3-42b8-97db-de48b3cbd57f"
       },
       "pipeline": "4ae3857c-2708-4e6c-804a-f5f467a7f52b",
       "atalhos": {

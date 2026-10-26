@@ -4,3 +4,7 @@ __pycache__/
 
 # amostras de dados das origens: podem ter dados pessoais (docs/00_guia_nova_origem.md, etapa 4.3)
 docs/origens/*/amostra_*
+
+# testes
+.pytest_cache/
+*.egg-info/

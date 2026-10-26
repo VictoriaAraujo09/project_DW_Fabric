@@ -196,7 +196,7 @@ GROUP BY rc.RDB$RELATION_NAME;
 ```powershell
 cd implantacao
 $env:PYTHONUTF8='1'; ..\.venv\Scripts\python.exe build_notebooks.py
-..\.venv\Scripts\python.exe teste_local.py
+..\.venv\Scripts\python.exe -m pytest   # na raiz do projeto: testes unitários e de qualidade
 cd ..
 ```
 

@@ -15,6 +15,7 @@
     "Carga geral": ["pl_mestre_dw", "nb_setup_controle", "nb_preparar_ciclo", "nb_ingestao_api", "nb_orquestrador"],
     "Execução sob demanda": ["pl_atualizar_todas", "pl_atualizar_gs", "pl_atualizar_4s", "pl_atualizar_nexti"],
     "Rotinas Nexti": ["nb_rotina_nexti"],
+    "Qualidade e monitoramento": ["nb_qualidade", "nb_monitoramento"],
     "Regras de negócio": ["nb_gold", "nb_gold_fato_movimentacao_colaborador", "nb_gold_fato_ausencias"]
   },
   "agendamentos": {

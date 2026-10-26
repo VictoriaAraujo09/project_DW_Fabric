@@ -107,5 +107,7 @@ for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
 
 resumo = {k: len(v) for k, v in saida.items()}
 print(f"Ciclo {ciclo} | lote {lote} | origens {selecionadas} | tabelas por origem: {resumo}")
-sair(json.dumps({"ciclo": ciclo, "lote": lote, "origens": saida, "selecionadas": ",".join(selecionadas)},
-                ensure_ascii=False))
+# ids planejados: o orquestrador compara com os resultados para achar cópias que falharam
+ids = [t["id"] for lista in saida.values() for t in lista]
+sair(json.dumps({"ciclo": ciclo, "lote": lote, "origens": saida, "selecionadas": ",".join(selecionadas),
+                 "ids": ids}, ensure_ascii=False))

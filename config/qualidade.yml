@@ -1,0 +1,73 @@
+# Regras de qualidade dos dados, aplicadas pelo nb_qualidade nos dados reais do Fabric.
+# A implantação copia este arquivo para o lakehouse Gold → Files/config/qualidade.yml.
+#
+# Cada regra:
+#   nome        descrição curta (aparece no ctl_qualidade e nos alertas)
+#   grupo       rotina ou assunto: o nb_qualidade roda um grupo de cada vez (ex.: AUSENCIAS) ou todos
+#   tabela      Camada.tabela (Bronze, Silver ou Gold)
+#   tipo        chave_unica | nao_nulo | sem_linhas | valores_permitidos | intervalo | minimo_linhas
+#               | sem_timestamp_sem_fuso
+#   severidade  erro (regra de negócio quebrada) | alerta (dado estranho que vale olhar)
+#   colunas     colunas lidas/verificadas; em sem_linhas, as colunas que a condição usa
+#   condicao    (sem_linhas) expressão SQL das linhas que NÃO podem existir; {hoje} = data de Brasília
+#   coluna, valores, minimo, maximo   (valores_permitidos, intervalo, minimo_linhas)
+
+regras:
+  # ---------------------------------------------------------------- ausências e movimentação
+  - {nome: chave única da Gold de ausências, grupo: AUSENCIAS, tabela: Gold.gold_fato_ausencias,
+     tipo: chave_unica, colunas: [IdAusencia, DataCalendario, SistemaOrigem], severidade: erro}
+  - {nome: campos obrigatórios das ausências, grupo: AUSENCIAS, tabela: Gold.gold_fato_ausencias,
+     tipo: nao_nulo, colunas: [PK_Colaborador, IdAusencia, DataCalendario, CodColaborador], severidade: erro}
+  - {nome: ausência ativa sem data de inativação, grupo: AUSENCIAS, tabela: Gold.gold_fato_ausencias,
+     tipo: sem_linhas, colunas: [Ativo, DataInativacao], condicao: "Ativo AND DataInativacao IS NOT NULL",
+     severidade: erro}
+  - {nome: datas de ausência fora de faixa, grupo: AUSENCIAS, tabela: Gold.gold_fato_ausencias,
+     tipo: intervalo, coluna: DataCalendario, minimo: "2000-01-01", maximo: "2100-12-31", severidade: alerta}
+  - {nome: chave única da movimentação, grupo: AUSENCIAS, tabela: Gold.gold_fato_movimentacao_colaborador,
+     tipo: chave_unica, colunas: [CodColaborador, DataReferencia, SistemaOrigem], severidade: erro}
+  - {nome: movimentação no futuro, grupo: AUSENCIAS, tabela: Gold.gold_fato_movimentacao_colaborador,
+     tipo: sem_linhas, colunas: [DataReferencia], condicao: "DataReferencia > DATE '{hoje}'", severidade: erro}
+  - {nome: chave única da Silver de ausências, grupo: AUSENCIAS, tabela: Silver.silver_fato_ausencias_nexti,
+     tipo: chave_unica, colunas: [id], severidade: erro}
+  - {nome: chave única da Silver de transferências, grupo: AUSENCIAS,
+     tabela: Silver.silver_fato_transferencias_posto_nexti, tipo: chave_unica, colunas: [id], severidade: erro}
+
+  # ---------------------------------------------------------------- coberturas
+  - {nome: chave única da Gold de coberturas, grupo: COBERTURAS, tabela: Gold.gold_fato_coberturas,
+     tipo: chave_unica, colunas: [IdCobertura, DataCalendario, SistemaOrigem], severidade: erro}
+  - {nome: colaborador cobrindo a si mesmo, grupo: COBERTURAS, tabela: Gold.gold_fato_coberturas,
+     tipo: sem_linhas, colunas: [CodColaborador, CodColaboradorAusente],
+     condicao: "CodColaborador = CodColaboradorAusente", severidade: erro}
+  - {nome: datas de cobertura fora de faixa, grupo: COBERTURAS, tabela: Gold.gold_fato_coberturas,
+     tipo: intervalo, coluna: DataCalendario, minimo: "2000-01-01", maximo: "2100-12-31", severidade: alerta}
+  - {nome: chave única da Silver de coberturas, grupo: COBERTURAS, tabela: Silver.silver_fato_coberturas_nexti,
+     tipo: chave_unica, colunas: [id], severidade: erro}
+
+  # ---------------------------------------------------------------- marcação
+  - {nome: chave única da Gold de marcação, grupo: MARCACAO, tabela: Gold.gold_fato_marcacao_ponto,
+     tipo: chave_unica, colunas: [IdMarcacaoPonto, SistemaOrigem], severidade: erro}
+  - {nome: data de referência diferente da data da marcação, grupo: MARCACAO, tabela: Gold.gold_fato_marcacao_ponto,
+     tipo: sem_linhas, colunas: [DataReferencia, DataHoraMarcacao],
+     condicao: "DataReferencia <> CAST(DataHoraMarcacao AS DATE)", severidade: erro}
+  - {nome: chave única da Silver de marcações, grupo: MARCACAO, tabela: Silver.silver_fato_marcacoes_ponto_nexti,
+     tipo: chave_unica, colunas: [id], severidade: erro}
+  - {nome: tipos de marcação na Gold, grupo: MARCACAO, tabela: Silver.silver_fato_marcacoes_ponto_nexti,
+     tipo: valores_permitidos, coluna: clockingTypeId, valores: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], severidade: alerta}
+
+  # ---------------------------------------------------------------- geral
+  - {nome: Gold sem timestamp sem fuso (SQL endpoint), grupo: GERAL, tabela: Gold.*,
+     tipo: sem_timestamp_sem_fuso, severidade: erro}
+  - {nome: Gold de ausências não vazia, grupo: GERAL, tabela: Gold.gold_fato_ausencias, tipo: minimo_linhas,
+     minimo: 1, severidade: erro}
+  - {nome: Gold de coberturas não vazia, grupo: GERAL, tabela: Gold.gold_fato_coberturas, tipo: minimo_linhas,
+     minimo: 1, severidade: erro}
+
+# Limites do nb_monitoramento
+monitoramento:
+  rotinas:                       # rotinas do nb_rotina_nexti: atraso máximo dentro da janela de horário
+    AUSENCIAS: {janela: ["06:00", "20:00"], atraso_max_min: 20}
+    COBERTURAS: {janela: ["06:00", "20:00"], atraso_max_min: 20}
+  tabelas_incrementais_max_horas: 30   # ciclo geral: watermark parado há mais que isso
+  volume_queda_max_percentual: 70      # FULL do ciclo completo: queda maior que isso em relação à média
+  silenciar_horas: 6                   # o mesmo alerta não se repete nesse intervalo
+  teams_webhook_segredo: teams-webhook-dw   # segredo do Key Vault com o webhook do canal (opcional)

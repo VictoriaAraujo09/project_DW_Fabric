@@ -1,0 +1,22 @@
+[project]
+name = "dw-fabric"
+version = "0.1.0"
+description = "Data Warehouse no Microsoft Fabric: ingestão (bancos e APIs), Bronze/Silver/Gold, rotinas e qualidade"
+requires-python = ">=3.11"
+dependencies = [
+    "deltalake>=0.20",
+    "duckdb>=1.0",
+    "pyarrow>=15",
+    "pandas>=2",
+    "pyyaml>=6",
+    "requests>=2.31",
+    "azure-identity>=1.15",
+    "truststore>=0.9",
+]
+
+[project.optional-dependencies]
+teste = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

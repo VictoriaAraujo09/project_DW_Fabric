@@ -38,9 +38,10 @@ def existe(lakehouse, tabela):
     except Exception:
         return False
 
-def ler(lakehouse, tabela, filtros=None):
+def ler(lakehouse, tabela, filtros=None, colunas=None):
     dt_ = DeltaTable(caminho(lakehouse, tabela), storage_options=_opts())
-    return dt_.to_pyarrow_table(filters=filtros) if filtros else dt_.to_pyarrow_table()
+    kw = {k: v for k, v in (("filters", filtros), ("columns", colunas)) if v}
+    return dt_.to_pyarrow_table(**kw)
 
 def gravar(lakehouse, tabela, dados, modo="append"):
     if modo == "append":
@@ -125,3 +126,13 @@ def cabecalho(sql):
             chave, _, valor = linha[4:].partition(" ")
             cfg[chave] = valor.strip()
     return cfg
+
+def ler_config(nome):
+    """Arquivo YAML da pasta config (no Fabric: lakehouse Gold → Files/config/<nome>, copiado de config/ pela
+    implantação). Nos testes locais, lê de DW_CONFIG."""
+    import yaml
+    if _LOCAL:
+        with open(os.path.join(os.environ["DW_CONFIG"], nome), encoding="utf-8") as arq:
+            return yaml.safe_load(arq)
+    return yaml.safe_load(notebookutils.fs.head(
+        f"abfss://{_WS}@onelake.dfs.fabric.microsoft.com/{LH_GOLD}.Lakehouse/Files/config/{nome}", 10_000_000))

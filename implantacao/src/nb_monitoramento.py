@@ -100,37 +100,23 @@ if novos:
            modo="append" if existe(LH_BRONZE, "ctl_alertas") else "overwrite")
 gravar_watermark_gold("MONITORAMENTO", "ctl_log", agora)
 
-# Teams: os novos das severidades configuradas, num cartão só, pelo Workflow do Teams
+# Teams: os alertas novos das severidades configuradas, num cartão só, pelo Workflow do Teams
 notif = cfg.get("notificacao") or {}
 erros = [a for a in novos if a["severidade"] in notif.get("severidades", ["erro"])]
 
-def cartao(itens):
-    """Mensagem no formato dos Workflows do Teams (cartão adaptável)."""
-    corpo = [{"type": "TextBlock", "size": "Medium", "weight": "Bolder", "text": "DW Fabric: alertas"},
+def corpo_alertas(itens):
+    """Corpo do Adaptive Card: um TextBlock por alerta (até 20)."""
+    corpo = [{"type": "TextBlock", "size": "Medium", "weight": "Bolder", "color": "Attention",
+              "text": "🔴 DW Fabric: alertas"},
              {"type": "TextBlock", "isSubtle": True, "spacing": "None",
               "text": f"{agora_brt:%d/%m/%Y %H:%M} · {len(itens)} novo(s)"}]
     corpo += [{"type": "TextBlock", "wrap": True, "text": f"**{a['tipo']}** · {a['objeto']}\n\n{a['mensagem'][:500]}"}
               for a in itens[:20]]
     if len(itens) > 20:
         corpo.append({"type": "TextBlock", "text": f"... e mais {len(itens) - 20} em ctl_alertas"})
-    return {"type": "message", "destinatario": notif.get("destinatario"),
-            "attachments": [{"contentType": "application/vnd.microsoft.card.adaptive", "content": {
-                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json", "type": "AdaptiveCard",
-                "version": "1.4", "body": corpo}}]}
+    return corpo
 
-teams = "sem alertas"
-if erros and _LOCAL:
-    teams = "local"
-elif erros and notif.get("teams_workflow_segredo"):
-    try:
-        cofre = json.loads(configuracao_api)["NEXTI"]["key_vault"]
-        url = notebookutils.credentials.getSecret(cofre, notif["teams_workflow_segredo"])
-        import requests
-        r = requests.post(url, json=cartao(erros), timeout=30)
-        r.raise_for_status()
-        teams = f"enviado para {notif.get('destinatario') or 'o Workflow'}"
-    except Exception as e:   # sem Workflow configurado ou fora do ar: o alerta continua no ctl_alertas
-        teams = f"não notificado: {str(e)[:200]}"
+teams = "sem alertas" if not erros else enviar_teams(corpo_alertas(erros))
 print(f"Teams: {teams}")
 
 for a in novos:

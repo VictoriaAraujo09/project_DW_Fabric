@@ -70,10 +70,21 @@ monitoramento:
   tabelas_incrementais_max_horas: 30   # ciclo geral: watermark parado há mais que isso
   volume_queda_max_percentual: 70      # FULL do ciclo completo: queda maior que isso em relação à média
   silenciar_horas: 6                   # o mesmo alerta não se repete nesse intervalo
-  # Aviso no Teams: o nb_monitoramento posta os alertas novos num Workflow do Teams ("Enviar alertas
-  # de webhook para um chat"), que entrega no chat do destinatário. A URL do Workflow fica no Key Vault.
+  # Aviso no Teams: entrega num Workflow do Teams ("Enviar alertas de webhook para um chat"), no chat do
+  # destinatário. A URL do Workflow fica no Key Vault (cofre `key_vault`, segredo `teams_workflow_segredo`).
   # Quando houver canal oficial: novo Workflow para o canal, URL no mesmo segredo, destinatario atualizado.
+  #
+  # Dois tipos de aviso usam esta seção:
+  #   - nb_monitoramento: os alertas novos cujas severidades estão em `severidades` (a cada 30 min);
+  #   - nb_orquestrador e nb_rotina_nexti: o resultado de cada execução (`avisar_execucoes`), com o
+  #     comportamento 🟢 NORMAL / 🟡 ATENÇÃO (acima de `duracao_atencao_s`) / 🔴 ALERTA (falha).
   notificacao:
     teams_workflow_segredo: teams-webhook-dw
+    key_vault: https://kv-dw-fabric-kmf.vault.azure.net/   # cofre onde está a URL do Workflow
     destinatario: victoria.araujo@gscsc.com.br   # provisório, enquanto não há canal oficial
-    severidades: [erro]                           # quais alertas vão para o Teams (todos ficam em ctl_alertas)
+    severidades: [erro]                           # alertas do nb_monitoramento que vão para o Teams
+    avisar_execucoes: true                         # avisa o resultado de cada ciclo e de cada rotina
+    nexti_cada: 3          # rotinas da Nexti (5 em 5 min): avisa o sucesso NORMAL 1 vez a cada 3 execuções
+    duracao_atencao_s:     # concluiu acima disto (segundos) = comportamento ATENÇÃO
+      CICLO: 1800
+      ROTINA: 300

@@ -176,10 +176,11 @@ def executar(nome, cfg):
     if copiadas == 0 and not falhou and modo_gold != "COMPLETO" and (not cfg["golds"] or hoje_ja(nome, "golds_dia")):
         seg = (agora_utc() - t_ini).total_seconds()
         log(lote, nome, f"ROTINA.{nome}", "ROTINA", 0, "SEM_ALTERACAO", f"nenhuma alteração na API | {seg:.0f}s")
-        return f"{nome}: sem alteração ({seg:.0f}s)"
+        return {"status": "SUCESSO", "resumo": "sem alteração na API", "segundos": seg,
+                "linha": f"{nome}: sem alteração ({seg:.0f}s)"}
     rodar("nb_orquestrador", {
         "lote": lote, "ciclo": "FATOS", "resultados": "[]", "resultados_api": res_api,
-        "status_ciclo": "SUCESSO", "origens": "NEXTI"})
+        "status_ciclo": "SUCESSO", "origens": "NEXTI", "notificar": "NAO"})   # a rotina faz o próprio aviso
     resumo = [f"{copiadas} linhas da API"]
     for g in (cfg["golds"] if modo_gold != "NENHUM" else []):
         t0 = agora_utc()
@@ -197,7 +198,8 @@ def executar(nome, cfg):
         resumo.append("manutenção diária")
     seg = (agora_utc() - t_ini).total_seconds()
     log(lote, nome, f"ROTINA.{nome}", "ROTINA", copiadas, "SUCESSO", " | ".join(resumo) + f" | {seg:.0f}s")
-    return f"{nome}: " + " | ".join(resumo) + f" | {seg:.0f}s"
+    return {"status": "SUCESSO", "resumo": " | ".join(resumo), "segundos": seg,
+            "linha": f"{nome}: " + " | ".join(resumo) + f" | {seg:.0f}s"}
 
 # %%
 resultado = {"rotinas": escolhidas, "status": "SEM_ROTINA_NO_HORARIO" if not escolhidas else "EM_EXECUCAO"}
@@ -207,11 +209,17 @@ if escolhidas and not pegar_trava():
 elif escolhidas:
     try:
         for nome in escolhidas:
+            t0 = agora_utc()
             try:
-                print(executar(nome, ROTINAS[nome]))
+                r = executar(nome, ROTINAS[nome])
+                print(r["linha"])
+                print("  teams:", avisar_execucao("NEXTI", f"Rotina {nome}", r["status"], r["segundos"],
+                                                  resumo=r["resumo"], tipo="ROTINA", chave=f"ROTINA_{nome}"))
             except Exception as e:
                 falhas.append(f"{nome}: {e}")
                 log("", nome, f"ROTINA.{nome}", "ROTINA", 0, "FALHA", str(e))
+                avisar_execucao("NEXTI", f"Rotina {nome}", "FALHA", (agora_utc() - t0).total_seconds(),
+                                erro=str(e), tipo="ROTINA", chave=f"ROTINA_{nome}")
             gravar_log()
         resultado = {"rotinas": escolhidas, "status": "FALHA" if falhas else "SUCESSO",
                      "segundos": round((agora_utc() - inicio).total_seconds())}

@@ -177,3 +177,78 @@ def ler_config(nome):
             return yaml.safe_load(arq)
     return yaml.safe_load(notebookutils.fs.head(
         f"{raiz(LH_GOLD)}/Files/config/{nome}", 10_000_000))
+
+# ---------------------------------------------------------------- aviso no Teams por execução
+# Resultado de cada ciclo (nb_orquestrador) e de cada rotina (nb_rotina_nexti) vai para o Teams pelo
+# mesmo Workflow do nb_monitoramento. Config: config/qualidade.yml, seção `monitoramento.notificacao`.
+_ICONE_STATUS = {"SUCESSO": "✅", "PARCIAL": "⚠️", "FALHA": "❌"}
+_ICONE_COMP = {"NORMAL": "🟢", "ATENÇÃO": "🟡", "ALERTA": "🔴"}
+_COR_COMP = {"NORMAL": "Good", "ATENÇÃO": "Warning", "ALERTA": "Attention"}
+
+def _config_notificacao():
+    return ((ler_config("qualidade.yml").get("monitoramento") or {}).get("notificacao")) or {}
+
+def incrementar_contador(chave):
+    """Contador persistente por chave (ctl_contador na Bronze); devolve o novo valor. Usado para avisar
+    só 1 a cada N execuções das rotinas de alta frequência."""
+    atual = 0
+    if existe(LH_BRONZE, "ctl_contador"):
+        r = ler(LH_BRONZE, "ctl_contador").where(F.col("chave") == chave).first()
+        atual = int(r["n"]) if r else 0
+    linha = criar([{"chave": chave, "n": atual + 1, "dt": agora_utc()}], "chave string, n bigint, dt timestamp")
+    com_nova_tentativa(lambda: mesclar(LH_BRONZE, "ctl_contador", linha, ["chave"]))
+    return atual + 1
+
+def enviar_teams(corpo_cartao):
+    """Posta um Adaptive Card no Workflow do Teams (URL no Key Vault, cofre e segredo em qualidade.yml).
+    Não lança: uma notificação que falha não derruba a execução. Devolve o status do envio em texto."""
+    notif = _config_notificacao()
+    if _LOCAL:
+        return "local"
+    if not notif.get("teams_workflow_segredo") or not notif.get("key_vault"):
+        return "sem workflow"
+    try:
+        import requests
+        url = notebookutils.credentials.getSecret(notif["key_vault"], notif["teams_workflow_segredo"])
+        payload = {"type": "message", "destinatario": notif.get("destinatario"),
+                   "attachments": [{"contentType": "application/vnd.microsoft.card.adaptive", "content": {
+                       "$schema": "http://adaptivecards.io/schemas/adaptive-card.json", "type": "AdaptiveCard",
+                       "version": "1.4", "body": corpo_cartao}}]}
+        r = requests.post(url, json=payload, timeout=30)
+        r.raise_for_status()
+        return f"enviado para {notif.get('destinatario') or 'o Workflow'}"
+    except Exception as e:   # sem Workflow configurado ou fora do ar: a execução segue normal
+        return f"não notificado: {str(e)[:200]}"
+
+def comportamento_execucao(status, duracao_s, limite_atencao=None):
+    """🔴 ALERTA: a base não atualizou (FALHA/PARCIAL). 🟡 ATENÇÃO: concluiu, mas acima do tempo esperado
+    (`limite_atencao`). 🟢 NORMAL: concluiu no tempo normal."""
+    if status in ("FALHA", "PARCIAL"):
+        return "ALERTA"
+    if limite_atencao and duracao_s and duracao_s > limite_atencao:
+        return "ATENÇÃO"
+    return "NORMAL"
+
+def avisar_execucao(base, objeto, status, duracao_s, erro="", resumo="", tipo="CICLO", chave=None):
+    """Aviso no Teams do resultado de uma execução (ciclo do pipeline ou rotina). As rotinas da Nexti só
+    avisam o sucesso NORMAL 1 vez a cada `nexti_cada` execuções (config); falha, PARCIAL e ATENÇÃO avisam
+    sempre. Devolve o status do envio ('enviado...', 'local', 'agrupado', 'desligado', 'sem workflow')."""
+    notif = _config_notificacao()
+    if not notif.get("avisar_execucoes", True):
+        return "desligado"
+    comp = comportamento_execucao(status, duracao_s, (notif.get("duracao_atencao_s") or {}).get(tipo))
+    cada = int(notif.get("nexti_cada", 1)) if str(base).upper() == "NEXTI" else 1
+    if comp == "NORMAL" and cada > 1 and chave and incrementar_contador(f"AVISO_{chave}") % cada != 1:
+        return "agrupado"
+    fatos = [("BASE", base), ("Notebook/Pipeline", objeto),
+             ("Status", f"{_ICONE_STATUS.get(status, '•')} {status}")]
+    if erro:
+        fatos.append(("Erro", erro[:800]))
+    fatos.append(("Horário", agora_utc().astimezone(FUSO_BRT).strftime("%d/%m/%Y %H:%M")))
+    fatos.append(("Comportamento", f"{_ICONE_COMP[comp]} {comp}"))
+    corpo = [{"type": "TextBlock", "size": "Medium", "weight": "Bolder", "color": _COR_COMP[comp],
+              "text": f"{_ICONE_COMP[comp]} DW Fabric — {comp}"}]
+    if resumo:
+        corpo.append({"type": "TextBlock", "isSubtle": True, "wrap": True, "spacing": "None", "text": resumo[:300]})
+    corpo.append({"type": "FactSet", "facts": [{"title": t, "value": str(v)} for t, v in fatos]})
+    return enviar_teams(corpo)

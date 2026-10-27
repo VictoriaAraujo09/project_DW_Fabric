@@ -17,6 +17,7 @@ planejadas = "[]"       # ids das tabelas de banco que o nb_preparar_ciclo mando
 status_ciclo = "SUCESSO"
 mensagem = ""
 origens = ""            # origens deste ciclo, ex.: "GS,4S" (vazio = todas): limita a retenção a elas
+notificar = "SIM"       # aviso do ciclo no Teams; "NAO" quando chamado por uma rotina (ela faz o próprio)
 
 # %%
 #@@COMUM@@
@@ -155,6 +156,10 @@ def avancar_watermarks(itens, ctl):
 if status_ciclo != "SUCESSO":
     log("CICLO", "CICLO", 0, "FALHA", mensagem or "Falha em etapa do pipeline")
     gravar_log()
+    if notificar == "SIM":
+        avisar_execucao(origens or "todas", f"Ciclo {ciclo} (pl_mestre_dw)", "FALHA",
+                        (agora_utc() - INICIO).total_seconds(),
+                        erro=mensagem or "Falha antes do orquestrador", tipo="CICLO")
     sair("FALHA registrada")
 else:
     # Cada tabela é independente: a que falhou fica com o watermark parado e vai para o log; as outras
@@ -210,6 +215,10 @@ else:
         f"Origens {origens or 'todas'}: {len(ok)} tabelas na Silver, {len(alteradas)} alteradas, "
         f"{len(falhas)} com falha, {duracao:.0f}s no notebook" + (" | " + " | ".join(falhas) if falhas else ""))
     gravar_log()
+    if notificar == "SIM":
+        avisar_execucao(origens or "todas", f"Ciclo {ciclo} (pl_mestre_dw)", status, duracao,
+                        erro=" | ".join(falhas),
+                        resumo=f"{len(ok)} tabelas na Silver, {len(alteradas)} Gold(s) afetada(s)", tipo="CICLO")
     if falhas:
         raise RuntimeError(f"Ciclo {status}: {len(ok)} tabelas atualizadas; watermark parado nas que falharam:\n"
                            + "\n".join(falhas))

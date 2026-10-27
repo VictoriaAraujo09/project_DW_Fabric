@@ -416,6 +416,8 @@ O GitHub roda os mesmos testes a cada push e pull request (`.github/workflows/ci
 
 O mesmo alerta não se repete por `silenciar_horas`. Os alertas novos das severidades em `monitoramento.notificacao` (hoje `erro`) também vão para o Teams, num cartão, por um **Workflow do Teams** ("Enviar alertas de webhook para um chat"). A URL do Workflow fica no Key Vault (segredo `teams-webhook-dw`). Enquanto não há canal oficial, o Workflow entrega no chat de `victoria.araujo@gscsc.com.br`. Para trocar pelo canal: criar o Workflow do canal, gravar a nova URL no mesmo segredo e atualizar `destinatario` no `qualidade.yml`.
 
+**Aviso de cada execução no Teams.** Além dos alertas acima, o `nb_orquestrador` (ciclos do pipeline) e o `nb_rotina_nexti` (rotinas) mandam para o mesmo Workflow um cartão com o resultado de cada execução: `BASE`, `Notebook/Pipeline`, `Status` (✅ SUCESSO / ⚠️ PARCIAL / ❌ FALHA), `Erro` (quando há), `Horário` e `Comportamento` — 🟢 NORMAL, 🟡 ATENÇÃO (concluiu acima de `duracao_atencao_s`) ou 🔴 ALERTA (falha). Config em `qualidade.yml`, `monitoramento.notificacao`: `avisar_execucoes` liga/desliga; `nexti_cada` evita o excesso das rotinas (5 em 5 min), avisando o sucesso NORMAL só 1 vez a cada N execuções (hoje 3) — falha, PARCIAL e ATENÇÃO avisam sempre. O contador fica em `ctl_contador` (Bronze). A rotina faz o próprio aviso e manda `notificar=NAO` ao `nb_orquestrador` que chama, para não duplicar.
+
 ```sql
 -- últimos alertas (SQL endpoint do lakehouse Bronze)
 SELECT dt_alerta, severidade, tipo, mensagem FROM ctl_alertas ORDER BY dt_alerta DESC;

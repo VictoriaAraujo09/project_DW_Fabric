@@ -67,23 +67,16 @@ for base, grupo in CADASTRO["bases"].items():
 # ## 2. Gravação (não alterar)
 
 # %%
-SCHEMA_ORIGENS = pa.schema([("origem", pa.string()), ("dialeto", pa.string()), ("ativo", pa.bool_())])
+SCHEMA_ORIGENS = "origem string, dialeto string, ativo boolean"
 
-SCHEMA_TABELAS = pa.schema([
-    ("id", pa.string()), ("origem", pa.string()), ("tabela_origem", pa.string()),
-    ("tabela_destino", pa.string()), ("tipo", pa.string()), ("modo_carga", pa.string()),
-    ("colunas", pa.string()), ("coluna_watermark", pa.string()), ("tipo_watermark", pa.string()),
-    ("ultimo_watermark", pa.string()), ("chave_negocio", pa.string()),
-    ("janela_seguranca_min", pa.int32()), ("janela_dias", pa.int32()),
-    ("filtro_adicional", pa.string()), ("ativo", pa.bool_()),
-    ("dt_atualizacao", pa.timestamp("us", tz="UTC")),
-])
+SCHEMA_TABELAS = ("id string, origem string, tabela_origem string, tabela_destino string, tipo string, "
+                  "modo_carga string, colunas string, coluna_watermark string, tipo_watermark string, "
+                  "ultimo_watermark string, chave_negocio string, janela_seguranca_min int, janela_dias int, "
+                  "filtro_adicional string, ativo boolean, dt_atualizacao timestamp")
+COLUNAS_TABELAS = [c.split()[0] for c in SCHEMA_TABELAS.split(", ")]
 
-SCHEMA_LOG = pa.schema([
-    ("lote", pa.string()), ("ciclo", pa.string()), ("tabela_id", pa.string()),
-    ("etapa", pa.string()), ("linhas", pa.int64()), ("status", pa.string()),
-    ("mensagem", pa.string()), ("dt_registro", pa.timestamp("us", tz="UTC")),
-])
+SCHEMA_LOG = ("lote string, ciclo string, tabela_id string, etapa string, linhas bigint, status string, "
+              "mensagem string, dt_registro timestamp")
 
 def validar(t):
     erros = []
@@ -104,40 +97,40 @@ def validar(t):
         raise ValueError(f"{t.get('tabela_origem')}: " + "; ".join(erros))
 
 # origens: sempre reescrita a partir de tabelas.yml
-gravar(LH_BRONZE, "ctl_origens", pa.Table.from_pylist(ORIGENS, schema=SCHEMA_ORIGENS), modo="overwrite")
+gravar(LH_BRONZE, "ctl_origens", criar(ORIGENS, SCHEMA_ORIGENS), modo="overwrite")
 
 # tabelas: upsert preservando ultimo_watermark
 agora = agora_utc()
 linhas = []
 for t in TABELAS:
     validar(t)
-    linhas.append({**{c: None for c in SCHEMA_TABELAS.names}, **t,
+    linhas.append({**{c: None for c in COLUNAS_TABELAS}, **t,
                    "id": f"{t['origem']}.{t['tabela_origem']}".upper(),
                    "ultimo_watermark": None, "dt_atualizacao": agora})
 ids = [l["id"] for l in linhas]
 if len(ids) != len(set(ids)):
     raise ValueError("Há tabelas repetidas em tabelas.yml")
-novos = pa.Table.from_pylist(linhas, schema=SCHEMA_TABELAS)
+novos = criar(linhas, SCHEMA_TABELAS)
 
 if not existe(LH_BRONZE, "ctl_tabelas"):
     gravar(LH_BRONZE, "ctl_tabelas", novos, modo="overwrite")
 else:
     # dt_atualizacao também fica: marca o último avanço do watermark (usada pelo nb_monitoramento)
-    atualizar = {c: f"s.{c}" for c in SCHEMA_TABELAS.names if c not in ("id", "ultimo_watermark", "dt_atualizacao")}
-    (tabela_delta(LH_BRONZE, "ctl_tabelas")
-        .merge(novos, predicate="t.id = s.id", source_alias="s", target_alias="t")
-        .when_matched_update(updates=atualizar)
-        .when_not_matched_insert_all()
+    atualizar = {c: f"s.{c}" for c in COLUNAS_TABELAS if c not in ("id", "ultimo_watermark", "dt_atualizacao")}
+    (tabela_delta(LH_BRONZE, "ctl_tabelas").alias("t")
+        .merge(novos.alias("s"), "t.id = s.id")
+        .whenMatchedUpdate(set=atualizar)
+        .whenNotMatchedInsertAll()
         .execute())
 
 if not existe(LH_BRONZE, "ctl_log"):
-    gravar(LH_BRONZE, "ctl_log", SCHEMA_LOG.empty_table(), modo="overwrite")
+    gravar(LH_BRONZE, "ctl_log", criar([], SCHEMA_LOG), modo="overwrite")
 
-print(f"ctl_origens: {len(ORIGENS)} | ctl_tabelas: {ler(LH_BRONZE, 'ctl_tabelas').num_rows} linhas")
+print(f"ctl_origens: {len(ORIGENS)} | ctl_tabelas: {ler(LH_BRONZE, 'ctl_tabelas').count()} linhas")
 
 # %% [markdown]
 # ## 3. Conferência
 
 # %%
-ctl = ler(LH_BRONZE, "ctl_tabelas")
-print(duckdb.sql("SELECT id, tipo, modo_carga, coluna_watermark, ultimo_watermark, ativo FROM ctl ORDER BY id"))
+(ler(LH_BRONZE, "ctl_tabelas").select("id", "tipo", "modo_carga", "coluna_watermark", "ultimo_watermark", "ativo")
+    .orderBy("id").show(500, truncate=False))

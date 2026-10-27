@@ -2,7 +2,6 @@
 import datetime as dt
 import json
 
-import pyarrow as pa
 from conftest import UTC, ts
 
 
@@ -64,7 +63,10 @@ def test_coluna_nova_na_origem_entra_sem_recriar_a_tabela(lake):
     escopo = {}
     import build_notebooks
     exec(build_notebooks.codigo_comum(), escopo)
-    escopo["gravar"]("Bronze", "bronze_teste_evolucao", pa.Table.from_pylist([dict(id=1, a="x")]), modo="overwrite")
-    escopo["gravar"]("Bronze", "bronze_teste_evolucao", pa.Table.from_pylist([dict(id=2, a="y", cid="M54")]))
+    criar = escopo["criar"]
+    escopo["gravar"]("Bronze", "bronze_teste_evolucao", criar([dict(id=1, a="x")], "id bigint, a string"),
+                     modo="overwrite")
+    escopo["gravar"]("Bronze", "bronze_teste_evolucao", criar([dict(id=2, a="y", cid="M54")],
+                                                               "id bigint, a string, cid string"))
     t = lake.ler("Bronze", "bronze_teste_evolucao").set_index("id")
     assert t.loc[2, "cid"] == "M54" and t["cid"].isna()[1]

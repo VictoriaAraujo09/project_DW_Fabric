@@ -44,8 +44,8 @@ TABELAS_ROTINA = {k for k, ep in _NEXTI.items() if ep.get("rotina")}
 # Início do histórico por endpoint, quando difere de `inicio_historico`.
 INICIO_HISTORICO_TABELA = {k: str(ep["inicio_historico"]) for k, ep in _NEXTI.items() if ep.get("inicio_historico")}
 
-TIPO_ARROW = {"inteiro": pa.int64(), "numero": pa.float64(), "texto": pa.string(), "json": pa.string(),
-              "booleano": pa.bool_(), "data_hora": pa.timestamp("us", tz="UTC")}
+TIPO_SPARK = {"inteiro": "bigint", "numero": "double", "texto": "string", "json": "string",
+              "booleano": "boolean", "data_hora": "timestamp"}
 DATAS_FICTICIAS = ("01011900", "01011940", "01011970")  # "sem data" na Nexti
 
 # %%
@@ -129,13 +129,14 @@ def converter(valor, tipo, utc=False):
     return str(valor)
 
 def para_tabela(chave, itens):
+    """DataFrame com os campos de config/nexti.yml e as colunas técnicas. Devolve (DataFrame, linhas)."""
     colunas, utc = COLUNAS_NEXTI[chave], ENDPOINTS_NEXTI[chave].get("utc", False)
-    schema = pa.schema([(c, TIPO_ARROW[t]) for c, t in colunas.items()] + [
-        ("_origem", pa.string()), ("_lote", pa.string()), ("_dt_carga", pa.timestamp("us", tz="UTC"))])
+    schema = ", ".join([f"`{c}` {TIPO_SPARK[t]}" for c, t in colunas.items()]
+                       + ["_origem string", "_lote string", "_dt_carga timestamp"])
     agora = agora_utc()
-    linhas = [{**{c: converter(i.get(c), t, utc) for c, t in colunas.items()},
-               "_origem": "NEXTI", "_lote": lote, "_dt_carga": agora} for i in itens]
-    return pa.Table.from_pylist(linhas, schema=schema)
+    linhas = [tuple(converter(i.get(c), t, utc) for c, t in colunas.items()) + ("NEXTI", lote, agora)
+              for i in itens]
+    return criar(linhas, schema), len(linhas)
 
 def janelas(ini, fim, dias, por_dia):
     """Divide [ini, fim] em blocos de até `dias` dias (limite da API)."""
@@ -162,9 +163,9 @@ def carregar(cliente, cfg):
     fuso = dt.timezone.utc if ep.get("utc") else FUSO_BRT       # fuso da janela e do watermark
     agora = dt.datetime.now(fuso).replace(tzinfo=None, microsecond=0)
     if cfg["modo_carga"] == "FULL":
-        tabela = para_tabela(cfg["tabela_origem"], cliente.itens(ep))
+        tabela, n = para_tabela(cfg["tabela_origem"], cliente.itens(ep))
         gravar(LH_BRONZE, destino, tabela)
-        return agora.isoformat(), tabela.num_rows
+        return agora.isoformat(), n
     por_dia = ep.get("por_dia", False)
     ini, fim = periodo(cfg, agora)
     if por_dia:
@@ -177,10 +178,10 @@ def carregar(cliente, cfg):
     # a gravação segue na ordem, e o watermark só avança se todas as janelas derem certo
     total = 0
     with ThreadPoolExecutor(max_workers=max(1, int(janelas_paralelas))) as pool:
-        for tabela in pool.map(buscar, list(janelas(ini, fim, ep["janela_dias"], por_dia))):
-            if tabela.num_rows:
+        for tabela, n in pool.map(buscar, list(janelas(ini, fim, ep["janela_dias"], por_dia))):
+            if n:
                 gravar(LH_BRONZE, destino, tabela)
-                total += tabela.num_rows
+                total += n
     return fim.isoformat(), total
 
 # %%
@@ -193,7 +194,7 @@ def escolhida(cfg):
     if so_tabelas:
         return cfg["tabela_origem"] in so_tabelas
     return cfg["tipo"] in tipos and cfg["tabela_origem"] not in TABELAS_ROTINA
-ativas = {o["origem"] for o in ler(LH_BRONZE, "ctl_origens").to_pylist()
+ativas = {o["origem"] for o in coletar(ler(LH_BRONZE, "ctl_origens"))
           if o["ativo"] and o["dialeto"] == "API" and (not filtro or o["origem"] in filtro)}
 
 resultados = []
@@ -201,7 +202,7 @@ for origem in sorted(ativas):
     if origem != "NEXTI":
         raise ValueError(f"Origem API sem conector implementado: {origem}")
     cliente = ClienteNexti(cfg_api.get(origem, {}))
-    for cfg in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
+    for cfg in coletar(ler(LH_BRONZE, "ctl_tabelas")):
         if cfg["origem"] == origem and cfg["ativo"] and escolhida(cfg):
             inicio = time.time()
             # falha de uma tabela não impede as outras: vai para o orquestrador como FALHA (watermark parado)

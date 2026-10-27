@@ -8,3 +8,7 @@ docs/origens/*/amostra_*
 # testes
 .pytest_cache/
 *.egg-info/
+
+# certificados raiz da rede local, usados só no build da imagem de testes
+tests/docker/certificados/*
+!tests/docker/certificados/.gitkeep

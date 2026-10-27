@@ -20,15 +20,14 @@ hoje = dt.datetime.now(FUSO_BRT).date().isoformat()
 regras = [r for r in ler_config("qualidade.yml")["regras"] if not grupo or r["grupo"] in (grupo, "GERAL")]
 
 def q(nome):
-    return '"' + nome.replace('"', '""') + '"'
+    return "`" + nome.replace("`", "``") + "`"
 
 def tabelas_da_camada(camada):
     lh = LAKEHOUSES[camada]
     if _LOCAL:
         raiz = os.path.join(os.environ["DW_LOCAL_ROOT"], lh)
         return sorted(n for n in os.listdir(raiz) if os.path.isdir(os.path.join(raiz, n)))
-    return sorted(i.name.rstrip("/") for i in notebookutils.fs.ls(
-        f"abfss://{_WS}@onelake.dfs.fabric.microsoft.com/{lh}.Lakehouse/Tables"))
+    return sorted(i.name.rstrip("/") for i in notebookutils.fs.ls(f"{raiz(lh)}/Tables"))
 
 def avaliar(regra):
     """Devolve (linhas com problema, amostra)."""
@@ -37,17 +36,16 @@ def avaliar(regra):
     if tipo == "sem_timestamp_sem_fuso":
         ruins = []
         for t in tabelas_da_camada(camada):
-            for campo in tabela_delta(LAKEHOUSES[camada], t).schema().fields:
-                if "timestamp_ntz" in str(campo.type).lower():
+            for campo in ler(LAKEHOUSES[camada], t).schema:
+                if isinstance(campo.dataType, T.TimestampNTZType):
                     ruins.append(f"{t}.{campo.name}")
         return len(ruins), ruins[:5]
     colunas = regra.get("colunas") or ([regra["coluna"]] if regra.get("coluna") else None)
     dados = ler(LAKEHOUSES[camada], tabela, colunas=colunas)
     if tipo == "minimo_linhas":
-        return (0 if dados.num_rows >= int(regra["minimo"]) else 1), [f"{dados.num_rows} linhas"]
-    con = duckdb.connect()
-    con.execute("SET TimeZone = 'UTC'").fetchall()
-    con.register("t", dados)
+        n = dados.count()
+        return (0 if n >= int(regra["minimo"]) else 1), [f"{n} linhas"]
+    dados.createOrReplaceTempView("t")
     if tipo == "chave_unica":
         cols = ", ".join(q(c) for c in regra["colunas"])
         sql = f"SELECT {cols}, count(*) AS repeticoes FROM t GROUP BY {cols} HAVING count(*) > 1"
@@ -63,9 +61,8 @@ def avaliar(regra):
         sql = f"SELECT * FROM t WHERE {c} < '{regra['minimo']}' OR {c} > '{regra['maximo']}'"
     else:
         raise ValueError(f"tipo de regra desconhecido: {tipo}")
-    n = con.execute(f"SELECT count(*) FROM ({sql})").fetchall()[0][0]
-    amostra = [str(l) for l in con.execute(f"{sql} LIMIT 5").fetchall()] if n else []
-    con.close()
+    n = spark.sql(f"SELECT count(*) FROM ({sql})").first()[0]
+    amostra = [str(tuple(l)) for l in spark.sql(f"{sql} LIMIT 5").collect()] if n else []
     return n, amostra
 
 # %%
@@ -85,12 +82,10 @@ for regra in regras:
         "segundos": round((agora_utc() - t0).total_seconds(), 1)})
     print(f"{status:<13} {regra['severidade']:<7} {regra['nome']}: {n}")
 
-schema = pa.schema([("dt_execucao", pa.timestamp("us", tz="UTC")), ("lote", pa.string()), ("grupo", pa.string()),
-                    ("regra", pa.string()), ("tabela", pa.string()), ("tipo", pa.string()),
-                    ("severidade", pa.string()), ("status", pa.string()), ("linhas_problema", pa.int64()),
-                    ("amostra", pa.string()), ("segundos", pa.float64())])
+schema = ("dt_execucao timestamp, lote string, grupo string, regra string, tabela string, tipo string, "
+          "severidade string, status string, linhas_problema bigint, amostra string, segundos double")
 if resultados:
-    gravar(LH_BRONZE, "ctl_qualidade", pa.Table.from_pylist(resultados, schema=schema),
+    gravar(LH_BRONZE, "ctl_qualidade", criar(resultados, schema),
            modo="append" if existe(LH_BRONZE, "ctl_qualidade") else "overwrite")
 
 # %%

@@ -1,7 +1,7 @@
 name: ci
 
 # Testes unitários e de qualidade (tests/) a cada push e pull request: roda os notebooks localmente,
-# sem Fabric, sobre lakehouses temporários. Um teste quebrado bloqueia o merge na main.
+# com PySpark local, sem Fabric, sobre lakehouses temporários. Um teste quebrado bloqueia o merge na main.
 on:
   push:
   pull_request:
@@ -11,11 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # mesmas versões do Fabric Runtime 2.0: Java 21, Python 3.13, Spark 4.1, Delta 4.2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
       - name: Dependências (as do pyproject.toml usadas nos testes)
-        run: pip install deltalake duckdb pyarrow pandas pyyaml pytest
+        run: pip install "pyspark==4.1.1" "delta-spark==4.2.0" deltalake pyarrow pandas pyyaml requests pytest
       - name: Notebooks gerados a partir do src
         run: cd implantacao && PYTHONUTF8=1 python build_notebooks.py
       - name: Testes

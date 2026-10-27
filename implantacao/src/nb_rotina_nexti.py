@@ -64,8 +64,9 @@ def log(lote, rot, tabela_id, etapa, linhas, status, msg=""):
 
 def gravar_log():
     if _log:
-        schema = ler(LH_BRONZE, "ctl_log").schema
-        gravar(LH_BRONZE, "ctl_log", pa.Table.from_pylist(_log, schema=schema))
+        com_nova_tentativa(lambda: gravar(LH_BRONZE, "ctl_log", criar(_log, (
+            "lote string, ciclo string, tabela_id string, etapa string, linhas bigint, status string, "
+            "mensagem string, dt_registro timestamp"))))
         _log.clear()
 
 def no_horario(nome, cfg):
@@ -96,7 +97,7 @@ if _LOCAL:
     def rodar(nome, params):
         raise RuntimeError("nb_rotina_nexti só roda no Fabric (chama outros notebooks)")
 else:
-    TRAVA = f"abfss://{_WS}@onelake.dfs.fabric.microsoft.com/{LH_BRONZE}.Lakehouse/Files/rotinas/nb_rotina_nexti.lock"
+    TRAVA = f"{raiz(LH_BRONZE)}/Files/rotinas/nb_rotina_nexti.lock"
     DONO = str(uuid.uuid4())
 
     def pegar_trava():
@@ -125,7 +126,7 @@ def manutencao(nome, cfg, lote):
     """Uma vez por dia: compacta os arquivos pequenos que a rotina gera a cada 5 min e remove os
     antigos (VACUUM de 7 dias). Falha aqui só vai para o log."""
     alvos = [(LH_BRONZE, "ctl_log"), (LH_BRONZE, "ctl_tabelas"), (LH_BRONZE, "ctl_gold")]
-    for t in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
+    for t in coletar(ler(LH_BRONZE, "ctl_tabelas")):
         if t["origem"] == "NEXTI" and t["tabela_origem"] in cfg["tabelas"]:
             alvos += [(LH_BRONZE, nome_bronze(t["tabela_destino"])), (LH_SILVER, nome_silver(t["tabela_destino"]))]
     alvos += [(LH_GOLD, g.replace("nb_", "", 1)) for g in cfg["golds"]]
@@ -133,10 +134,19 @@ def manutencao(nome, cfg, lote):
         try:
             if existe(lh, tabela):
                 alvo = tabela_delta(lh, tabela)
-                alvo.optimize.compact()
-                alvo.vacuum(retention_hours=168, enforce_retention_duration=False, dry_run=False)
+                alvo.optimize().executeCompaction()
+                alvo.vacuum(168)
         except Exception as e:
             log(lote, nome, tabela, "MANUTENCAO", 0, "FALHA", str(e))
+    # checkpoints de sessões encerradas (mais de 1 dia): os da sessão atual e de outras em andamento ficam
+    if not _LOCAL:
+        try:
+            limite_ms = (agora_utc() - dt.timedelta(days=1)).timestamp() * 1000
+            for pasta in notebookutils.fs.ls(CHECKPOINTS):
+                if pasta.modifyTime < limite_ms:
+                    notebookutils.fs.rm(pasta.path, True)
+        except Exception as e:
+            log(lote, nome, "_checkpoints", "MANUTENCAO", 0, "FALHA", str(e))
     # regras de qualidade do grupo da rotina (config/qualidade.yml), uma vez por dia
     try:
         q = json.loads(rodar("nb_qualidade", {"grupo": nome, "lote": lote}) or "{}")

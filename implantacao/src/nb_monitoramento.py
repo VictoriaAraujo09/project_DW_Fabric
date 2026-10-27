@@ -44,7 +44,8 @@ for rotina, lim in cfg.get("rotinas", {}).items():
 
 # ---------------------------------------------------------------- 2. tabelas incrementais paradas
 limite_h = cfg.get("tabelas_incrementais_max_horas", 30)
-for t in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
+ctl = coletar(ler(LH_BRONZE, "ctl_tabelas"))
+for t in ctl:
     if not t["ativo"] or t["modo_carga"] != "INCREMENTAL" or t["dt_atualizacao"] is None:
         continue
     horas = (agora - t["dt_atualizacao"]).total_seconds() / 3600
@@ -54,7 +55,7 @@ for t in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
 
 # ---------------------------------------------------------------- 3. falhas no log
 ultima_verificacao = watermark_gold("MONITORAMENTO", "ctl_log") or (agora - dt.timedelta(hours=horas_log))
-log = ler(LH_BRONZE, "ctl_log", filtros=[("dt_registro", ">", ultima_verificacao)]).to_pylist()
+log = coletar(ler(LH_BRONZE, "ctl_log", filtros=[("dt_registro", ">", ultima_verificacao)]))
 for x in log:
     if x["status"] in ("FALHA", "PARCIAL") and x["etapa"] in ("CICLO", "ROTINA", "GOLD", "SILVER", "BRONZE"):
         alerta(f"FALHA_{x['etapa']}", f"{x['ciclo']}|{x['tabela_id']}", "erro",
@@ -62,13 +63,13 @@ for x in log:
 
 # ---------------------------------------------------------------- 4. volume das tabelas FULL
 queda = cfg.get("volume_queda_max_percentual", 70) / 100
-completos = ler(LH_BRONZE, "ctl_log", filtros=[("ciclo", "=", "COMPLETO"), ("etapa", "=", "SILVER"),
-                                               ("dt_registro", ">", agora - dt.timedelta(days=15))]).to_pylist()
+completos = coletar(ler(LH_BRONZE, "ctl_log", filtros=[("ciclo", "=", "COMPLETO"), ("etapa", "=", "SILVER"),
+                                                       ("dt_registro", ">", agora - dt.timedelta(days=15))]))
 por_tabela = {}
 for x in sorted(completos, key=lambda x: x["dt_registro"]):
     if x["status"] == "SUCESSO":
         por_tabela.setdefault(x["tabela_id"], []).append(x)
-modos = {t["id"]: t["modo_carga"] for t in ler(LH_BRONZE, "ctl_tabelas").to_pylist()}
+modos = {t["id"]: t["modo_carga"] for t in ctl}
 for tid, xs in por_tabela.items():
     if modos.get(tid) != "FULL" or len(xs) < 3 or xs[-1]["dt_registro"] <= ultima_verificacao:
         continue
@@ -79,7 +80,7 @@ for tid, xs in por_tabela.items():
 
 # ---------------------------------------------------------------- 5. qualidade
 if existe(LH_BRONZE, "ctl_qualidade"):
-    qual = ler(LH_BRONZE, "ctl_qualidade", filtros=[("dt_execucao", ">", ultima_verificacao)]).to_pylist()
+    qual = coletar(ler(LH_BRONZE, "ctl_qualidade", filtros=[("dt_execucao", ">", ultima_verificacao)]))
     for x in qual:
         if x["status"] != "OK":
             alerta("QUALIDADE", f"{x['grupo']}|{x['regra']}", x["severidade"],
@@ -90,13 +91,12 @@ if existe(LH_BRONZE, "ctl_qualidade"):
 silenciar = dt.timedelta(hours=cfg.get("silenciar_horas", 6))
 recentes = set()
 if existe(LH_BRONZE, "ctl_alertas"):
-    recentes = {a["chave"] for a in ler(LH_BRONZE, "ctl_alertas", filtros=[("dt_alerta", ">", agora - silenciar)],
-                                        colunas=["chave"]).to_pylist()}
+    recentes = {a["chave"] for a in coletar(ler(LH_BRONZE, "ctl_alertas", filtros=[("dt_alerta", ">", agora - silenciar)],
+                                                colunas=["chave"]))}
 novos = list({a["chave"]: a for a in alertas if a["chave"] not in recentes}.values())   # 1 por chave
-schema = pa.schema([("dt_alerta", pa.timestamp("us", tz="UTC")), ("tipo", pa.string()), ("objeto", pa.string()),
-                    ("severidade", pa.string()), ("mensagem", pa.string()), ("chave", pa.string())])
+schema = "dt_alerta timestamp, tipo string, objeto string, severidade string, mensagem string, chave string"
 if novos:
-    gravar(LH_BRONZE, "ctl_alertas", pa.Table.from_pylist(novos, schema=schema),
+    gravar(LH_BRONZE, "ctl_alertas", criar(novos, schema),
            modo="append" if existe(LH_BRONZE, "ctl_alertas") else "overwrite")
 gravar_watermark_gold("MONITORAMENTO", "ctl_log", agora)
 

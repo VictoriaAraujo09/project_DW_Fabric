@@ -206,8 +206,8 @@ Origem por API (como a Nexti): o endpoint e os campos gravados ficam em [`config
 ```powershell
 cd implantacao
 $env:PYTHONUTF8='1'; ..\.venv\Scripts\python.exe build_notebooks.py
-..\.venv\Scripts\python.exe -m pytest   # na raiz do projeto: testes unitários e de qualidade
 cd ..
+docker run --rm -v "${PWD}:/projeto" dw-fabric-testes   # testes com Spark (ver docs/03, seção 9.1)
 ```
 
 **5. Implantar no DW Dev e rodar um ciclo completo só da origem nova:**

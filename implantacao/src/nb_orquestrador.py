@@ -35,17 +35,8 @@ INICIO = agora_utc()
 _log = []
 FILTRO = {o.strip().upper() for o in origens.split(",") if o.strip()}
 
-def com_nova_tentativa(acao, tentativas=5):
-    """Ciclos de origens diferentes podem rodar juntos e gravar ctl_tabelas/ctl_log ao mesmo tempo:
-    o commit que perde a disputa é refeito sobre a versão nova da tabela."""
-    import time
-    for n in range(tentativas):
-        try:
-            return acao()
-        except Exception as e:
-            if n == tentativas - 1 or ("commit" not in str(e).lower() and "conflict" not in str(e).lower()):
-                raise
-            time.sleep(5 * (n + 1))
+SCHEMA_LOG = ("lote string, ciclo string, tabela_id string, etapa string, linhas bigint, status string, "
+              "mensagem string, dt_registro timestamp")
 
 def log(tabela_id, etapa, linhas, status, msg=""):
     _log.append({"lote": lote, "ciclo": ciclo, "tabela_id": tabela_id, "etapa": etapa,
@@ -54,8 +45,7 @@ def log(tabela_id, etapa, linhas, status, msg=""):
 
 def gravar_log():
     if _log:
-        schema = ler(LH_BRONZE, "ctl_log").schema
-        com_nova_tentativa(lambda: gravar(LH_BRONZE, "ctl_log", pa.Table.from_pylist(_log, schema=schema)))
+        com_nova_tentativa(lambda: gravar(LH_BRONZE, "ctl_log", criar(_log, SCHEMA_LOG)))
 
 def interpretar(resultados):
     """Itens "id|novo_watermark|linhas[|mensagem]". novo_watermark = FALHA (cópia falhou) ou SEM_MUDANCA
@@ -67,32 +57,32 @@ def interpretar(resultados):
     return itens
 
 def q(nome):
-    return '"' + nome.replace('"', '""') + '"'
+    return "`" + nome.replace("`", "``") + "`"
 
-def padronizar(tabela):
+def padronizar(df):
     """Regras da Silver (docs/02_levantamento_silver.md): float -> DECIMAL(18,6), com NaN/infinito
     -> NULL; texto sem espaços no fim e vazio -> NULL; binários removidos. Colunas técnicas (_*) e
-    demais tipos ficam como estão. Devolve (tabela, aviso com as conversões de NaN/infinito)."""
-    import pyarrow.compute as pc
-    exprs, nao_finitos = [], []
-    for f in tabela.schema:
-        c = q(f.name)
+    demais tipos ficam como estão. Devolve (DataFrame, aviso com as conversões de NaN/infinito)."""
+    flutuantes = [f.name for f in df.schema if not f.name.startswith("_")
+                  and isinstance(f.dataType, (T.FloatType, T.DoubleType))]
+    def nao_finito(c):
+        return F.isnan(F.col(q(c))) | (F.abs(F.col(q(c))) == float("inf"))
+    nao_finitos = []
+    if flutuantes:
+        contagem = df.select([F.sum(F.when(nao_finito(c), 1).otherwise(0)).alias(c) for c in flutuantes]).first()
+        nao_finitos = [f"{c}={contagem[c]}" for c in flutuantes if contagem[c]]
+    exprs = []
+    for f in df.schema:
+        c = F.col(q(f.name))
         if f.name.startswith("_"):
             exprs.append(c)
-        elif pa.types.is_floating(f.type):
-            n = pc.sum(pc.invert(pc.is_finite(tabela.column(f.name)))).as_py()
-            if n:
-                nao_finitos.append(f"{f.name}={n}")
-            exprs.append(f"CAST(CASE WHEN isfinite({c}) THEN {c} END AS DECIMAL(18,6)) AS {c}")
-        elif pa.types.is_string(f.type) or pa.types.is_large_string(f.type):
-            exprs.append(f"NULLIF(rtrim({c}), '') AS {c}")
-        elif not (pa.types.is_binary(f.type) or pa.types.is_large_binary(f.type)):
+        elif f.name in flutuantes:
+            exprs.append(F.when(~nao_finito(f.name), c).cast("decimal(18,6)").alias(f.name))
+        elif isinstance(f.dataType, T.StringType):
+            exprs.append(F.when(F.rtrim(c) != "", F.rtrim(c)).alias(f.name))
+        elif not isinstance(f.dataType, T.BinaryType):
             exprs.append(c)
-    con = duckdb.connect()
-    con.register("tbl", tabela)
-    saida = para_arrow(con.sql(f"SELECT {', '.join(exprs)} FROM tbl"))
-    con.close()
-    return saida, ("NaN/infinito -> NULL: " + ", ".join(nao_finitos)) if nao_finitos else ""
+    return df.select(exprs), ("NaN/infinito -> NULL: " + ", ".join(nao_finitos)) if nao_finitos else ""
 
 def carregar_silver(cfg, linhas_copiadas):
     """Leva o lote da Bronze para a Silver. Devolve quantas linhas foram gravadas."""
@@ -100,39 +90,28 @@ def carregar_silver(cfg, linhas_copiadas):
     if not existe(LH_BRONZE, nome_bronze(cfg["tabela_destino"])):  # origem API sem nenhuma linha ainda
         return 0, ""
     bruto = ler(LH_BRONZE, nome_bronze(cfg["tabela_destino"]), filtros=[("_lote", "=", lote)])
-    if bruto.num_rows == 0:
+    if bruto.isEmpty():
         return 0, ""
     # nomes sem diferenciar maiúsculas: o Firebird (4S) devolve EMP_CODIGO para EMP_Codigo
-    por_nome = {c.upper(): c for c in bruto.column_names}
+    por_nome = {c.upper(): c for c in bruto.columns}
     chaves = [por_nome.get(c.strip().upper(), c.strip()) for c in cfg["chave_negocio"].split(",") if c.strip()]
-    faltando = [c for c in chaves if c not in bruto.column_names]
+    faltando = [c for c in chaves if c not in bruto.columns]
     if faltando:
         raise ValueError(f"chave_negocio não encontrada na Bronze: {faltando}")
     ordem = por_nome.get((cfg["coluna_watermark"] or "").upper(), "_dt_carga")
-    con = duckdb.connect()
-    con.register("lote_tbl", bruto)
-    unico = para_arrow(con.sql(f"""
-        SELECT * EXCLUDE (_rn), TRUE AS _ativo, now() AS _dt_atualizacao
-        FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY {", ".join(q(c) for c in chaves)}
-                                           ORDER BY {q(ordem)} DESC NULLS LAST) AS _rn
-              FROM lote_tbl)
-        WHERE _rn = 1"""))
-    con.close()
+    janela = Window.partitionBy(*[q(c) for c in chaves]).orderBy(F.col(q(ordem)).desc_nulls_last())
+    unico = (bruto.withColumn("_rn", F.row_number().over(janela)).where("_rn = 1").drop("_rn")
+             .withColumn("_ativo", F.lit(True)).withColumn("_dt_atualizacao", F.current_timestamp()))
     unico, aviso = padronizar(unico)
+    unico = materializar(unico)
+    n = unico.count()
 
     if cfg["modo_carga"] == "FULL" or not existe(LH_SILVER, destino):
         # dimensões: retrato completo do dia substitui a versão anterior
         gravar(LH_SILVER, destino, unico, modo="overwrite")
     else:
-        acrescentar_colunas(LH_SILVER, destino, unico.schema)
-        alvo = tabela_delta(LH_SILVER, destino)
-        (alvo.merge(unico,
-                    predicate=" AND ".join(f"t.{q(c)} = s.{q(c)}" for c in chaves),
-                    source_alias="s", target_alias="t")
-             .when_matched_update_all()
-             .when_not_matched_insert_all()
-             .execute())
-    return unico.num_rows, aviso
+        mesclar(LH_SILVER, destino, unico, chaves)
+    return n, aviso
 
 def aplicar_retencao(ctl):
     """Apaga da Bronze os lotes mais antigos que RETENCAO_DIAS, compacta os arquivos e remove
@@ -147,10 +126,11 @@ def aplicar_retencao(ctl):
         limite = agora_utc() - dt.timedelta(days=RETENCAO_DIAS.get(cfg["modo_carga"], 30))
         try:
             alvo = tabela_delta(LH_BRONZE, nome)
-            r = alvo.delete(f"_dt_carga < '{limite:%Y-%m-%d %H:%M:%S}'")
-            alvo.optimize.compact()
-            alvo.vacuum(retention_hours=168, enforce_retention_duration=False, dry_run=False)
-            log(cfg["id"], "RETENCAO", r.get("num_deleted_rows", 0), "SUCESSO")
+            alvo.delete(F.col("_dt_carga") < F.lit(limite))
+            apagadas = linhas_deletadas(LH_BRONZE, nome)
+            alvo.optimize().executeCompaction()
+            alvo.vacuum(168)
+            log(cfg["id"], "RETENCAO", apagadas, "SUCESSO")
         except Exception as e:
             log(cfg["id"], "RETENCAO", 0, "FALHA", str(e))
 
@@ -165,11 +145,10 @@ def avancar_watermarks(itens, ctl):
              if i["novo"] and ctl[i["id"]]["modo_carga"] == "INCREMENTAL"]
     if not novos:
         return
-    fonte = pa.Table.from_pylist(novos, schema=pa.schema(
-        [("id", pa.string()), ("novo", pa.string()), ("dt", pa.timestamp("us", tz="UTC"))]))
-    com_nova_tentativa(lambda: tabela_delta(LH_BRONZE, "ctl_tabelas")
-        .merge(fonte, predicate="t.id = s.id", source_alias="s", target_alias="t")
-        .when_matched_update(updates={"ultimo_watermark": "s.novo", "dt_atualizacao": "s.dt"})
+    fonte = criar(novos, "id string, novo string, dt timestamp")
+    com_nova_tentativa(lambda: tabela_delta(LH_BRONZE, "ctl_tabelas").alias("t")
+        .merge(fonte.alias("s"), "t.id = s.id")
+        .whenMatchedUpdate(set={"ultimo_watermark": "s.novo", "dt_atualizacao": "s.dt"})
         .execute())
 
 # %%
@@ -187,7 +166,7 @@ else:
         log("Ingestao_API", "BRONZE", 0, "FALHA", "notebook nb_ingestao_api falhou")
     else:
         itens += interpretar(resultados_api)
-    ctl = {r["id"]: r for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist()}
+    ctl = {r["id"]: r for r in coletar(ler(LH_BRONZE, "ctl_tabelas"))}
     reportadas = {i["id"] for i in itens}
     for tid in json.loads(planejadas or "[]"):
         if tid not in reportadas:   # o ForEach não chegou a registrar: a cópia falhou

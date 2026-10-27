@@ -224,6 +224,16 @@ def agendar(fab, ws, item_id, nome, tipo_job, minutos, ativo=True, inicio=None, 
     print(f"  agendamento {nome}: a cada {minutos} min{janela} ({len(configs)} agendamento(s), "
           f"{'ativo' if ativo else 'pausado'})")
 
+def configurar_spark(fab, ws, cfg):
+    """Tamanho das sessões do pool inicial (config "spark"). Sem limite, uma sessão cresce até ocupar a
+    capacidade inteira e as outras são recusadas (HTTP 430)."""
+    atual = fab.chamar("GET", f"/workspaces/{ws}/spark/settings")
+    pool = atual.get("pool", {}).get("starterPool", {})
+    novo = {"maxNodeCount": int(cfg["max_nos"]), "maxExecutors": int(cfg["max_executores"])}
+    if {k: pool.get(k) for k in novo} != novo:
+        fab.chamar("PATCH", f"/workspaces/{ws}/spark/settings", {"pool": {"starterPool": novo}})
+    print(f"  Spark: pool inicial com até {novo['maxNodeCount']} nó(s) e {novo['maxExecutors']} executor(es) por sessão")
+
 def executar_job(fab, ws, item_id, nome, tipo_job="RunNotebook", corpo=None):
     print(f"  executando {nome} ...")
     r = requests.post(f"{API}/workspaces/{ws}/items/{item_id}/jobs/instances?jobType={tipo_job}",
@@ -307,6 +317,8 @@ def main():
             atalhos[nome] = item(fab, ws, nome, "DataPipeline", {"pipeline-content.json": json.dumps(
                 pipeline_mestre.gerar_atalho(pl, origem), ensure_ascii=False)})
 
+        if cfg.get("spark"):
+            configurar_spark(fab, ws, cfg["spark"])
         if cfg.get("pastas"):
             organizar_pastas(fab, ws, cfg["pastas"])
         # rotinas agendadas (config "agendamentos": {notebook: {"minutos": 5, "inicio": "06:00", "fim": "20:00"}})

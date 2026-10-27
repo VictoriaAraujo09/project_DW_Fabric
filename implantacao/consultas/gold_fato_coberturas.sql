@@ -23,23 +23,23 @@ WITH coberturas AS (
       AND (nullif(f.personId, 0) IS NULL OR nullif(f.absenteeId, 0) IS NULL OR f.personId <> f.absenteeId)
 ),
 dias AS (
-    SELECT *, unnest(generate_series(ini::TIMESTAMP, fim::TIMESTAMP, INTERVAL 1 DAY))::DATE AS DataCalendario
+    SELECT *, explode(sequence(ini, fim, INTERVAL 1 DAY)) AS DataCalendario
     FROM coberturas
     WHERE fim >= ini
 )
 SELECT
     id AS IdCobertura,
     DataCalendario,
-    upper(md5(coalesce(CNPJ, '') || '|NEXTI|' || coalesce(CAST(nullif(personId, 0) AS VARCHAR), ''))) AS PK_Colaborador,
+    upper(md5(coalesce(CNPJ, '') || '|NEXTI|' || coalesce(CAST(nullif(personId, 0) AS STRING), ''))) AS PK_Colaborador,
     nullif(personId, 0) AS CodColaborador,
     personName AS NomeColaborador,
-    upper(md5(coalesce(CNPJ, '') || '|NEXTI|' || coalesce(CAST(nullif(absenteeId, 0) AS VARCHAR), '')))
+    upper(md5(coalesce(CNPJ, '') || '|NEXTI|' || coalesce(CAST(nullif(absenteeId, 0) AS STRING), '')))
         AS PK_ColaboradorAusente,
     nullif(absenteeId, 0) AS CodColaboradorAusente,
     absenteeName AS NomeColaboradorAusente,
     nullif(workplaceId, 0) AS CodPosto,
-    ini::TIMESTAMPTZ AS DataInicio,
-    fim::TIMESTAMPTZ AS DataFim,
+    CAST(ini AS TIMESTAMP) AS DataInicio,
+    CAST(fim AS TIMESTAMP) AS DataFim,
     nullif(replacementTypeId, 0) AS CodTipoSubstituicao,
     note AS Justificativa,
     registerDate AS DataAtualizacaoCobertura,
@@ -48,11 +48,13 @@ SELECT
     nullif(replacementResourceId, 0) AS CodRecursoSubstituicao,
     replacementResourceName AS RecursoSubstituicao,
     nullif(shiftId, 0) AS CodTurno,
-    CAST(lastUpdate AS DATE)::TIMESTAMPTZ AS DataUltimaAtualizacaoCobertura,
+    CAST(CAST(lastUpdate AS DATE) AS TIMESTAMP) AS DataUltimaAtualizacaoCobertura,
     removed AS Removido,
     'NEXTI' AS SistemaOrigem,
-    now() AS DataIngestao,
-    now() AS DataModificacao,
-    CNPJ AS CNPJEmpresaOrigem
+    current_timestamp() AS DataIngestao,
+    current_timestamp() AS DataModificacao,
+    CNPJ AS CNPJEmpresaOrigem,
+    row_number() OVER (PARTITION BY id, DataCalendario ORDER BY lastUpdate DESC NULLS LAST) AS _rn
 FROM dias
-QUALIFY row_number() OVER (PARTITION BY id, DataCalendario ORDER BY lastUpdate DESC NULLS LAST) = 1
+|> WHERE _rn = 1
+|> DROP _rn

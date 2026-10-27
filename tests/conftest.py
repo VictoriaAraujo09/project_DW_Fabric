@@ -2,7 +2,10 @@
 
 Cada módulo de teste recebe o seu lakehouse (fixture `lake`), então um teste não depende do estado
 deixado por outro módulo. Os notebooks rodam pelo mesmo código que vai para o Fabric
-(build_notebooks.script_local), com o bloco comum em modo local (DW_LOCAL_ROOT).
+(build_notebooks.script_local), com o bloco comum em modo local (DW_LOCAL_ROOT), sobre uma sessão
+PySpark local com Delta. Rodar pelo contêiner de tests/docker (Java e Spark nas versões do Fabric).
+
+As tabelas de entrada são gravadas e conferidas com o deltalake, independente do Spark dos notebooks.
 """
 import datetime as dt
 import json
@@ -13,6 +16,23 @@ import sys
 import pyarrow as pa
 import pytest
 from deltalake import DeltaTable, write_deltalake
+
+os.environ["TZ"] = "UTC"
+import time  # noqa: E402
+time.tzset()
+
+from delta import configure_spark_with_delta_pip  # noqa: E402
+from pyspark.sql import SparkSession  # noqa: E402
+
+# sessão única para todos os testes; os notebooks a reaproveitam (SparkSession.builder.getOrCreate)
+SPARK = configure_spark_with_delta_pip(
+    SparkSession.builder.master("local[2]").appName("dw-fabric-testes")
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+    .config("spark.sql.shuffle.partitions", "2")
+    .config("spark.ui.enabled", "false")
+    .config("spark.databricks.delta.snapshotPartitions", "2")).getOrCreate()
+SPARK.sparkContext.setLogLevel("ERROR")
 
 RAIZ_PROJETO = pathlib.Path(__file__).resolve().parents[1]
 IMPLANTACAO = RAIZ_PROJETO / "implantacao"
@@ -45,8 +65,12 @@ class Lake:
         return json.loads(self.rodar(notebook, params))
 
     def gravar(self, camada, tabela, linhas, modo="overwrite"):
-        kw = {"schema_mode": "overwrite"} if modo == "overwrite" else {}
-        write_deltalake(f"{self.raiz}/{camada}/{tabela}", pa.Table.from_pylist(linhas), mode=modo, **kw)
+        dados = pa.Table.from_pylist(linhas)
+        # coluna só com None (tipo null) não existe no Delta: vira texto vazio
+        dados = dados.cast(pa.schema([pa.field(f.name, pa.string()) if pa.types.is_null(f.type) else f
+                                      for f in dados.schema]))
+        kw = {"schema_mode": "overwrite"} if modo == "overwrite" else {"schema_mode": "merge"}
+        write_deltalake(f"{self.raiz}/{camada}/{tabela}", dados, mode=modo, **kw)
 
     def ler(self, camada, tabela):
         return DeltaTable(f"{self.raiz}/{camada}/{tabela}").to_pandas()

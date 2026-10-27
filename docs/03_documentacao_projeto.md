@@ -41,7 +41,12 @@ flowchart LR
 | **Silver** | `Silver` | Uma linha por chave de negócio, sempre com a versão mais recente, com tipos padronizados | MERGE para tabelas incrementais e substituição completa para tabelas FULL. Regras de tipo em [02](02_levantamento_silver.md#3-regras-propostas-para-a-silver) |
 | **Gold** | `Gold` | Fatos e dimensões de negócio para o Power BI | Ainda não iniciada (Fase 4) |
 
-Tecnologia: os notebooks são **Python notebooks** do Fabric, não PySpark. Eles usam `deltalake`, `duckdb` e `pyarrow`, mais leves e baratos que Spark para o volume atual. A cópia das origens é feita pela **Copy activity** do pipeline, através do gateway.
+Tecnologia: os notebooks são **PySpark** (Fabric Runtime 2.0: Spark 4.1, Delta 4.2, Python 3.13), para o DW crescer sem trocar de motor: mais volume pede só mais nós no pool ou capacidade maior, sem mudar código. As consultas das Golds (`implantacao/consultas/*.sql`) são Spark SQL. A cópia das origens é feita pela **Copy activity** do pipeline, através do gateway.
+
+Pontos do Spark neste ambiente (desde 27/10/2026; antes os notebooks eram Python com `deltalake` e `duckdb`):
+- **Caminhos do OneLake por ID:** o nome do workspace ("Squad Dados - DW Dev") tem espaços, que o ABFS do Spark não aceita. O `comum.py` monta os caminhos com o ID do workspace e do lakehouse (`raiz()`).
+- **Capacidade F4:** o pool inicial começa cada sessão com 1 nó Medium (8 vCores) e só cresce se houver folga, então cabem até 3 sessões ao mesmo tempo. A sessão Spark leva mais para subir que o notebook Python: a rotina de 5 min passou de 1,5 a 2 min para 3 a 4 min por execução.
+- **Horário:** sessão e processo em UTC (`comum.py`), porque as datas da Bronze são horário de Brasília rotulado UTC.
 
 ---
 
@@ -69,8 +74,8 @@ Tecnologia: os notebooks são **Python notebooks** do Fabric, não PySpark. Eles
 | `GS` | Fortes GS AG · SQL Server `10.1.0.38` / `GSAG` | Fortes AG GS - Cloud | `45393625-ea40-4705-9a62-14e2e875d8f7` | **Ativa** |
 | `4S` | Fortes 4S AG · Firebird `AG_4S.FDB` | FORTES AG 4S - FIREBIRD | `2783e8cb-469a-4581-80f7-b4e5f0fc448a` | **Ativa** |
 | `NEXTI` | Nexti (ponto e escalas) · API REST `api.nexti.com` | — (credenciais no Key Vault `kv-dw-fabric-kmf`) | — | **Ativa**, recuperando o histórico desde 01/01/2025 ([decisões](origens/nexti/proposta.md)) |
-| `PROTHEUS` | Protheus · SQL Server | Protheus PROD | — | Não iniciada |
-| `VIGON` | Fortes VIGON · Firebird | — | — | Não iniciada |
+| `PROTHEUS` | Protheus (TOTVS) · SQL Server `45.6.153.9,1819` / `C7FTHA_136941_PR_PD` | Protheus PROD | `c4b4f96f-b6a6-40f4-8dbb-2351c2e6dd83` | **Ativa** desde 27/10/2026: 14 tabelas da empresa 01 (financeiro, notas fiscais e cadastros) |
+| `VIGON` | Fortes VIGON AG · Firebird `AG_VIGON.FDB` | FORTES AG VIGON - NOVO IP | `72c5e5df-7d5a-4644-ac6e-6bae020b9e2d` | **Ativa** desde 27/10/2026: as mesmas 29 tabelas do GS e do 4S |
 
 ---
 
@@ -273,7 +278,7 @@ Pelo terminal, sem reimplantar:
 Os atalhos são gerados pela implantação a partir da lista `atalhos` do `config_fundacao.json`. Origem nova = acrescentar a sigla na lista e reimplantar. Também dá para executar o próprio `pl_mestre_dw` e preencher `origens` à mão.
 
 Regras:
-- Nome errado ou origem inativa (ex.: `G5`, ou `PROTHEUS` antes de ativado) **falha no Preparar_Ciclo**, com a lista das origens válidas. Um ciclo vazio não termina como sucesso.
+- Nome errado ou origem inativa (ex.: `G5`, ou uma origem com `ativo: false`) **falha no Preparar_Ciclo**, com a lista das origens válidas. Um ciclo vazio não termina como sucesso.
 - Execuções de **origens diferentes** podem rodar ao mesmo tempo: cada uma só mexe nas tabelas das suas origens, inclusive na retenção da Bronze, e a gravação dos watermarks e do log tenta de novo se as duas terminarem juntas.
 - **Não rode a mesma origem** em duas execuções simultâneas: as duas copiariam a mesma janela.
 - O `ctl_log` registra no resumo do ciclo quais origens rodaram.
@@ -371,7 +376,7 @@ SELECT id, ultimo_watermark, dt_atualizacao FROM ctl_tabelas
 WHERE modo_carga = 'INCREMENTAL' ORDER BY id;
 ```
 
-**Forçar a recarga completa de uma tabela incremental:** zere o `ultimo_watermark` dela (pelo notebook, com `deltalake`) e rode um ciclo.
+**Forçar a recarga completa de uma tabela incremental:** zere o `ultimo_watermark` dela (num notebook: `tabela_delta(LH_BRONZE, "ctl_tabelas").update("id = '<ID>'", {"ultimo_watermark": "NULL"})`) e rode um ciclo.
 
 **Desligar uma tabela:** `ativo=False` na lista do `nb_setup_controle` e rode o setup.
 
@@ -384,13 +389,18 @@ WHERE modo_carga = 'INCREMENTAL' ORDER BY id;
 - o orquestrador leva para a Silver e avança o watermark só das tabelas que deram certo; as que falharam ficam com o watermark parado e aparecem no `ctl_log` (o ciclo fica `PARCIAL`), e o pipeline termina vermelho para alertar;
 - o `nb_ingestao_api` devolve `FALHA` por tabela em vez de parar no primeiro erro; no `nb_rotina_nexti`, uma rotina com falha não impede as outras.
 
-**Testes unitários** (`tests/`, pytest): rodam os notebooks localmente, sem Fabric, sobre lakehouses temporários, e cobrem preparo do ciclo, padronização da Silver, isolamento, regras das Golds e o motor de qualidade.
+**Testes unitários** (`tests/`, pytest): rodam os notebooks localmente, com PySpark e Delta, sem Fabric, sobre lakehouses temporários, e cobrem preparo do ciclo, padronização da Silver, isolamento, regras das Golds e o motor de qualidade.
+
+O Spark local precisa de Java 21; no Windows, os testes rodam num contêiner com as versões do Fabric (`tests/docker/Dockerfile`, Docker Desktop ligado):
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest      # na raiz do projeto
+docker build -t dw-fabric-testes tests/docker                  # uma vez (e quando mudar o Dockerfile)
+docker run --rm -v "${PWD}:/projeto" dw-fabric-testes          # na raiz do projeto
 ```
 
-O GitHub roda os mesmos testes a cada push e pull request (`.github/workflows/ci.yml`).
+Na rede da empresa, que inspeciona o TLS, os certificados raiz do Windows precisam estar em `tests/docker/certificados/` (arquivo `.crt` em PEM, fora do Git) antes do build.
+
+O GitHub roda os mesmos testes a cada push e pull request (`.github/workflows/ci.yml`), com Java 21 e PySpark.
 
 **Qualidade dos dados** (`nb_qualidade` + `config/qualidade.yml`). As regras ficam no YAML (chave única, não nulo, linhas proibidas, valores permitidos, faixa de datas, mínimo de linhas, sem timestamp sem fuso), com grupo (`AUSENCIAS`, `COBERTURAS`, `MARCACAO`, `GERAL`) e severidade (`erro` ou `alerta`). O resultado de cada regra vai para `ctl_qualidade`. Roda uma vez por dia em cada rotina e pode ser executado à mão com `grupo` vazio (todas).
 
@@ -446,3 +456,4 @@ SELECT * FROM ctl_qualidade WHERE dt_execucao = (SELECT MAX(dt_execucao) FROM ct
 | 23/10/2026 | Lakehouses Bronze, Silver e Gold recriados e dados copiados dos antigos `lh_*`: a renomeação pela API não mudou o banco do SQL endpoint e a sincronização de todas as tabelas falhava. A implantação não renomeia mais lakehouses |
 | 23/10/2026 | Orquestração por origem: todas de uma vez ou só as escolhidas (`executar_ciclo.py`), com validação do filtro e retenção limitada às origens do ciclo |
 | 26/10/2026 | Testes (pytest e CI no GitHub), isolamento entre bases no pipeline e na ingestão, qualidade de dados (`nb_qualidade`, `config/qualidade.yml`) e monitoramento (`nb_monitoramento`, `ctl_alertas`) |
+| 27/10/2026 | Notebooks migrados para PySpark (Runtime 2.0) e consultas Gold para Spark SQL; testes com Spark num contêiner Docker. Protheus (14 tabelas) e VIGON (29 tabelas do Fortes) ativados. Primeira carga incremental passa a trazer também as linhas sem data de alteração |

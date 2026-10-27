@@ -22,8 +22,6 @@ modo = "INCREMENTAL"      # INCREMENTAL | COMPLETO
 #@@COMUM@@
 
 # %%
-import pyarrow.compute as pc
-
 LAKEHOUSES = {"Bronze": LH_BRONZE, "Silver": LH_SILVER, "Gold": LH_GOLD}
 inicio = agora_utc()
 sql = consulta(gold)
@@ -43,43 +41,39 @@ lh_inc, tabela_inc = fontes[apelido_inc]
 wm = watermark_gold(destino, tabela_inc)
 completo = modo == "COMPLETO" or wm is None or not existe(LH_GOLD, destino)
 
-con = duckdb.connect()
-# as datas da Bronze são horário de Brasília rotulado UTC: converter em UTC para não recuar um dia
-con.execute("SET TimeZone = 'UTC'").fetchall()
+# cada fonte vira uma view com o apelido usado no .sql; a do incremental traz só as linhas novas
 for apelido, (lh, tabela) in fontes.items():
     if apelido == apelido_inc and not completo:
-        dados = ler(lh, tabela, filtros=[("_dt_carga", ">", wm)])
+        dados = materializar(ler(lh, tabela, filtros=[("_dt_carga", ">", wm)]))
     else:
         dados = ler(lh, tabela)
     if apelido == apelido_inc:
         alterados = dados
-    con.register(apelido, dados)
+    dados.createOrReplaceTempView(apelido)
 
 # %%
-if alterados.num_rows == 0:
+if alterados.isEmpty():
     print(f"{destino}: nada novo")
     resultado = {"gold": destino, "registros": 0, "linhas": 0, "completo": False}
 else:
-    linhas = para_arrow(con.sql(sql))
-    chaves = sorted(set(pc.unique(alterados.column(coluna_inc)).drop_null().to_pylist()))
-    novo_wm = pc.max(alterados.column("_dt_carga")).as_py()
-    con.close()
+    linhas = materializar(spark.sql(sql))
+    n_linhas = linhas.count()
+    chaves = sorted(r[0] for r in alterados.select(coluna_inc).distinct().collect() if r[0] is not None)
+    novo_wm = maximo(alterados, "_dt_carga")
     if completo:
-        if linhas.num_rows == 0:
+        if n_linhas == 0:
             raise RuntimeError(f"{destino}: consulta sem linhas; tabela não substituída para não esvaziá-la")
         gravar(LH_GOLD, destino, linhas, modo="overwrite")
     else:
-        alvo = tabela_delta(LH_GOLD, destino)
-        for i in range(0, len(chaves), 5000):
-            alvo.delete(f"{chave} IN ({', '.join(str(int(x)) for x in chaves[i:i + 5000])})")
-        if linhas.num_rows:
+        apagar(LH_GOLD, destino, chave, chaves)
+        if n_linhas:
             gravar(LH_GOLD, destino, linhas)
     gravar_watermark_gold(destino, tabela_inc, novo_wm)
     gravar_watermark_gold(destino, "escrita", inicio)
     duracao = (agora_utc() - inicio).total_seconds()
     print(f"{destino}: {'COMPLETO' if completo else 'INCREMENTAL'} | {len(chaves)} registros | "
-          f"{linhas.num_rows} linhas | {duracao:.0f}s")
-    resultado = {"gold": destino, "registros": len(chaves), "linhas": linhas.num_rows, "completo": completo}
+          f"{n_linhas} linhas | {duracao:.0f}s")
+    resultado = {"gold": destino, "registros": len(chaves), "linhas": n_linhas, "completo": completo}
 
 # %%
 sair(json.dumps(resultado))

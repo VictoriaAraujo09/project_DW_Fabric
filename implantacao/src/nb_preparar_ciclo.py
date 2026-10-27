@@ -64,7 +64,11 @@ def montar(r, dialeto):
         q_max = s["q_max_data"].format(col=col, tab=tab)
         if ultimo:
             filtros.append(f"{col} > '{inicio_janela(ultimo, r['janela_seguranca_min'], s['fmt_data'])}'")
-        filtros.append(f"{col} <= '{MARCADOR}'")
+            filtros.append(f"{col} <= '{MARCADOR}'")
+        else:
+            # primeira carga: também as linhas sem data de alteração (registros anteriores à coluna,
+            # como o S_T_A_M_P_ do Protheus), que nenhuma carga incremental traria depois
+            filtros.append(f"({col} <= '{MARCADOR}' OR {col} IS NULL)")
     elif modo == "JANELA":
         q_max = s["q_agora"]
         filtros.append(f"{col} >= {s['dias_atras'].format(dias=int(r['janela_dias']))}")
@@ -89,7 +93,7 @@ if ciclo == "AUTO":
 tipos = {"DIM", "FATO"} if ciclo == "COMPLETO" else {"FATO"}
 
 filtro = {o.strip().upper() for o in origens.split(",") if o.strip()}
-origens = {o["origem"]: o for o in ler(LH_BRONZE, "ctl_origens").to_pylist()}
+origens = {o["origem"]: o for o in coletar(ler(LH_BRONZE, "ctl_origens"))}
 ativas = sorted(n for n, o in origens.items() if o["ativo"])
 # nome errado no filtro faria um ciclo vazio terminar com "sucesso": melhor falhar já aqui
 invalidas = sorted(filtro - set(ativas))
@@ -98,7 +102,7 @@ if invalidas:
                      f"Ativas: {', '.join(ativas)} (vazio = todas)")
 selecionadas = sorted(filtro) if filtro else ativas
 saida = {nome: [] for nome in origens}          # toda origem aparece, mesmo vazia
-for r in ler(LH_BRONZE, "ctl_tabelas").to_pylist():
+for r in coletar(ler(LH_BRONZE, "ctl_tabelas")):
     o = origens.get(r["origem"])
     # origens API são lidas pelo nb_ingestao_api, não pela cópia do pipeline
     if (r["ativo"] and o and o["ativo"] and o["dialeto"] != "API" and r["tipo"] in tipos

@@ -25,51 +25,44 @@ SILVER_EMP = nome_silver("dim_empresas_nexti")
 SILVER_POSTOS = nome_silver("dim_postos_nexti")
 
 # %%
-import pyarrow.compute as pc
-
 inicio = agora_utc()
 hoje = dt.datetime.now(FUSO_BRT).date()
 transf = ler(LH_SILVER, SILVER_TRANSF)
 wm = watermark_gold(GOLD, SILVER_TRANSF)
-novo_wm = pc.max(transf.column("_dt_carga")).as_py() if transf.num_rows else wm
+novo_wm = maximo(transf, "_dt_carga") or wm
 
-con = duckdb.connect()
-# as datas da Bronze são horário de Brasília rotulado UTC: converter em UTC para não recuar um dia
-con.execute("SET TimeZone = 'UTC'").fetchall()
-con.register("transf", transf)
-con.register("src_colab", ler(LH_SILVER, SILVER_COLAB))
-con.register("src_emp", ler(LH_SILVER, SILVER_EMP))
-con.register("src_postos", ler(LH_SILVER, SILVER_POSTOS))
+transf.createOrReplaceTempView("transf")
+ler(LH_SILVER, SILVER_COLAB).createOrReplaceTempView("src_colab")
+ler(LH_SILVER, SILVER_EMP).createOrReplaceTempView("src_emp")
+ler(LH_SILVER, SILVER_POSTOS).createOrReplaceTempView("src_postos")
 
 # virada do dia: o primeiro recálculo do dia é completo, para estender as linhas de todos até hoje
 ultima_virada = watermark_gold(GOLD, "virada_dia")
 completo = (modo == "COMPLETO" or wm is None or not existe(LH_GOLD, GOLD) or ultima_virada is None
             or ultima_virada.astimezone(FUSO_BRT).date() < hoje)
 
-if completo:
-    con.sql("CREATE TABLE alterados AS SELECT DISTINCT personId AS CodColaborador FROM transf")
-else:
-    con.execute("CREATE TABLE alterados AS SELECT DISTINCT personId AS CodColaborador FROM transf "
-                "WHERE _dt_carga > ?", [wm]).fetchall()
-n_alterados = con.execute("SELECT count(*) FROM alterados").fetchall()[0][0]
+alterados = transf.select(F.col("personId").alias("CodColaborador"))
+if not completo:
+    alterados = alterados.where(F.col("_dt_carga") > F.lit(wm))
+alterados = materializar(alterados.distinct())
+alterados.createOrReplaceTempView("alterados")
+n_alterados = alterados.count()
 
 # %%
 if n_alterados == 0:
     print(f"{GOLD}: nenhum colaborador alterado")
     sair(json.dumps({"gold": GOLD, "colaboradores": 0, "linhas": 0, "completo": False}))
 else:
-    con.execute("SET VARIABLE hoje = ?::DATE", [hoje]).fetchall()
-    linhas = para_arrow(con.sql(consulta(GOLD)))
-    ids = con.execute("SELECT list(CodColaborador) FROM alterados").fetchall()[0][0]
-    con.close()
+    linhas = materializar(spark.sql(consulta(GOLD).replace("{hoje}", hoje.isoformat())))
+    n_linhas = linhas.count()
+    ids = [r[0] for r in alterados.collect()]
 
     if completo:
         gravar(LH_GOLD, GOLD, linhas, modo="overwrite")
     else:
-        alvo = tabela_delta(LH_GOLD, GOLD)
         # troca as linhas dos colaboradores alterados: as que sumiram saem, as novas entram
-        alvo.delete(f"CodColaborador IN ({', '.join(str(int(i)) for i in ids)}) AND SistemaOrigem = 'NEXTI'")
-        if linhas.num_rows:
+        apagar(LH_GOLD, GOLD, "CodColaborador", ids, extra="SistemaOrigem = 'NEXTI'")
+        if n_linhas:
             gravar(LH_GOLD, GOLD, linhas)
     if novo_wm is not None:
         gravar_watermark_gold(GOLD, SILVER_TRANSF, novo_wm)
@@ -79,6 +72,6 @@ else:
         gravar_watermark_gold(GOLD, "virada_dia", inicio)
     duracao = (agora_utc() - inicio).total_seconds()
     print(f"{GOLD}: {'COMPLETO' if completo else 'INCREMENTAL'} | {n_alterados} colaboradores | "
-          f"{linhas.num_rows} linhas | {duracao:.0f}s")
-    sair(json.dumps({"gold": GOLD, "colaboradores": int(n_alterados), "linhas": linhas.num_rows,
+          f"{n_linhas} linhas | {duracao:.0f}s")
+    sair(json.dumps({"gold": GOLD, "colaboradores": int(n_alterados), "linhas": n_linhas,
                      "completo": completo}))

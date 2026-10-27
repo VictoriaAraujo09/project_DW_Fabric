@@ -12,7 +12,7 @@ Este pacote cria a estrutura do DW em poucos minutos: workspaces, lakehouses (Br
 | `notebooks/nb_setup_controle.ipynb` | Cria `ctl_origens`, `ctl_tabelas` e `ctl_log` no lakehouse `Bronze` |
 | `notebooks/nb_preparar_ciclo.ipynb` | Lê o controle e monta as consultas incrementais de cada tabela |
 | `notebooks/nb_orquestrador.ipynb` | Faz o MERGE na Silver, avança os watermarks e grava o log |
-| `src/`, `build_notebooks.py` | Fonte dos notebooks, para versionar no GitHub. Testes em `tests/` (`python -m pytest` na raiz) |
+| `src/`, `build_notebooks.py` | Fonte dos notebooks (PySpark), para versionar no GitHub. Testes em `tests/`, pelo contêiner de `tests/docker` |
 
 ## Passo a passo
 
@@ -64,7 +64,7 @@ Remova os itens de teste: Dw Teste, testeSintetico, pipeline_teste_service, Stag
 
 ## Pontos a conferir no primeiro teste
 
-- **Kernel dos notebooks:** os notebooks precisam abrir como Python notebook, não PySpark. Se abrirem como PySpark, troque o idioma para Python no canto superior do notebook.
+- **Kernel dos notebooks:** os notebooks são PySpark (Runtime 2.0 do workspace). Os caminhos do OneLake usam os IDs do workspace e dos lakehouses, porque o nome do workspace tem espaços.
 - **Conexão do pipeline:** abra o `pl_mestre_dw` e confira se o Lookup e a Copy do `ForEach_GS` mostram a conexão do gateway. Se a conexão exigir banco de dados, preencha `database` no config e rode o script de novo.
-- **Firebird (4S e VIGON):** o caminho por ODBC já está no gerador do pipeline, mas só será testado na Fase 3.
+- **Firebird (4S e VIGON):** cópia por ODBC, pelas conexões do gateway em `config_fundacao.json`.
 - **Exclusões na origem:** ainda não são tratadas. A reconciliação semanal entra depois do piloto.

@@ -576,6 +576,180 @@
         }
       },
       {
+        "name": "ForEach_VIGON",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "Preparar_Ciclo",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@json(activity('Preparar_Ciclo').output.result.exitValue)['origens']['VIGON']",
+            "type": "Expression"
+          },
+          "isSequential": false,
+          "batchCount": 4,
+          "activities": [
+            {
+              "name": "Lookup_Max_VIGON",
+              "type": "Lookup",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.00:30:00",
+                "retry": 1,
+                "retryIntervalInSeconds": 60,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "OdbcSource",
+                  "query": {
+                    "value": "@item().query_max",
+                    "type": "Expression"
+                  },
+                  "queryTimeout": "02:00:00"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "type": "OdbcTable",
+                  "schema": [],
+                  "typeProperties": {},
+                  "externalReferences": {
+                    "connection": "72c5e5df-7d5a-4644-ac6e-6bae020b9e2d"
+                  }
+                },
+                "firstRowOnly": true
+              }
+            },
+            {
+              "name": "Se_Mudou_VIGON",
+              "type": "IfCondition",
+              "dependsOn": [
+                {
+                  "activity": "Lookup_Max_VIGON",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "typeProperties": {
+                "expression": {
+                  "value": "@or(not(equals(item().modo_carga, 'INCREMENTAL')), and(not(equals(coalesce(activity('Lookup_Max_VIGON').output.firstRow.novo, ''), '')), not(equals(coalesce(activity('Lookup_Max_VIGON').output.firstRow.novo, ''), item().wm_atual))))",
+                  "type": "Expression"
+                },
+                "ifTrueActivities": [
+                  {
+                    "name": "Copiar_VIGON",
+                    "type": "Copy",
+                    "dependsOn": [],
+                    "policy": {
+                      "timeout": "0.02:00:00",
+                      "retry": 1,
+                      "retryIntervalInSeconds": 60,
+                      "secureOutput": false,
+                      "secureInput": false
+                    },
+                    "typeProperties": {
+                      "source": {
+                        "type": "OdbcSource",
+                        "query": {
+                          "value": "@replace(item().query_copy, '#NOVO#', coalesce(activity('Lookup_Max_VIGON').output.firstRow.novo, ''))",
+                          "type": "Expression"
+                        },
+                        "queryTimeout": "02:00:00",
+                        "datasetSettings": {
+                          "annotations": [],
+                          "type": "OdbcTable",
+                          "schema": [],
+                          "typeProperties": {},
+                          "externalReferences": {
+                            "connection": "72c5e5df-7d5a-4644-ac6e-6bae020b9e2d"
+                          }
+                        }
+                      },
+                      "sink": {
+                        "type": "LakehouseTableSink",
+                        "tableActionOption": "Append",
+                        "datasetSettings": {
+                          "annotations": [],
+                          "linkedService": {
+                            "name": "Bronze",
+                            "properties": {
+                              "annotations": [],
+                              "type": "Lakehouse",
+                              "typeProperties": {
+                                "workspaceId": "db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9",
+                                "artifactId": "9e23d513-0ddd-4671-8940-2728cb1bb64e",
+                                "rootFolder": "Tables"
+                              }
+                            }
+                          },
+                          "type": "LakehouseTable",
+                          "schema": [],
+                          "typeProperties": {
+                            "table": {
+                              "value": "@item().tabela_destino",
+                              "type": "Expression"
+                            }
+                          }
+                        }
+                      },
+                      "enableStaging": false,
+                      "translator": {
+                        "type": "TabularTranslator",
+                        "typeConversion": true,
+                        "typeConversionSettings": {
+                          "allowDataTruncation": true,
+                          "treatBooleanAsNumber": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "Registrar_VIGON",
+                    "type": "AppendVariable",
+                    "dependsOn": [
+                      {
+                        "activity": "Copiar_VIGON",
+                        "dependencyConditions": [
+                          "Succeeded"
+                        ]
+                      }
+                    ],
+                    "typeProperties": {
+                      "variableName": "resultados",
+                      "value": {
+                        "value": "@concat(item().id, '|', coalesce(activity('Lookup_Max_VIGON').output.firstRow.novo, ''), '|', string(activity('Copiar_VIGON').output.rowsCopied))",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                ],
+                "ifFalseActivities": [
+                  {
+                    "name": "Sem_Mudanca_VIGON",
+                    "type": "AppendVariable",
+                    "dependsOn": [],
+                    "typeProperties": {
+                      "variableName": "resultados",
+                      "value": {
+                        "value": "@concat(item().id, '|SEM_MUDANCA|0')",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
         "name": "Ingestao_API",
         "type": "TridentNotebook",
         "dependsOn": [
@@ -643,6 +817,12 @@
           },
           {
             "activity": "ForEach_4S",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          },
+          {
+            "activity": "ForEach_VIGON",
             "dependencyConditions": [
               "Completed"
             ]

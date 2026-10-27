@@ -8,9 +8,9 @@
 # ativo: false deixa a origem fora dos ciclos. dialeto API: lida pelo nb_ingestao_api (config/nexti.yml).
 origens:
   GS: {dialeto: SQLSERVER, ativo: true}
-  PROTHEUS: {dialeto: SQLSERVER, ativo: false}
+  PROTHEUS: {dialeto: SQLSERVER, ativo: true}
   4S: {dialeto: FIREBIRD, ativo: true}
-  VIGON: {dialeto: FIREBIRD, ativo: false}
+  VIGON: {dialeto: FIREBIRD, ativo: true}
   NEXTI: {dialeto: API, ativo: true}
 
 # Campos de cada tabela:
@@ -23,12 +23,13 @@ origens:
 #   opcionais   ativo (padrão true), modo_carga (JANELA), janela_dias, filtro_adicional
 # As colunas carregadas são todas (*), menos nas tabelas de config/colunas_permitidas.yml.
 bases:
-  # GS AG (SQL Server) e 4S AG (Firebird) são o mesmo sistema Fortes, com as mesmas tabelas.
+  # GS AG (SQL Server), 4S AG e VIGON AG (Firebird) são o mesmo sistema Fortes, com as mesmas tabelas.
   # Chaves = chave primária do GS AG.
   FORTES:
     origens:
       GS: {prefixo: dbo., sufixo: gs}
       4S: {prefixo: "", sufixo: 4s}
+      VIGON: {prefixo: "", sufixo: vigon}
     tabelas:
       - {tabela: LAN, tipo: FATO, assunto: lancamentos, chave: "EMP_Codigo, Codigo", watermark: DataUltimaAlteracao}
       - {tabela: CPG, tipo: FATO, assunto: contas_pagar, chave: "EMP_Codigo, Codigo", watermark: DataUltimaAlteracao}
@@ -59,6 +60,29 @@ bases:
       - {tabela: APF, tipo: DIM, assunto: apuracao_financeira, chave: "EMP_Codigo, Sequencial"}
       - {tabela: GCL, tipo: DIM, assunto: grupo_clientes, chave: "EMP_Codigo, Codigo"}
       - {tabela: EMP, tipo: DIM, assunto: empresas, chave: Codigo}
+
+  # Protheus (TOTVS, SQL Server), empresa 01 (tabelas com final 010). Chave: R_E_C_N_O_, o número único
+  # da linha. Exclusão lógica: a linha apagada continua com D_E_L_E_T_ = '*' (vai assim para a Silver).
+  # Incremental pela S_T_A_M_P_ (data de alteração do banco); sem ela, carga completa (a SE5 é a única
+  # grande nesse caso, 235 mil linhas).
+  PROTHEUS:
+    origens:
+      PROTHEUS: {prefixo: dbo., sufixo: protheus}
+    tabelas:
+      - {tabela: SE1010, tipo: FATO, assunto: contas_receber, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+      - {tabela: SE2010, tipo: FATO, assunto: contas_pagar, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+      - {tabela: SE5010, tipo: FATO, assunto: movimentacao_financeira, chave: R_E_C_N_O_}
+      - {tabela: SF2010, tipo: FATO, assunto: notas_fiscais_saida, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+      - {tabela: SD2010, tipo: FATO, assunto: itens_notas_fiscais_saida, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+      - {tabela: SF1010, tipo: FATO, assunto: notas_fiscais_entrada, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+      - {tabela: SD1010, tipo: FATO, assunto: itens_notas_fiscais_entrada, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+      - {tabela: SFT010, tipo: FATO, assunto: livro_fiscal, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+      - {tabela: SA1010, tipo: DIM, assunto: clientes, chave: R_E_C_N_O_}
+      - {tabela: SA2010, tipo: DIM, assunto: fornecedores, chave: R_E_C_N_O_}
+      - {tabela: SA6010, tipo: DIM, assunto: bancos, chave: R_E_C_N_O_}
+      - {tabela: SED010, tipo: DIM, assunto: natureza_financeira, chave: R_E_C_N_O_}
+      - {tabela: CTT010, tipo: DIM, assunto: centro_resultado, chave: R_E_C_N_O_}
+      - {tabela: SYS_COMPANY, tipo: DIM, assunto: empresas, chave: R_E_C_N_O_}
 
   # Incrementais pela data da última alteração (margem de 10 min); previsto x trabalhado pela data de
   # referência, reprocessando os últimos 35 dias (apuração do mês ainda aberta).

@@ -28,14 +28,15 @@ def ts(texto):
 
 
 class Lake:
-    def __init__(self, raiz):
+    def __init__(self, raiz, config=RAIZ_PROJETO / "config"):
         self.raiz = raiz
+        self.config = config            # pasta dos YAMLs (um teste pode usar uma cópia alterada)
 
     def rodar(self, notebook, params=None):
         """Executa o notebook e devolve o valor de saída (sair)."""
         os.environ["DW_LOCAL_ROOT"] = str(self.raiz)
         os.environ["DW_CONSULTAS"] = str(IMPLANTACAO / "consultas")
-        os.environ["DW_CONFIG"] = str(RAIZ_PROJETO / "config")
+        os.environ["DW_CONFIG"] = str(self.config)
         escopo = {}
         exec(build_notebooks.script_local(notebook, params), escopo)
         return escopo.get("_EXIT_VALUE")

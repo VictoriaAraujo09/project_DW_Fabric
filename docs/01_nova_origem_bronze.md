@@ -105,7 +105,7 @@ Por padrão, a carga traz **todas as colunas** (`colunas = "*"`). No GS AG, isso
 1. Procure colunas com `SENHA`, `PASSWORD`, `TOKEN`, `SECRET`, `CLIENTID`, `APIKEY`/`DEVKEY`, `CREDENCIAL`, `CERTIFICADO`, `LOGIN` e `USUARIO` no nome.
 2. **Leia a lista de colunas das tabelas de cadastro** (empresa, filial, parâmetros, integrações). No Fortes, o conteúdo do certificado estava numa coluna chamada `ImpNFEConteudoArquivoA1`, que nenhum filtro por nome pega.
 3. Procure colunas binárias (imagens, anexos, XML grande).
-4. Nas tabelas que tiverem esse tipo de coluna, coloque a lista explícita do que **deve** ser carregado em `COLUNAS_PERMITIDAS` no `nb_setup_controle`, em vez de `*`.
+4. Nas tabelas que tiverem esse tipo de coluna, coloque a lista explícita do que **deve** ser carregado em [`config/colunas_permitidas.yml`](../config/colunas_permitidas.yml), em vez de `*`.
 
 ```sql
 -- SQL Server: colunas suspeitas
@@ -183,13 +183,23 @@ GROUP BY rc.RDB$RELATION_NAME;
  "connection_id": "c4b4f96f-b6a6-40f4-8dbb-2351c2e6dd83", "database": "C7FTHA_136941_PR_PD"}
 ```
 
-**2. Ativar a origem** em [`implantacao/src/nb_setup_controle.py`](../implantacao/src/nb_setup_controle.py), na lista `ORIGENS`:
+**2. Ativar a origem** em [`config/tabelas.yml`](../config/tabelas.yml), na seção `origens`:
 
-```python
-{"origem": "PROTHEUS", "dialeto": "SQLSERVER", "ativo": True},
+```yaml
+  PROTHEUS: {dialeto: SQLSERVER, ativo: true}
 ```
 
-**3. Cadastrar as tabelas** no mesmo arquivo. Siga o modelo da lista `FORTES`: uma lista própria da origem, com sigla, tipo, assunto, chave e coluna de alteração. Inclua as linhas na lista `TABELAS`. O notebook valida cada linha antes de gravar e recusa um cadastro incompleto.
+**3. Cadastrar as tabelas** no mesmo arquivo, em `bases`: um grupo da base, com as origens que a usam (prefixo e sufixo do nome) e uma linha por tabela, com tabela, tipo, assunto, chave e coluna de alteração. Nenhum notebook é alterado: o `nb_setup_controle` lê o arquivo, valida cada linha e recusa um cadastro incompleto, repetido ou com campo desconhecido.
+
+```yaml
+  PROTHEUS:
+    origens:
+      PROTHEUS: {prefixo: dbo., sufixo: protheus}
+    tabelas:
+      - {tabela: SE1010, tipo: FATO, assunto: titulos_receber, chave: R_E_C_N_O_, watermark: S_T_A_M_P_}
+```
+
+Origem por API (como a Nexti): o endpoint e os campos gravados ficam em [`config/nexti.yml`](../config/nexti.yml), e a linha em `tabelas.yml` usa a chave do endpoint em `tabela`.
 
 **4. Gerar os notebooks e testar localmente:**
 
@@ -227,7 +237,7 @@ Em cada tabela, o número de linhas da etapa `SILVER` deve ser igual ao da etapa
 
 - [ ] Gateway e conexão funcionando, com usuário somente leitura
 - [ ] ID da conexão e banco no `config_fundacao.json`
-- [ ] Origem ativa em `ORIGENS`, com o dialeto certo
+- [ ] Origem ativa em `config/tabelas.yml`, com o dialeto certo
 - [ ] Planilha de tabelas preenchida: chave, tipo, assunto e forma de carga
 - [ ] Colunas sensíveis e binárias excluídas (`colunas` explícito)
 - [ ] Nulos na coluna de alteração conferidos (zero)

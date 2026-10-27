@@ -1,0 +1,83 @@
+# Cadastro das origens e tabelas do DW. O nb_setup_controle lê este arquivo e grava ctl_origens e
+# ctl_tabelas no lakehouse Bronze (upsert por id, sem nunca apagar o watermark já gravado).
+#
+# Para incluir uma tabela: acrescente uma linha no grupo da base, rode a implantação
+# (implantacao/implantar_fundacao.py --executar-setup). Não precisa mexer em nenhum notebook.
+# Para parar de carregar: ativo: false (a linha que sai daqui continua em ctl_tabelas, como estava).
+
+# ativo: false deixa a origem fora dos ciclos. dialeto API: lida pelo nb_ingestao_api (config/nexti.yml).
+origens:
+  GS: {dialeto: SQLSERVER, ativo: true}
+  PROTHEUS: {dialeto: SQLSERVER, ativo: false}
+  4S: {dialeto: FIREBIRD, ativo: true}
+  VIGON: {dialeto: FIREBIRD, ativo: false}
+  NEXTI: {dialeto: API, ativo: true}
+
+# Campos de cada tabela:
+#   tabela      nome na origem (sigla do Fortes; na Nexti, a chave do endpoint em config/nexti.yml)
+#   tipo        DIM (só no ciclo completo das 05:00) | FATO (todos os ciclos)
+#   assunto     nome no DW: {tipo}_{assunto}_{sufixo}; a Bronze recebe bronze_ e a Silver silver_
+#   chave       chave de negócio (MERGE da Silver), colunas separadas por vírgula
+#   watermark   coluna de data de alteração: carga INCREMENTAL; sem ela, FULL
+#   margem_min  minutos reprocessados antes do watermark (padrão 10)
+#   opcionais   ativo (padrão true), modo_carga (JANELA), janela_dias, filtro_adicional
+# As colunas carregadas são todas (*), menos nas tabelas de config/colunas_permitidas.yml.
+bases:
+  # GS AG (SQL Server) e 4S AG (Firebird) são o mesmo sistema Fortes, com as mesmas tabelas.
+  # Chaves = chave primária do GS AG.
+  FORTES:
+    origens:
+      GS: {prefixo: dbo., sufixo: gs}
+      4S: {prefixo: "", sufixo: 4s}
+    tabelas:
+      - {tabela: LAN, tipo: FATO, assunto: lancamentos, chave: "EMP_Codigo, Codigo", watermark: DataUltimaAlteracao}
+      - {tabela: CPG, tipo: FATO, assunto: contas_pagar, chave: "EMP_Codigo, Codigo", watermark: DataUltimaAlteracao}
+      - {tabela: NFS, tipo: FATO, assunto: notas_fiscais, chave: "EMP_Codigo, Codigo"}
+      - {tabela: ORL, tipo: FATO, assunto: origem_lancamentos, chave: "EMP_Codigo, LAN_Codigo"}
+      - {tabela: CRE, tipo: FATO, assunto: contas_receber, chave: "EMP_Codigo, Codigo", watermark: DataUltimaAlteracao}
+      - {tabela: VDR, tipo: FATO, assunto: vencimentos_contas_receber, chave: "EMP_Codigo, CRE_Codigo, Sequencial"}
+      - {tabela: VCP, tipo: FATO, assunto: vencimentos_contas_pagar, chave: "EMP_Codigo, CPG_Codigo, Data, Sequencial"}
+      - {tabela: BVP, tipo: FATO, assunto: baixas_contas_pagar, chave: "EMP_Codigo, VCP_CPG_Codigo, VCP_Data, VCP_Sequencial, Sequencial", watermark: DataUltimaAlteracao}
+      - {tabela: SCR, tipo: FATO, assunto: rateio_servicos, chave: "EMP_Codigo, CRE_Codigo, Sequencial"}
+      - {tabela: BVD, tipo: FATO, assunto: baixas_contas_receber, chave: "EMP_Codigo, VDR_CRE_Codigo, VDR_Sequencial, Sequencial", watermark: DataUltimaAlteracao}
+      - {tabela: RDL, tipo: FATO, assunto: rateio_receitas_despesas_lancamentos, chave: "EMP_Codigo, LAN_Codigo, Sequencial"}
+      - {tabela: TCF, tipo: FATO, assunto: transferencias_contas, chave: "EMP_Codigo, Data, Sequencial", watermark: DataUltimaAlteracao}
+      - {tabela: DCP, tipo: FATO, assunto: rateio_despesas, chave: "EMP_Codigo, CPG_Codigo, CRD_Codigo, EST_Codigo, CRS_Codigo"}
+      - {tabela: RRR, tipo: FATO, assunto: rateio_receitas, chave: "EMP_Codigo, CRE_Codigo, CRD_Codigo, EST_Codigo, CRS_Codigo"}
+      - {tabela: LAF, tipo: FATO, assunto: linhas_apuracao_financeira, chave: "EMP_Codigo, APF_Sequencial, Codigo"}
+      - {tabela: VSE, tipo: FATO, assunto: vinculos_servicos_apf, chave: "EMP_Codigo, LAF_APF_Sequencial, LAF_Codigo, SER_Codigo, Faturado"}
+      - {tabela: VRD, tipo: FATO, assunto: vinculos_natureza_centro_resultado_apf, chave: "EMP_Codigo, LAF_APF_Sequencial, LAF_Codigo, CODIGO"}
+      - {tabela: CLI, tipo: DIM, assunto: clientes, chave: "EMP_Codigo, Codigo"}
+      - {tabela: FRN, tipo: DIM, assunto: fornecedores, chave: "EMP_Codigo, Codigo"}
+      - {tabela: CRS, tipo: DIM, assunto: centro_resultado, chave: "EMP_Codigo, Codigo"}
+      - {tabela: CRD, tipo: DIM, assunto: natureza_financeira, chave: "EMP_Codigo, Codigo"}
+      - {tabela: EST, tipo: DIM, assunto: estabelecimentos, chave: "EMP_Codigo, Codigo"}
+      - {tabela: CON, tipo: DIM, assunto: contas_bancarias, chave: "EMP_Codigo, Codigo"}
+      - {tabela: SER, tipo: DIM, assunto: servicos, chave: "EMP_Codigo, Codigo"}
+      - {tabela: BAN, tipo: DIM, assunto: bancos, chave: "EMP_Codigo, Codigo"}
+      - {tabela: GFR, tipo: DIM, assunto: grupo_fornecedores, chave: "EMP_Codigo, Codigo"}
+      - {tabela: APF, tipo: DIM, assunto: apuracao_financeira, chave: "EMP_Codigo, Sequencial"}
+      - {tabela: GCL, tipo: DIM, assunto: grupo_clientes, chave: "EMP_Codigo, Codigo"}
+      - {tabela: EMP, tipo: DIM, assunto: empresas, chave: Codigo}
+
+  # Incrementais pela data da última alteração (margem de 10 min); previsto x trabalhado pela data de
+  # referência, reprocessando os últimos 35 dias (apuração do mês ainda aberta).
+  NEXTI:
+    origens:
+      NEXTI: {prefixo: "", sufixo: nexti}
+    tabelas:
+      - {tabela: CLOCKINGS, tipo: FATO, assunto: marcacoes_ponto, chave: id, watermark: lastUpdate}
+      - {tabela: TIMETRACKINGS, tipo: FATO, assunto: previsto_trabalhado, chave: "personId, referenceDate", watermark: referenceDate, margem_min: 50400}
+      - {tabela: ABSENCES, tipo: FATO, assunto: ausencias, chave: id, watermark: lastUpdate}
+      - {tabela: PERSONS, tipo: DIM, assunto: colaboradores, chave: id}
+      - {tabela: WORKPLACES, tipo: DIM, assunto: postos, chave: id}
+      - {tabela: SCHEDULES, tipo: DIM, assunto: escalas, chave: id}
+      - {tabela: SHIFTS, tipo: DIM, assunto: horarios, chave: id}
+      - {tabela: CLIENTS, tipo: DIM, assunto: clientes, chave: id}
+      - {tabela: COMPANIES, tipo: DIM, assunto: empresas, chave: id}
+      - {tabela: BUSINESSUNITS, tipo: DIM, assunto: unidades_negocio, chave: id}
+      - {tabela: CAREERS, tipo: DIM, assunto: cargos, chave: id}
+      - {tabela: ABSENCESITUATIONS, tipo: DIM, assunto: situacoes_ausencia, chave: id}
+      - {tabela: WORKPLACETRANSFERS, tipo: FATO, assunto: transferencias_posto, chave: id, watermark: lastUpdate}
+      - {tabela: USERACCOUNTS, tipo: DIM, assunto: usuarios, chave: id}
+      - {tabela: REPLACEMENTS, tipo: FATO, assunto: coberturas, chave: id, watermark: lastUpdate}

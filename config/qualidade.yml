@@ -70,4 +70,10 @@ monitoramento:
   tabelas_incrementais_max_horas: 30   # ciclo geral: watermark parado há mais que isso
   volume_queda_max_percentual: 70      # FULL do ciclo completo: queda maior que isso em relação à média
   silenciar_horas: 6                   # o mesmo alerta não se repete nesse intervalo
-  teams_webhook_segredo: teams-webhook-dw   # segredo do Key Vault com o webhook do canal (opcional)
+  # Aviso no Teams: o nb_monitoramento posta os alertas novos num Workflow do Teams ("Enviar alertas
+  # de webhook para um chat"), que entrega no chat do destinatário. A URL do Workflow fica no Key Vault.
+  # Quando houver canal oficial: novo Workflow para o canal, URL no mesmo segredo, destinatario atualizado.
+  notificacao:
+    teams_workflow_segredo: teams-webhook-dw
+    destinatario: victoria.araujo@gscsc.com.br   # provisório, enquanto não há canal oficial
+    severidades: [erro]                           # quais alertas vão para o Teams (todos ficam em ctl_alertas)

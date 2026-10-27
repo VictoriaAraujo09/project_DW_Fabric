@@ -153,11 +153,15 @@ O código-fonte fica em [`implantacao/src/`](../implantacao/src/), em arquivos `
 - Modo local (`DW_LOCAL_ROOT`), para rodar os notebooks no computador, sem Fabric, nos testes.
 
 ### `nb_setup_controle`: cadastro
-- **Quando roda:** manualmente, depois de alterar a lista de origens ou de tabelas, e uma vez em cada workspace novo.
+- **Quando roda:** depois de alterar o cadastro (`implantar_fundacao.py --executar-setup`) e uma vez em cada workspace novo.
+- **Cadastro fora do código**, na pasta [`config/`](../config/), copiada pela implantação para o lakehouse Gold → `Files/config`:
+  - [`tabelas.yml`](../config/tabelas.yml): origens e, por base, as tabelas (tabela, tipo, assunto, chave, coluna de alteração, margem). A base `FORTES` vale para GS e 4S;
+  - [`colunas_permitidas.yml`](../config/colunas_permitidas.yml): lista explícita das tabelas com credenciais (CLI, EMP, EST e NFS) e as colunas ausentes no 4S;
+  - [`nexti.yml`](../config/nexti.yml): endpoints e campos da API Nexti.
 - **O que faz:**
-  1. Regrava `ctl_origens` a partir da lista `ORIGENS`.
-  2. Monta as tabelas a partir da lista `FORTES` (sigla, tipo, assunto, chave e coluna de alteração) para cada origem em `ORIGENS_FORTES`. Nas tabelas com credenciais (CLI, EMP, EST e NFS), usa a lista explícita de `COLUNAS_PERMITIDAS` em vez de `*`.
-  3. **Valida** cada linha: campos obrigatórios, tipos válidos, nome em minúsculas e duplicidade.
+  1. Regrava `ctl_origens` a partir de `tabelas.yml`.
+  2. Monta as tabelas de cada base para cada origem dela. Nas tabelas de `colunas_permitidas.yml`, usa a lista explícita em vez de `*`.
+  3. **Valida** cada linha: campos obrigatórios, campos desconhecidos (erro de digitação), tipos válidos, endpoint existente em `nexti.yml`, nome em minúsculas e duplicidade.
   4. Faz upsert em `ctl_tabelas` **sem apagar o `ultimo_watermark`**.
   5. Cria `ctl_log`, se ainda não existir.
 - Pode ser executado quantas vezes quiser.
@@ -178,8 +182,8 @@ O código-fonte fica em [`implantacao/src/`](../implantacao/src/), em arquivos `
 - **Parâmetros:** `lote`, `ciclo` (já resolvido pelo preparador), `origens` (filtro), `configuracao_api` (URL do Key Vault de cada origem), `inicio_historico` (01/01/2025) e `max_dias_por_execucao` (45).
 - **O que faz:**
   1. Lê as credenciais no Key Vault e obtém o token da API.
-  2. Para cada tabela ativa da origem, chama o endpoint de `ENDPOINTS_NEXTI`: os cadastros por inteiro e as fatos pela janela que vai do último watermark (menos a margem) até agora, em blocos do tamanho que a API aceita.
-  3. Grava **só os campos de `COLUNAS_NEXTI`**, com tipos fixos. Converte as datas `ddMMyyyyHHmmss`, passa os horários UTC das marcações para Brasília e troca datas fictícias por nulo.
+  2. Para cada tabela ativa da origem, chama o endpoint definido em `config/nexti.yml`: os cadastros por inteiro e as fatos pela janela que vai do último watermark (menos a margem) até agora, em blocos do tamanho que a API aceita.
+  3. Grava **só os campos listados em `config/nexti.yml`**, com tipos fixos. Converte as datas `ddMMyyyyHHmmss`, passa os horários UTC das marcações para Brasília e troca datas fictícias por nulo.
   4. Faz append na Bronze, bloco a bloco, com as colunas técnicas.
   5. Devolve ao orquestrador a lista `id|novo_watermark|linhas`, no mesmo formato do pipeline.
 - Na recuperação do histórico, cada ciclo avança no máximo 45 dias por tabela. O watermark só avança com o ciclo inteiro bem-sucedido.
@@ -400,7 +404,7 @@ O GitHub roda os mesmos testes a cada push e pull request (`.github/workflows/ci
 | `VOLUME_BAIXO` | tabela FULL do ciclo completo com queda grande em relação à média |
 | `QUALIDADE` | regra do `qualidade.yml` quebrada |
 
-O mesmo alerta não se repete por `silenciar_horas`. Com o webhook do canal no Key Vault (segredo `teams-webhook-dw`), os alertas de severidade `erro` também vão para o Teams.
+O mesmo alerta não se repete por `silenciar_horas`. Os alertas novos das severidades em `monitoramento.notificacao` (hoje `erro`) também vão para o Teams, num cartão, por um **Workflow do Teams** ("Enviar alertas de webhook para um chat"). A URL do Workflow fica no Key Vault (segredo `teams-webhook-dw`). Enquanto não há canal oficial, o Workflow entrega no chat de `victoria.araujo@gscsc.com.br`. Para trocar pelo canal: criar o Workflow do canal, gravar a nova URL no mesmo segredo e atualizar `destinatario` no `qualidade.yml`.
 
 ```sql
 -- últimos alertas (SQL endpoint do lakehouse Bronze)

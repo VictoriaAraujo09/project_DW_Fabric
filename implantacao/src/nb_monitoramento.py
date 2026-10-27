@@ -8,7 +8,8 @@
 # 5. **Qualidade**: regras do `ctl_qualidade` quebradas na última execução.
 #
 # Limites em `config/qualidade.yml` (seção `monitoramento`). O mesmo alerta não se repete dentro de
-# `silenciar_horas`. Com o segredo do webhook no Key Vault, os alertas de severidade erro vão para o Teams.
+# `silenciar_horas`. Com a URL do Workflow do Teams no Key Vault, os alertas novos das severidades de
+# `notificacao` vão para o chat do destinatário (ou canal) configurado no Workflow.
 
 # %% tags=["parameters"]
 configuracao_api = '{"NEXTI": {"key_vault": "https://kv-dw-fabric-kmf.vault.azure.net/"}}'
@@ -99,18 +100,39 @@ if novos:
            modo="append" if existe(LH_BRONZE, "ctl_alertas") else "overwrite")
 gravar_watermark_gold("MONITORAMENTO", "ctl_log", agora)
 
-# Teams: só os novos de severidade erro, numa mensagem só
-erros = [a for a in novos if a["severidade"] == "erro"]
-if erros and not _LOCAL and cfg.get("teams_webhook_segredo"):
+# Teams: os novos das severidades configuradas, num cartão só, pelo Workflow do Teams
+notif = cfg.get("notificacao") or {}
+erros = [a for a in novos if a["severidade"] in notif.get("severidades", ["erro"])]
+
+def cartao(itens):
+    """Mensagem no formato dos Workflows do Teams (cartão adaptável)."""
+    corpo = [{"type": "TextBlock", "size": "Medium", "weight": "Bolder", "text": "DW Fabric: alertas"},
+             {"type": "TextBlock", "isSubtle": True, "spacing": "None",
+              "text": f"{agora_brt:%d/%m/%Y %H:%M} · {len(itens)} novo(s)"}]
+    corpo += [{"type": "TextBlock", "wrap": True, "text": f"**{a['tipo']}** · {a['objeto']}\n\n{a['mensagem'][:500]}"}
+              for a in itens[:20]]
+    if len(itens) > 20:
+        corpo.append({"type": "TextBlock", "text": f"... e mais {len(itens) - 20} em ctl_alertas"})
+    return {"type": "message", "destinatario": notif.get("destinatario"),
+            "attachments": [{"contentType": "application/vnd.microsoft.card.adaptive", "content": {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json", "type": "AdaptiveCard",
+                "version": "1.4", "body": corpo}}]}
+
+teams = "sem alertas"
+if erros and _LOCAL:
+    teams = "local"
+elif erros and notif.get("teams_workflow_segredo"):
     try:
         cofre = json.loads(configuracao_api)["NEXTI"]["key_vault"]
-        url = notebookutils.credentials.getSecret(cofre, cfg["teams_webhook_segredo"])
+        url = notebookutils.credentials.getSecret(cofre, notif["teams_workflow_segredo"])
         import requests
-        texto = "**DW Fabric: alertas**\n\n" + "\n\n".join(f"- {a['mensagem']}" for a in erros[:20])
-        requests.post(url, json={"text": texto}, timeout=30)
-    except Exception as e:   # sem webhook configurado ou fora do ar: o alerta continua no ctl_alertas
-        print(f"Teams não notificado: {str(e)[:200]}")
+        r = requests.post(url, json=cartao(erros), timeout=30)
+        r.raise_for_status()
+        teams = f"enviado para {notif.get('destinatario') or 'o Workflow'}"
+    except Exception as e:   # sem Workflow configurado ou fora do ar: o alerta continua no ctl_alertas
+        teams = f"não notificado: {str(e)[:200]}"
+print(f"Teams: {teams}")
 
 for a in novos:
     print(f"{a['severidade']:<7} {a['tipo']:<16} {a['mensagem']}")
-sair(json.dumps({"alertas": len(alertas), "novos": len(novos), "erros": len(erros)}))
+sair(json.dumps({"alertas": len(alertas), "novos": len(novos), "erros": len(erros), "teams": teams}))

@@ -1,0 +1,184 @@
+# Endpoints da API Nexti lidos pelo nb_ingestao_api. A tabela é cadastrada em config/tabelas.yml (base
+# NEXTI, campo tabela = chave abaixo); aqui fica como buscar e quais campos gravar.
+#
+#   caminho           relativo a https://api.nexti.com (ou URL completa); {ini} e {fim} = janela ddMMyyyyHHmmss
+#   params            parâmetros da chamada (aceitam {ini} e {fim})
+#   itens             content (paginado) | value (resposta única)
+#   janela_dias       tamanho máximo da janela por chamada (incrementais)
+#   tamanho           itens por página (padrão 60000)
+#   utc               true: janela, watermark e datas em UTC (gravadas no horário de Brasília)
+#   por_dia           true: janela por data de referência (dias inteiros)
+#   inicio_historico  início da primeira carga, quando difere do padrão do notebook (2025-01-01)
+#   rotina            true: carregada só pelo nb_rotina_nexti, fora do ciclo geral
+#   campos            campo: tipo (inteiro, numero, texto, booleano, data_hora, json); só eles são gravados.
+#                     Dados pessoais e de saúde entram como no DW do Airflow (decisão de 26/10/2026).
+
+endpoints:
+  # a API trabalha em UTC (marcação 3h à frente do firstClocking do previsto); sem o filtro
+  # de tipos devolve zero marcações; um dia (~45 mil marcações) cabe numa página
+  CLOCKINGS:
+    caminho: "/clockings/lastupdate/start/{ini}/finish/{fim}/types"
+    params: {types: "1,2,3,4,5,6,7,8,9,10"}
+    itens: content
+    janela_dias: 1
+    utc: true
+    rotina: true
+    campos:
+      {adjustmentDate: data_hora, adjustmentReasonId: inteiro, clockingCollectorId: inteiro,
+      clockingCollectorName: texto, clockingDate: data_hora, clockingOriginId: inteiro,
+      clockingTypeId: inteiro, clockingTypeName: texto, companyNumber: texto, deviceCode: texto,
+      deviceId: inteiro, directionTypeId: inteiro, externalPersonId: texto, id: inteiro,
+      identificationMethodId: inteiro, identificationMethodName: texto, lastUpdate: data_hora,
+      online: booleano, personId: inteiro, referenceDate: data_hora, registerDate: data_hora,
+      removed: booleano, timezone: texto, userAdjustmentId: inteiro, workplaceId: inteiro,
+      adjustmentObservation: texto, latitude: numero, longitude: numero, personPIS: texto,
+      ticketSignature: texto}
+
+  TIMETRACKINGS:
+    caminho: /timetrackings/estimatedhoursvsworkedhours
+    params: {startDate: "{ini}", finishDate: "{fim}"}
+    itens: value
+    janela_dias: 7
+    por_dia: true
+    campos:
+      {absenceSituation: texto, adjustmentReason: texto, costCenter: texto, expectedHours: texto,
+      expectedMinutes: inteiro, firstClocking: texto, month: inteiro, personEnrolment: texto,
+      personExternalId: texto, personId: inteiro, referenceDate: data_hora, scheduleId: inteiro,
+      scheduleName: texto, timeTrackingEvents: json, timeTrackingPeriodId: inteiro,
+      timeTrackingPeriodName: texto, workedMinutes: inteiro, workedMinutesWithOvertime: inteiro,
+      workplaceName: texto, year: inteiro, personName: texto}
+
+  ABSENCES:
+    caminho: "/absences/lastupdate/start/{ini}/finish/{fim}"
+    itens: content
+    janela_dias: 30
+    tamanho: 1000
+    rotina: true
+    campos:
+      {absenceSituationExternalId: texto, absenceSituationId: inteiro, demissionReasonId: inteiro,
+      finishDateTime: data_hora, finishMinute: inteiro, id: inteiro, lastUpdate: data_hora,
+      medicalDoctorId: inteiro, personExternalId: texto, personId: inteiro, removed: booleano,
+      startDateTime: data_hora, startMinute: inteiro, userRegisterId: inteiro, note: texto,
+      medicalDoctorName: texto, medicalDoctorCrm: texto, cidId: inteiro, cidCode: texto,
+      cidDescription: texto}
+
+  # a transferência antiga define o posto atual do colaborador: histórico completo
+  WORKPLACETRANSFERS:
+    caminho: "/workplacetransfers/lastupdate/start/{ini}/finish/{fim}"
+    itens: content
+    janela_dias: 30
+    tamanho: 1000
+    inicio_historico: 2010-01-01
+    rotina: true
+    campos:
+      {id: inteiro, personId: inteiro, workplaceId: inteiro, transferDateTime: data_hora,
+      lastUpdate: data_hora, removed: booleano, userRegisterId: inteiro}
+
+  REPLACEMENTS:
+    caminho: "/replacements/lastupdate/start/{ini}/finish/{fim}"
+    itens: content
+    janela_dias: 30
+    tamanho: 1000
+    rotina: true
+    campos:
+      {id: inteiro, personId: inteiro, personName: texto, absenteeId: inteiro, absenteeName: texto,
+      workplaceId: inteiro, startDateTime: data_hora, finishDateTime: data_hora,
+      replacementTypeId: inteiro, note: texto, registerDate: data_hora, replacementReasonId: inteiro,
+      replacementReasonName: texto, replacementResourceId: inteiro, replacementResourceName: texto,
+      shiftId: inteiro, lastUpdate: data_hora, removed: booleano}
+
+  # outro host; a resposta traz senha e token, que não estão nos campos
+  USERACCOUNTS:
+    caminho: "https://pontodigital.api.nexti.com/security/useraccounts/"
+    itens: content
+    tamanho: 1000
+    campos:
+      {id: inteiro, name: texto, active: booleano}
+
+  PERSONS:
+    caminho: /persons/all
+    itens: content
+    campos:
+      {adminDevice: booleano, admissionDate: data_hora, allowMobileClocking: booleano,
+      allowMobileMonthComptime: booleano, businessUnitId: inteiro, businessUnitName: texto,
+      careerId: inteiro, city: texto, companyId: inteiro, country: texto, demissionDate: data_hora,
+      enrolment: texto, externalCareerId: texto, externalCompanyId: texto, externalId: texto,
+      externalScheduleId: texto, federatedUnitInitials: texto, gender: texto,
+      generateNightBonusByExpectedWorkload: booleano, id: inteiro, ignoreTimeTracking: booleano,
+      ignoreTimeTrackingDate: data_hora, ignoreValidation: booleano, personSituationId: inteiro,
+      personTypeId: inteiro, rotationCode: inteiro, rotationId: inteiro, scheduleId: inteiro,
+      state: texto, userAccountId: inteiro, workplaceId: inteiro, name: texto, cpf: texto, email: texto,
+      phone: texto}
+
+  WORKPLACES:
+    caminho: /workplaces/all
+    itens: content
+    campos:
+      {active: booleano, alterBonusForReplacement: booleano, businessUnitId: inteiro,
+      checkinTolerance: inteiro, checkoutTolerance: inteiro, cityExternalId: texto, cityId: inteiro,
+      cityName: texto, clientId: inteiro, clientName: texto, companyId: inteiro, companyNumber: texto,
+      contractNumber: inteiro, contractNumberTxt: texto, controlLackOfEffectiveness: booleano,
+      costCenter: texto, createMaximumPerimeterToRecordMarking: booleano, externalCompanyId: texto,
+      federatedUnitExternalId: texto, federatedUnitId: inteiro, federatedUnitInitials: texto,
+      federatedUnitName: texto, finalScheduleAdjustment: booleano, finishDate: data_hora,
+      forceCompanyReplacement: booleano, forceCompanyTransfer: booleano, fractionalVacancy: booleano,
+      generateFlexibleInconsistenciesAlert: booleano, generateVirtualClocking: booleano, id: inteiro,
+      initialScheduleAdjustment: booleano, intervalScheduleAdjustment: booleano, lastUpdate: data_hora,
+      maximumPerimeterRecordMarking: inteiro, name: texto, registerDate: data_hora, service: texto,
+      serviceTypeId: inteiro, showWorkplaceInPersonInformationApp: booleano, startDate: data_hora,
+      state: texto, timezone: texto, vacantJob: inteiro, latitude: numero, longitude: numero}
+
+  SCHEDULES:
+    caminho: /schedules/all
+    itens: content
+    campos:
+      {active: booleano, dailyWorkload: inteiro, differentiateToleranceInMarkings: booleano,
+      externalId: texto, fullDescription: texto, holidayTimeTracking: booleano, id: inteiro,
+      ignoreHolidays: booleano, ignoreInterval: booleano, ignoreValidation: booleano,
+      lastUpdate: data_hora, monthlyWorkload: inteiro, name: texto, premarkedInterval: booleano,
+      registerDate: data_hora, rotations: json, scheduleShifts: json, scheduleTurnId: inteiro,
+      scheduleTypeId: inteiro, weeklyWorkload: inteiro, workedBreakOnDoubleJourney: booleano}
+
+  SHIFTS:
+    caminho: /shifts/all
+    itens: content
+    campos:
+      {active: booleano, generateFlexibleInconsistenciesAlert: booleano, id: inteiro,
+      lastUpdate: data_hora, markings: json, mobilityAfter: inteiro, mobilityBefore: inteiro, name: texto,
+      registerDate: data_hora, shiftTypeId: inteiro}
+
+  CLIENTS:
+    caminho: /clients/all
+    itens: content
+    campos:
+      {active: booleano, clientTypeId: inteiro, companyNumber: texto,
+      generateFlexibleInconsistenciesAlert: booleano, id: inteiro, name: texto,
+      premarkedInterval: booleano, startPaycheckPeriod: inteiro}
+
+  COMPANIES:
+    caminho: /companies/all
+    itens: content
+    campos:
+      {active: booleano, companyName: texto, companyNumber: texto, companyNumberType: texto,
+      externalId: texto, fantasyName: texto, id: inteiro}
+
+  BUSINESSUNITS:
+    caminho: /businessunits/all
+    itens: content
+    campos:
+      {active: booleano, externalId: texto, id: inteiro, name: texto}
+
+  CAREERS:
+    caminho: /careers/all
+    itens: content
+    campos:
+      {active: booleano, careerGroupId: inteiro, id: inteiro, lastUpdate: data_hora, name: texto,
+      registerDate: data_hora}
+
+  ABSENCESITUATIONS:
+    caminho: /absencesituations/all
+    itens: content
+    campos:
+      {absenceTypeId: inteiro, active: booleano, cid: booleano, deductWeeklyDayOff: booleano,
+      externalId: texto, id: inteiro, medicalDoctor: booleano, name: texto, removeAbsence: booleano,
+      removeTemplate: booleano, requiredReplacement: booleano, showSituation: booleano}

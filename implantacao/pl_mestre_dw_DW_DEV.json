@@ -222,6 +222,186 @@
         }
       },
       {
+        "name": "ForEach_PROTHEUS",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "Preparar_Ciclo",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@json(activity('Preparar_Ciclo').output.result.exitValue)['origens']['PROTHEUS']",
+            "type": "Expression"
+          },
+          "isSequential": false,
+          "batchCount": 4,
+          "activities": [
+            {
+              "name": "Lookup_Max_PROTHEUS",
+              "type": "Lookup",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.00:30:00",
+                "retry": 1,
+                "retryIntervalInSeconds": 60,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "SqlServerSource",
+                  "sqlReaderQuery": {
+                    "value": "@item().query_max",
+                    "type": "Expression"
+                  },
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None"
+                },
+                "datasetSettings": {
+                  "annotations": [],
+                  "type": "SqlServerTable",
+                  "schema": [],
+                  "typeProperties": {
+                    "database": "C7FTHA_136941_PR_PD"
+                  },
+                  "externalReferences": {
+                    "connection": "c4b4f96f-b6a6-40f4-8dbb-2351c2e6dd83"
+                  }
+                },
+                "firstRowOnly": true
+              }
+            },
+            {
+              "name": "Se_Mudou_PROTHEUS",
+              "type": "IfCondition",
+              "dependsOn": [
+                {
+                  "activity": "Lookup_Max_PROTHEUS",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "typeProperties": {
+                "expression": {
+                  "value": "@or(not(equals(item().modo_carga, 'INCREMENTAL')), and(not(equals(coalesce(activity('Lookup_Max_PROTHEUS').output.firstRow.novo, ''), '')), not(equals(coalesce(activity('Lookup_Max_PROTHEUS').output.firstRow.novo, ''), item().wm_atual))))",
+                  "type": "Expression"
+                },
+                "ifTrueActivities": [
+                  {
+                    "name": "Copiar_PROTHEUS",
+                    "type": "Copy",
+                    "dependsOn": [],
+                    "policy": {
+                      "timeout": "0.02:00:00",
+                      "retry": 1,
+                      "retryIntervalInSeconds": 60,
+                      "secureOutput": false,
+                      "secureInput": false
+                    },
+                    "typeProperties": {
+                      "source": {
+                        "type": "SqlServerSource",
+                        "sqlReaderQuery": {
+                          "value": "@replace(item().query_copy, '#NOVO#', coalesce(activity('Lookup_Max_PROTHEUS').output.firstRow.novo, ''))",
+                          "type": "Expression"
+                        },
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None",
+                        "datasetSettings": {
+                          "annotations": [],
+                          "type": "SqlServerTable",
+                          "schema": [],
+                          "typeProperties": {
+                            "database": "C7FTHA_136941_PR_PD"
+                          },
+                          "externalReferences": {
+                            "connection": "c4b4f96f-b6a6-40f4-8dbb-2351c2e6dd83"
+                          }
+                        }
+                      },
+                      "sink": {
+                        "type": "LakehouseTableSink",
+                        "tableActionOption": "Append",
+                        "datasetSettings": {
+                          "annotations": [],
+                          "linkedService": {
+                            "name": "Bronze",
+                            "properties": {
+                              "annotations": [],
+                              "type": "Lakehouse",
+                              "typeProperties": {
+                                "workspaceId": "db0cf901-d6a7-4cf4-aaeb-f24d0e09a9e9",
+                                "artifactId": "9e23d513-0ddd-4671-8940-2728cb1bb64e",
+                                "rootFolder": "Tables"
+                              }
+                            }
+                          },
+                          "type": "LakehouseTable",
+                          "schema": [],
+                          "typeProperties": {
+                            "table": {
+                              "value": "@item().tabela_destino",
+                              "type": "Expression"
+                            }
+                          }
+                        }
+                      },
+                      "enableStaging": false,
+                      "translator": {
+                        "type": "TabularTranslator",
+                        "typeConversion": true,
+                        "typeConversionSettings": {
+                          "allowDataTruncation": true,
+                          "treatBooleanAsNumber": false
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "Registrar_PROTHEUS",
+                    "type": "AppendVariable",
+                    "dependsOn": [
+                      {
+                        "activity": "Copiar_PROTHEUS",
+                        "dependencyConditions": [
+                          "Succeeded"
+                        ]
+                      }
+                    ],
+                    "typeProperties": {
+                      "variableName": "resultados",
+                      "value": {
+                        "value": "@concat(item().id, '|', coalesce(activity('Lookup_Max_PROTHEUS').output.firstRow.novo, ''), '|', string(activity('Copiar_PROTHEUS').output.rowsCopied))",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                ],
+                "ifFalseActivities": [
+                  {
+                    "name": "Sem_Mudanca_PROTHEUS",
+                    "type": "AppendVariable",
+                    "dependsOn": [],
+                    "typeProperties": {
+                      "variableName": "resultados",
+                      "value": {
+                        "value": "@concat(item().id, '|SEM_MUDANCA|0')",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
         "name": "ForEach_4S",
         "type": "ForEach",
         "dependsOn": [
@@ -451,6 +631,12 @@
         "dependsOn": [
           {
             "activity": "ForEach_GS",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          },
+          {
+            "activity": "ForEach_PROTHEUS",
             "dependencyConditions": [
               "Completed"
             ]
